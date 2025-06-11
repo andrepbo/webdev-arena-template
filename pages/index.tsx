@@ -5,6 +5,7 @@ import {
   FiChevronDown,
   FiCornerDownLeft,
   FiCheckCircle,
+  FiCheck,
 } from "react-icons/fi";
 import { BsSunFill, BsMoonStarsFill } from "react-icons/bs";
 import {
@@ -75,7 +76,7 @@ const EditorApp = () => {
           <HiOutlineMenuAlt3 className="text-gray-700" />
         </div>
       )}
-      <header className="w-full border-b dark:border-gray-700 px-4 py-4 flex flex-col md:flex-row md:items-center md:justify-between">
+      <header className="fixed top-0 z-40 w-full bg-white dark:bg-gray-900 border-b dark:border-gray-700 px-4 py-4 flex flex-row flex-wrap items-center justify-between gap-4">
         <div
           onClick={() => setDarkMode(!darkMode)}
           className="hidden md:flex w-20 h-10 bg-gray-100 dark:bg-gray-800 rounded-full p-1 items-center justify-between cursor-pointer relative"
@@ -119,55 +120,86 @@ const EditorApp = () => {
         </div>
       </header>
 
-      <div className="md:fixed md:top-1/2 md:left-4 md:-translate-y-1/2 md:w-14 w-full bg-white dark:bg-gray-800 border md:rounded-2xl shadow-lg border-gray-200 dark:border-gray-700 flex md:flex-col items-center md:justify-start justify-center md:items-center overflow-x-auto md:overflow-visible px-2 md:px-0 py-2 md:py-0 my-4 md:my-0">
-        <div className="flex flex-wrap justify-center md:flex-col md:justify-start items-center gap-x-6 gap-y-4 md:py-4">
-          <div className="flex md:flex-col items-center gap-x-6 gap-y-4">
-            <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700">
+      <div className="fixed z-50 bottom-0 md:bottom-auto left-0 w-full md:top-1/2 md:left-4 md:-translate-y-1/2 md:w-14 bg-white dark:bg-gray-800 border md:rounded-2xl shadow-lg border-gray-200 dark:border-gray-700 flex md:flex-col items-center justify-center md:justify-start md:items-center px-2 md:px-0 py-2 md:py-0 overflow-x-auto md:overflow-visible">
+        <div className="flex md:flex-col gap-x-6 md:gap-y-4 md:py-4 w-max md:w-full">
+          <div className="flex md:flex-col items-center gap-x-6 md:gap-y-4">
+            <button
+              aria-label="Insert image"
+              className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
               <MdOutlineImage />
             </button>
-            <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button
+              aria-label="Insert video"
+              className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
               <MdOutlineSmartDisplay />
             </button>
-            <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button
+              aria-label="Insert music"
+              className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
               <MdOutlineMusicNote />
             </button>
-            <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button
+              aria-label="Insert extension"
+              className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
               <MdOutlineExtension />
             </button>
-            <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button
+              aria-label="Insert code"
+              className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
               <MdOutlineCode />
             </button>
           </div>
 
           <hr className="hidden md:block border-t border-gray-200 dark:border-gray-700 w-full my-2" />
 
-          <div className="flex md:flex-col items-center gap-x-6 gap-y-4">
-            <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700">
+          <div className="flex md:flex-col items-center gap-x-6 md:gap-y-4">
+            <button
+              aria-label="Insert text"
+              className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
               <MdOutlineTextFields />
             </button>
-            <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button
+              aria-label="Transform text"
+              className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
               <TbTransform />
             </button>
-            <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button
+              aria-label="Open chat"
+              className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
               <MdOutlineChatBubbleOutline />
             </button>
           </div>
 
           <hr className="hidden md:block border-t border-gray-200 dark:border-gray-700 w-full my-2" />
 
-          <div className="flex md:flex-col items-center gap-x-6 gap-y-4">
-            <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700">
+          <div className="flex md:flex-col items-center gap-x-6 md:gap-y-4">
+            <button
+              aria-label="Open grid layout"
+              className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
               <TbLayoutGrid />
             </button>
-            <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button
+              aria-label="Open folder"
+              className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
               <MdOutlineFolder />
             </button>
           </div>
         </div>
       </div>
+
       <div className="md:flex flex-1">
-        <main className="flex-1 flex justify-center px-4 md:px-6 py-8 md:py-12">
-          <div className="w-full max-w-4xl">
+        <main className="flex-1 overflow-y-auto max-h-screen px-4 md:px-6 py-8 md:py-12 pt-[88px] flex justify-center">
+          <div className="w-full max-w-4xl md:pt-12 pt-16">
             <div className="text-red-600 font-semibold text-sm mb-2">NEWS</div>
             <h1 className="text-2xl md:text-4xl font-bold leading-tight mb-4 md:mb-6">
               The United States of Fashion Meet the 56 people Changing the
@@ -244,7 +276,7 @@ const EditorApp = () => {
               </div>
             </div>
 
-            <article className="space-y-4 md:space-y-6 text-gray-800 dark:text-gray-200 text-base leading-relaxed">
+            <article className="space-y-4 md:space-y-6 text-gray-800 dark:text-gray-200 text-base leading-relaxed pb-8">
               <p>
                 Wildest time, the pin of American fashion only ever dropped on
                 one place: New York City. As those living elsewhere—and anybody
@@ -264,7 +296,7 @@ const EditorApp = () => {
           </div>
         </main>
 
-        <aside className="w-full md:w-80 px-4 pt-6 pb-6 md:pb-0 space-y-6 bg-white dark:bg-gray-900 border-t md:border-t-0 md:border-l border-gray-100 dark:border-gray-800">
+        <aside className="w-full md:w-80 px-4 md:pt-24 pt-6 pb-[88px] md:pb-0 space-y-6 bg-white dark:bg-gray-900 border-t md:border-t-0 md:border-l border-gray-100 dark:border-gray-800">
           <div className="space-y-1">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
@@ -277,7 +309,7 @@ const EditorApp = () => {
             <p className="text-xs text-gray-500">10/26 Comments resolved</p>
             <div className="w-full h-2 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
               <div
-                className="h-full bg-black rounded-full"
+                className="h-full bg-black dark:bg-white rounded-full"
                 style={{ width: "40%" }}
               ></div>
             </div>
@@ -293,7 +325,9 @@ const EditorApp = () => {
           <div className="space-y-4 max-h-[calc(100vh-240px)] overflow-y-auto pr-2">
             <div className="relative flex gap-3">
               <div className="flex flex-col items-center">
-                <div className="w-4 h-4 rounded-full bg-black"></div>
+                <div className="w-4 h-4 rounded-full flex items-center justify-center bg-black dark:bg-white">
+                  <FiCheck className="text-white dark:text-black text-[10px]" />
+                </div>
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -314,9 +348,11 @@ const EditorApp = () => {
               </div>
             </div>
 
-            <div className="relative bg-blue-50 p-3 rounded-md border-l-4 border-black flex gap-3">
+            <div className="relative bg-blue-50 p-3 rounded-md border-l-4 border-black flex gap-3 dark:border-slate-500">
               <div className="flex flex-col items-center">
-                <div className="w-4 h-4 border border-gray-400 rounded-full bg-white"></div>
+                <div className="w-4 h-4 rounded-full border border-black bg-white">
+                  <FiCheck className="text-white text-[10px]" />
+                </div>
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -326,7 +362,9 @@ const EditorApp = () => {
                     className="w-6 h-6 rounded-full"
                   />
                   <div>
-                    <p className="text-sm font-medium">Olivia Gil</p>
+                    <p className="text-sm font-medium dark:text-black">
+                      Olivia Gil
+                    </p>
                     <p className="text-xs text-gray-500">8 hrs ago</p>
                   </div>
                 </div>
@@ -346,7 +384,9 @@ const EditorApp = () => {
 
             <div className="relative flex gap-3">
               <div className="flex flex-col items-center">
-                <div className="w-4 h-4 border border-gray-400 rounded-full bg-white"></div>
+                <div className="w-4 h-4 rounded-full border border-black dark:border-white bg-white">
+                  <FiCheck className="text-white text-[10px]" />
+                </div>
               </div>
               <div>
                 <div className="flex items-center gap-2">
