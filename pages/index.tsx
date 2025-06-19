@@ -1,230 +1,193 @@
-import { useState, useEffect, useCallback } from "react";
-import { FaMicrophone, FaPlay, FaStop, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
+import { useState } from "react";
+import { MdSettings } from "react-icons/md";
+import { SiBat } from "react-icons/si";
+import { LuMessageSquareText } from "react-icons/lu";
+import { RxMinus, RxSquare, RxCross2 } from "react-icons/rx";
+import { GiSoundWaves } from "react-icons/gi";
+import { RiSpaceShipFill } from "react-icons/ri";
+import { FaAndroid } from "react-icons/fa";
 import {
-  IoIosArrowDown,
-  IoMdSettings,
-  IoMdInformationCircle,
-  IoMdHelpCircle,
-  IoMdApps,
-  IoMdHome,
-} from "react-icons/io";
-import { MdDarkMode } from "react-icons/md";
+  FaFaceTired,
+  FaFaceGrinTongueWink,
+  FaFaceAngry,
+  FaFaceSurprise,
+} from "react-icons/fa6";
+import { PiBabyFill, PiAlienFill, PiPoliceCarFill } from "react-icons/pi";
+import { SiSurveymonkey } from "react-icons/si";
+import { BsFan } from "react-icons/bs";
+import Head from "next/head";
 
-const voiceEffects = [
-  "Robot",
-  "Alien",
-  "Baby",
-  "Chipmunk",
-  "Female",
-  "Male",
-  "Darth Vader",
-  "Radio",
-  "Squeak",
-  "Gargle",
-  "Custom 1",
-  "Custom 2",
+const effects = [
+  { id: 1, name: "No effects", icon: <GiSoundWaves size={36} /> },
+  { id: 2, name: "Alien", icon: <RiSpaceShipFill size={36} /> },
+  { id: 3, name: "Android", icon: <FaAndroid size={36} /> },
+  { id: 4, name: "Aphonic", icon: <FaFaceTired size={36} /> },
+  { id: 5, name: "Baby", icon: <PiBabyFill size={36} /> },
+  { id: 6, name: "Alien", icon: <PiAlienFill size={36} /> },
+  { id: 7, name: "Chipmunk", icon: <SiSurveymonkey size={36} /> },
+  { id: 8, name: "Cop", icon: <PiPoliceCarFill size={36} /> },
+  { id: 9, name: "Crazy", icon: <FaFaceGrinTongueWink size={36} /> },
+  { id: 10, name: "Dark", icon: <FaFaceAngry size={36} /> },
+  { id: 11, name: "Echo", icon: <FaFaceSurprise size={36} /> },
+  { id: 12, name: "Fan", icon: <BsFan size={36} /> },
 ];
-
-const ambientSounds = [
-  "None",
-  "Rain",
-  "Thunderstorm",
-  "Wind",
-  "Waves",
-  "Fire",
-  "Coffee Shop",
-  "Night",
-];
-
-const soundDescriptions = {
-  "None": "",
-  "Rain": "Rain Description",
-  "Thunderstorm": "Thunderstorm Description",
-  "Wind": "Wind Description",
-  "Waves": "Waves Description",
-  "Fire": "Fire Description",
-  "Coffee Shop": "Coffee Shop Description",
-  "Night": "Night Description",
-};
 
 export default function VoiceChangerApp() {
-  const [selectedEffect, setSelectedEffect] = useState("Robot");
-  const [ambientSound, setAmbientSound] = useState("None");
-  const [voiceChangerOn, setVoiceChangerOn] = useState(false);
-  const [ambientSoundOn, setAmbientSoundOn] = useState(false);
-  const [showEffectDropdown, setShowEffectDropdown] = useState(false);
-  const [showSoundDropdown, setShowSoundDropdown] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
-  const [description, setDescription] = useState("");
-  const [selectedEffectDescription, setSelectedEffectDescription] = useState("Robot Description");
-
-  const toggleVoiceChanger = useCallback(() => {
-    setVoiceChangerOn((prev) => !prev);
-  }, []);
-
-  const toggleAmbientSound = useCallback(() => {
-    setAmbientSoundOn((prev) => !prev);
-  }, []);
-
-  const toggleMenu = useCallback(() => {
-    setShowMenu((prev) => !prev);
-  }, []);
-
-  const toggleEffectDropdown = useCallback(() => {
-    setShowEffectDropdown((prev) => !prev);
-  }, []);
-
-  const toggleSoundDropdown = useCallback(() => {
-    setShowSoundDropdown((prev) => !prev);
-  }, []);
-
-  useEffect(() => {
-    setDescription(soundDescriptions[ambientSound]);
-    setSelectedEffectDescription(`${selectedEffect} Description`);
-  }, [ambientSound, selectedEffect]);
+  const [selectedEffect, setSelectedEffect] = useState(1);
+  const [voiceChanger, setVoiceChanger] = useState(true);
+  const [ambientSound, setAmbientSound] = useState(false);
+  const [listenFX, setListenFX] = useState(true);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="flex flex-col bg-white rounded-3xl shadow-2xl overflow-hidden relative w-[450px] h-[750px]">
-        {/* Top Bar */}
-        <div className="flex justify-between items-center p-4 bg-white border-b border-gray-200">
-          <div className="flex items-center gap-4">
-            <button className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors">
-              <MdDarkMode className="w-5 h-5" />
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors">
-              <IoMdSettings className="w-5 h-5" />
-            </button>
-            <button className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors">
-              <IoMdInformationCircle className="w-5 h-5" />
-            </button>
-            <button className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors">
-              <IoMdHelpCircle className="w-5 h-5" />
-            </button>
-            <button className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors">
-              <IoMdApps className="w-5 h-5" />
-            </button>
-            <button className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors">
-              <IoMdHome className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-center p-6 bg-gray-50">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">Voice Changer</h1>
-
-          <div className="flex flex-col items-center mb-6">
-            <div className="relative w-32 h-32 mb-4">
-              <div className="w-full h-full rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center shadow-lg">
-                <FaMicrophone className="w-16 h-16 text-white" />
+    <>
+      <Head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
+      <div className="min-h-screen w-full bg-gradient-to-br from-[#21A3EA] to-[#4CDFC4] text-white flex items-center justify-center p-4 font-[Poppins]">
+        <div className="w-full max-w-[900px] h-full sm:h-[600px] bg-[#2c2c2c] shadow-[0_25px_70px_rgba(0,0,0,0.4)] flex flex-col sm:flex-row">
+          {/* Sidebar */}
+          <aside className="w-full sm:w-16 bg-[#1f1f1f] flex sm:flex-col justify-between sm:justify-between items-center sm:items-center p-0 relative">
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-[#21A3EA] to-[#4CDFC4] flex items-center justify-center">
+                <SiBat size={20} className="text-white" />
               </div>
-              <button className="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors">
-                <FaPlay className="w-5 h-5" />
+              <div className="mt-4 hidden sm:block">
+                <button className="text-gray-300 hover:text-white">
+                  <MdSettings size={24} />
+                </button>
+              </div>
+            </div>
+            <div className="hidden sm:flex flex-col items-center gap-4 pb-4">
+              <button className="text-gray-300 hover:text-white">
+                <LuMessageSquareText size={24} />
               </button>
             </div>
-
-            <div className="flex items-center gap-2 mb-2">
-              <span className="font-medium text-gray-700">Voice Changer:</span>
-              <button onClick={toggleVoiceChanger} className={`w-14 h-8 rounded-full flex items-center px-1 transition-colors duration-300 ${voiceChangerOn ? "bg-green-500" : "bg-gray-300"}`}>
-                <div className={`w-6 h-6 rounded-full bg-white shadow transform transition-transform duration-300 ${voiceChangerOn ? "translate-x-6" : "translate-x-0"}`}></div>
+            <div className="flex sm:hidden items-center gap-4 px-2">
+              <button className="text-gray-300 hover:text-white">
+                <MdSettings size={24} />
               </button>
-              <span className="font-medium text-gray-700">{voiceChangerOn ? "ON" : "OFF"}</span>
+              <button className="text-gray-300 hover:text-white">
+                <LuMessageSquareText size={24} />
+              </button>
             </div>
+          </aside>
 
-            <div className="flex items-center gap-2 mb-6">
-              <span className="font-medium text-gray-700">Ambient Sound:</span>
-              <button onClick={toggleAmbientSound} className={`w-14 h-8 rounded-full flex items-center px-1 transition-colors duration-300 ${ambientSoundOn ? "bg-green-500" : "bg-gray-300"}`}>
-                <div className={`w-6 h-6 rounded-full bg-white shadow transform transition-transform duration-300 ${ambientSoundOn ? "translate-x-6" : "translate-x-0"}`}></div>
+          {/* Right Content */}
+          <div className="flex flex-col flex-1">
+            {/* Header */}
+            <header className="h-10 px-4 flex items-center justify-end gap-4 text-gray-400">
+              <button className="hover:text-white">
+                <RxMinus size={18} />
               </button>
-              <span className="font-medium text-gray-700">{ambientSoundOn ? "ON" : "OFF"}</span>
-            </div>
-          </div>
+              <button className="hover:text-white">
+                <RxSquare size={18} />
+              </button>
+              <button className="hover:text-white">
+                <RxCross2 size={18} />
+              </button>
+            </header>
 
-          <div className="w-full space-y-4">
-            <div className="relative">
-              <button onClick={toggleEffectDropdown} className="w-full flex justify-between items-center px-4 py-2 bg-white rounded-lg border border-gray-300 shadow-sm text-gray-700 font-medium hover:bg-gray-50">
-                <span>{selectedEffect}</span>
-                <IoIosArrowDown className={`transition-transform duration-200 ${showEffectDropdown ? "rotate-180" : ""}`} />
-              </button>
-              {showEffectDropdown && (
-                <div className="absolute top-full left-0 w-full mt-1 bg-white rounded-lg border border-gray-200 shadow-lg z-10">
-                  <div className="max-h-60 overflow-y-auto py-1">
-                    {voiceEffects.map((effect) => (
-                      <button key={effect} onClick={() => { setSelectedEffect(effect); setShowEffectDropdown(false); }} className="w-full px-4 py-2 text-left hover:bg-gray-100 text-gray-700">
-                        {effect}
-                      </button>
-                    ))}
-                  </div>
+            {/* Main Content */}
+            <main className="flex-1 relative flex flex-col overflow-hidden h-full">
+              <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 sm:px-6 pt-4 pb-4 max-h-full">
+                <div className="flex items-center justify-center gap-4 mb-6">
+                  <div className="flex-1 h-px bg-gray-700"></div>
+                  <h1 className="text-lg font-semibold text-gray-300 whitespace-nowrap">
+                    VOICEMOD VOICES
+                  </h1>
+                  <div className="flex-1 h-px bg-gray-700"></div>
                 </div>
-              )}
-            </div>
-
-            <div className="relative">
-              <button onClick={toggleSoundDropdown} className="w-full flex justify-between items-center px-4 py-2 bg-white rounded-lg border border-gray-300 shadow-sm text-gray-700 font-medium hover:bg-gray-50">
-                <span>{ambientSound}</span>
-                <IoIosArrowDown className={`transition-transform duration-200 ${showSoundDropdown ? "rotate-180" : ""}`} />
-              </button>
-              {showSoundDropdown && (
-                <div className="absolute top-full left-0 w-full mt-1 bg-white rounded-lg border border-gray-200 shadow-lg z-10">
-                  <div className="max-h-60 overflow-y-auto py-1">
-                    {ambientSounds.map((sound) => (
-                      <button key={sound} onClick={() => { setAmbientSound(sound); setShowSoundDropdown(false); }} className="w-full px-4 py-2 text-left hover:bg-gray-100 text-gray-700">
-                        {sound}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                  {effects.map((effect) => (
+                    <div
+                      key={effect.id}
+                      className="flex flex-col items-center justify-center"
+                    >
+                      <button
+                        className={`relative w-24 h-24 rounded-full focus:outline-none ${
+                          selectedEffect === effect.id
+                            ? "ring-4 ring-white/70"
+                            : ""
+                        }`}
+                        onClick={() => setSelectedEffect(effect.id)}
+                      >
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#21A3EA] to-[#4CDFC4]"></div>
+                        <div className="absolute inset-[3px] rounded-full bg-[#2c2c2c]"></div>
+                        <div className="absolute inset-[6px] rounded-full bg-gray-200 flex items-center justify-center text-[#2c2c2c] text-3xl">
+                          {effect.icon}
+                        </div>
                       </button>
-                    ))}
-                  </div>
+                      <span className="text-sm text-center mt-2 text-gray-300 font-medium">
+                        {effect.name}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              )}
-            </div>
-          </div>
-        </div>
+              </div>
 
-        {/* Bottom Navigation */}
-        <div className="flex justify-between items-center px-6 py-3 bg-white border-t border-gray-200">
-          <div className="flex items-center gap-2">
-            <button className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-blue-500 hover:bg-gray-200 transition-colors">
-              <FaVolumeUp className="w-5 h-5" />
-            </button>
-            <span className="font-medium text-gray-700">89%</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
-              <FaStop className="w-5 h-5" />
-            </button>
-            <button className="flex items-center justify-center w-12 h-12 rounded-full bg-red-500 text-white shadow-lg hover:bg-red-600 transition-colors">
-              <FaPlay className="w-6 h-6" />
-            </button>
-            <button className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
-              <FaVolumeMute className="w-5 h-5" />
-            </button>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-gray-700">99%</span>
-            <button className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-blue-500 hover:bg-gray-200 transition-colors">
-              <FaVolumeUp className="w-5 h-5" />
-            </button>
+              {/* Footer */}
+              <footer className="h-auto bg-[#2c2c2c] border-t border-gray-700 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 px-4 py-4 sm:px-6">
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`relative w-10 h-5 rounded-full transition-colors duration-300 ${
+                      listenFX ? "bg-blue-500" : "bg-gray-400"
+                    }`}
+                    onClick={() => setListenFX(!listenFX)}
+                  >
+                    <div
+                      className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all duration-300 ${
+                        listenFX ? "left-0.5" : "left-5"
+                      }`}
+                    ></div>
+                  </div>
+                  <span className="text-sm font-medium text-gray-300">
+                    LISTEN MY FX VOICE
+                  </span>
+                </div>
+                <div className="hidden sm:block w-px h-6 bg-gray-600"></div>
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`relative w-10 h-5 rounded-full transition-colors duration-300 ${
+                      voiceChanger ? "bg-blue-500" : "bg-gray-400"
+                    }`}
+                    onClick={() => setVoiceChanger(!voiceChanger)}
+                  >
+                    <div
+                      className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all duration-300 ${
+                        voiceChanger ? "left-0.5" : "left-5"
+                      }`}
+                    ></div>
+                  </div>
+                  <span className="text-sm font-medium text-gray-300">
+                    VOICE CHANGER
+                  </span>
+                </div>
+                <div className="hidden sm:block w-px h-6 bg-gray-600"></div>
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`relative w-10 h-5 rounded-full transition-colors duration-300 ${
+                      ambientSound ? "bg-blue-500" : "bg-gray-400"
+                    }`}
+                    onClick={() => setAmbientSound(!ambientSound)}
+                  >
+                    <div
+                      className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all duration-300 ${
+                        ambientSound ? "left-0.5" : "left-5"
+                      }`}
+                    ></div>
+                  </div>
+                  <span className="text-sm font-medium text-gray-300">
+                    AMBIENT SOUND
+                  </span>
+                </div>
+              </footer>
+            </main>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
-}
-// Zod Schema
-export const Schema = {
-    "commentary": "",
-    "template": "nextjs-developer",
-    "title": "",
-    "description": "",
-    "additional_dependencies": [
-        "react-icons"
-    ],
-    "has_additional_dependencies": true,
-    "install_dependencies_command": "npm install react-icons",
-    "port": 3000,
-    "file_path": "pages/index.tsx",
-    "code": "<see code above>"
 }
