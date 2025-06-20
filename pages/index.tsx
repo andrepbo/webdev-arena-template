@@ -594,16 +594,3 @@ const SmartHomeDashboard = () => {
 };
 
 export default SmartHomeDashboard;
-// Zod Schema
-export const Schema = {
-    "commentary": "",
-    "template": "nextjs-developer",
-    "title": "",
-    "description": "",
-    "additional_dependencies": [],
-    "has_additional_dependencies": false,
-    "install_dependencies_command": "",
-    "port": 3000,
-    "file_path": "pages/index.tsx",
-    "code": "<see code above>"
-}
