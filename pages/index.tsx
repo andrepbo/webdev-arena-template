@@ -5,16 +5,23 @@ import {
 } from 'recharts';
 import { 
   Thermometer, Droplet, Wind, Sun, Moon, Power, 
-  Fan, Sparkles, Zap, ArrowUpRight, ArrowDownRight,
+  Sparkles, Zap, ArrowUpRight, ArrowDownRight,
   ChevronDown, ChevronUp
 } from 'lucide-react';
+
+type Device = {
+  id: number;
+  name: string;
+  status: 'Active' | 'Idle';
+  icon: JSX.Element;
+};
 
 const SmartHomeDashboard = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [deviceUsage, setDeviceUsage] = useState(
     [...Array(15)].map((_, i) => ({ name: `${i}h`, usage: Math.floor(Math.random() * 100) }))
   );
-  const [powerData, setPowerData] = useState(
+  const [powerData] = useState(
     [...Array(7)].map((_, i) => ({ name: `Day ${i+1}`, usage: Math.floor(Math.random() * 5 + 1) }))
   );
   const [thermostatTemp, setThermostatTemp] = useState(22);
@@ -24,8 +31,8 @@ const SmartHomeDashboard = () => {
     airQuality: 'Good',
     brightness: 75
   });
-  const [selectedDevice, setSelectedDevice] = useState(null);
-  const [devices] = useState([
+  const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
+  const [devices] = useState<Device[]>([
     { id: 1, name: 'Smart TV', status: 'Active', icon: <Sparkles size={16} /> },
     { id: 2, name: 'Sound System', status: 'Active', icon: <Zap size={16} /> },
     { id: 3, name: 'Smart Lamp', status: 'Active', icon: <Power size={16} /> },
@@ -57,9 +64,9 @@ const SmartHomeDashboard = () => {
   
   const toggleDarkMode = () => setDarkMode(!darkMode);
   
-  const handleDeviceClick = (device) => {
-    setSelectedDevice(selectedDevice && selectedDevice.id === device.id ? null : device);
-  };
+  const handleDeviceClick = (device: Device) => {
+  setSelectedDevice(selectedDevice && selectedDevice.id === device.id ? null : device);
+};
   
   const toggleDeviceStatus = () => {
     if (!selectedDevice) return;
