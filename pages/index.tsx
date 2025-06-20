@@ -32,7 +32,7 @@ const SmartHomeDashboard = () => {
     brightness: 75
   });
   const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
-  const [devices] = useState<Device[]>([
+  const [devices, setDevices] = useState<Device[]>([
     { id: 1, name: 'Smart TV', status: 'Active', icon: <Sparkles size={16} /> },
     { id: 2, name: 'Sound System', status: 'Active', icon: <Zap size={16} /> },
     { id: 3, name: 'Smart Lamp', status: 'Active', icon: <Power size={16} /> },
@@ -78,14 +78,14 @@ const SmartHomeDashboard = () => {
     setSelectedDevice({ ...selectedDevice, status });
   };
   
-  const adjustThermostat = (increment) => {
+  const adjustThermostat = (increment: number) => {
     const newTemp = thermostatTemp + increment;
     if (newTemp >= 18 && newTemp <= 28) {
       setThermostatTemp(newTemp);
     }
   };
   
-  const getAirQualityColor = (quality) => {
+  const getAirQualityColor = (quality: string) => {
     return quality === 'Excellent' 
       ? 'from-emerald-400 to-teal-500' 
       : 'from-blue-400 to-cyan-500';
