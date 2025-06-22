@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { faker } from "@faker-js/faker";
 
 type Product = {
   id: string;
@@ -120,7 +121,7 @@ export default function ProductDetail() {
         customerName: `${faker.person.firstName()} ${faker.person
           .lastName()
           .charAt(0)}.`,
-        location: `${faker.location.city()}, ${faker.location.stateAbbr()}`,
+        location: `${faker.location.city()}, ${faker.location.state()}`,
         timeAgo: `${Math.floor(Math.random() * 10) + 1}m ago`,
         flavor:
           PRODUCT_DATA.flavors[
