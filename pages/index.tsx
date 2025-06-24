@@ -24,7 +24,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ThumbsUp, MessageSquare, UserPlus, ImageIcon, X } from "lucide-react";
+import { ThumbsUp, MessageSquare, ImageIcon, X } from "lucide-react";
 
 type User = {
   id: string;
@@ -160,7 +160,7 @@ const ChallengeFeed = () => {
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(
     null
   );
-  const [mounted, setMounted] = useState(false);
+  const [, setMounted] = useState(false);
 
   const challengeForm = useForm<z.infer<typeof challengeSchema>>({
     resolver: zodResolver(challengeSchema),
