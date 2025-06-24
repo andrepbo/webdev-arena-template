@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ThumbsUp, MessageSquare, ImageIcon, X } from "lucide-react";
+import { Roboto } from 'next/font/google';
 
 type User = {
   id: string;
@@ -54,6 +55,11 @@ type Challenge = {
   timestamp: string;
   comments: Comment[];
 };
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "700"], // use os pesos que seu design usa
+});
 
 const challengeSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -310,7 +316,7 @@ const ChallengeFeed = () => {
   const currentUser = users[0];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className={`${roboto.className} min-h-screen bg-white`}>
       <header className="border-b border-gray-200 bg-white shadow-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
