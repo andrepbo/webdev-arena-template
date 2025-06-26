@@ -19,6 +19,7 @@ const blogPosts = [
     image: "https://i.imgur.com/G2HuAiM.png",
     category: "Tips",
     featured: true,
+    date: "Dec 06, 2023",
   },
   {
     id: 2,
@@ -27,6 +28,7 @@ const blogPosts = [
     image: "https://i.imgur.com/IipShXG.png",
     category: "Travel",
     featured: true,
+    date: "Jan 12, 2024",
   },
   {
     id: 3,
@@ -37,6 +39,7 @@ const blogPosts = [
       "https://images.unsplash.com/photo-1600066826863-4c1edc2b94a4?q=80&w=2070&auto=format&fit=crop",
     category: "Food & Culture",
     featured: false,
+    date: "Feb 20, 2024",
   },
   {
     id: 4,
@@ -45,6 +48,7 @@ const blogPosts = [
     image: "https://i.imgur.com/fZNww7a.png",
     category: "Hiking",
     featured: true,
+    date: "Mar 15, 2024",
   },
   {
     id: 5, // Updated ID to avoid duplication
@@ -55,6 +59,7 @@ const blogPosts = [
       "https://images.unsplash.com/photo-1515410763290-1e9c0cee75b7?q=80&w=2070&auto=format&fit=crop",
     category: "Destinations",
     featured: false,
+    date: "Sep 13, 2024",
   },
 ];
 
@@ -442,23 +447,31 @@ export default function TravelBlog() {
 
           <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {featuredPosts.map((post) => (
-              <div key={post.id} className="bg-[#F9F8F6] transition-shadow">
-                <div className="flex bg-[#F9F8F6] overflow-hidden transition-shadow">
-                  <div>
+              <div
+                key={post.id}
+                className="bg-[#F9F8F6] shadow-none overflow-hidden"
+              >
+                <div className="flex h-64">
+                  <div className="flex items-center justify-center px-4 bg-[#F9F8F6]">
+                    <span className="text-sm text-gray-500 rotate-[-90deg] whitespace-nowrap">
+                      {post.date}
+                    </span>
+                  </div>
+                  <div className="flex-1">
                     <img
                       src={post.image}
                       alt={post.title}
-                      className="w-[420px] h-auto object-cover"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="p-4">
-                      <p className="text-sm text-amber-500 font-semibold">
-                        {post.category}
-                      </p>
-                      <h3 className="text-xl font-serif text-gray-900">
-                        {post.title}
-                      </h3>
-                    </div>
                   </div>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-amber-500 font-semibold">
+                    {post.category}
+                  </p>
+                  <h3 className="text-xl font-serif text-gray-900">
+                    {post.title}
+                  </h3>
                 </div>
               </div>
             ))}
