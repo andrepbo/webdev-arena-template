@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { X, ShoppingCart, Search } from "lucide-react";
+import React, { useState } from "react";
+import { ShoppingCart, Search } from "lucide-react";
+import { Inter, Playfair_Display } from "next/font/google";
 
 import {
   FaFacebookF,
@@ -10,12 +11,25 @@ import {
   FaPinterestP,
 } from "react-icons/fa";
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
 // Sample blog data with full images
 const blogPosts = [
   {
     id: 1,
     title: "A Tale Of Backpacking Courage Through Conflict",
-    excerpt: "A Tale Of Backpacking Courage Through Conflict.",
+    excerpt:
+      "Discover the courageous journey of backpacking through conflict zones, where adventure meets resilience.",
     image: "https://i.imgur.com/G2HuAiM.png",
     category: "Tips",
     featured: true,
@@ -24,7 +38,8 @@ const blogPosts = [
   {
     id: 2,
     title: "No Fuss, Blue Heron Bridge Snorkle and Scuba Tours",
-    excerpt: "No Fuss, Blue Heron Bridge Snorkle and Scuba Tours.",
+    excerpt:
+      "Dive into the effortless experience of snorkeling and scuba tours at Blue Heron Bridge with expert guidance.",
     image: "https://i.imgur.com/IipShXG.png",
     category: "Travel",
     featured: true,
@@ -44,7 +59,8 @@ const blogPosts = [
   {
     id: 4,
     title: "A Romantic Escape To Italy's Floating City",
-    excerpt: "A Romantic Escape To Italy's Floating City.",
+    excerpt:
+      "Uncover the magic of a romantic getaway in Venice, Italy's enchanting floating city.",
     image: "https://i.imgur.com/fZNww7a.png",
     category: "Hiking",
     featured: true,
@@ -55,8 +71,7 @@ const blogPosts = [
     title: "Solo Female Travel: Safety Tips and Best Destinations",
     excerpt:
       "Empower yourself with our comprehensive guide to solo female travel. We cover essential safety tips and highlight the top destinations that welcome women traveling alone.",
-    image:
-      "https://images.unsplash.com/photo-1515410763290-1e9c0cee75b7?q=80&w=2070&auto=format&fit=crop",
+    image: "https://i.imgur.com/G2HuAiM.png",
     category: "Destinations",
     featured: false,
     date: "Sep 13, 2024",
@@ -123,95 +138,20 @@ const footerNav = {
   ],
 };
 
-// Modal Component
-const SubscribeModal = ({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="bg-white rounded-lg p-8 max-w-md w-full relative shadow-2xl">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors"
-          aria-label="Close subscribe modal"
-        >
-          <X size={24} />
-        </button>
-        <h2 className="text-3xl font-bold text-gray-800 mb-4">
-          Join Our Travel Community
-        </h2>
-        <p className="text-gray-600 mb-6">
-          Subscribe to receive our latest travel guides, tips, and stories
-          directly to your inbox. No spam, we promise!
-        </p>
-        <form className="space-y-4">
-          <input
-            type="email"
-            placeholder="Your email address"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all"
-            required
-          />
-          <button
-            type="submit"
-            className="w-full bg-amber-500 text-white font-medium py-3 px-6 rounded-lg hover:bg-amber-600 transition-colors"
-          >
-            Subscribe
-          </button>
-        </form>
-        <p className="text-xs text-gray-500 mt-6 text-center">
-          By subscribing, you agree to our Privacy Policy and consent to receive
-          updates.
-        </p>
-      </div>
-    </div>
-  );
-};
-
 export default function TravelBlog() {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  // Separate state for menu selection (visual highlight)
   const [selectedMenu, setSelectedMenu] = useState("Home");
-  const [displayedPosts, setDisplayedPosts] = useState(blogPosts);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   const [cartCount] = useState(0);
 
-  useEffect(() => {
-    setIsLoaded(true);
-    // Show subscribe modal after 10 seconds
-    const timer = setTimeout(() => {
-      setIsSubscribeModalOpen(true);
-    }, 10000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const categories = [
-    "All",
-    "Destinations",
-    "Tips & Tricks",
-    "Food & Culture",
-    "Adventure",
-  ];
-
-  useEffect(() => {
-    const filtered = blogPosts.filter((post) =>
-      selectedCategory === "All" ? true : post.category === selectedCategory
-    );
-    setDisplayedPosts(filtered);
-  }, [selectedCategory]);
-
   const featuredPosts = blogPosts.filter((post) => post.featured);
+  const recentPost = blogPosts.reduce((latest, post) =>
+    new Date(post.date) > new Date(latest.date) ? post : latest
+  );
 
   return (
-    <div className="min-h-screen">
+    <div
+      className={`${inter.variable} ${playfair.variable} font-sans min-h-screen`}
+    >
       {/* Header with Navigation */}
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -388,11 +328,7 @@ export default function TravelBlog() {
           <div className="relative z-10 pb-8 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
             <div className="pt-10 sm:pt-16 lg:pt-8 lg:pb-14 lg:overflow-hidden">
               <div className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
-                <div
-                  className={`flex flex-col items-start ${
-                    isLoaded ? "animate-fade-in" : "opacity-0"
-                  }`}
-                >
+                <div className={"flex flex-col items-start"}>
                   <div className="flex items-center gap-0">
                     <div
                       className="text-black text-xs tracking-wider rotate-[-90deg] origin-left whitespace-nowrap"
@@ -404,10 +340,7 @@ export default function TravelBlog() {
                       <p className="text-amber-500 text-sm font-semibold tracking-wide mb-2">
                         Adventure
                       </p>
-                      <span
-                        className="block text-black"
-                        style={{ fontFamily: "'Playfair Display', serif" }}
-                      >
+                      <span className="block text-black font-[var(--font-playfair)]">
                         Explore, Discover, and Dive
                       </span>
                     </h1>
@@ -421,6 +354,13 @@ export default function TravelBlog() {
                         Read More
                       </a>
                     </div>
+                  </div>
+                  <div className="hidden lg:block absolute bottom-0 right-8 z-20 pr-4 pb-4">
+                    <img
+                      src="https://i.imgur.com/bpIp8rz.png"
+                      alt="Decorative"
+                      className="max-w-[200px] h-auto"
+                    />
                   </div>
                 </div>
               </div>
@@ -437,7 +377,7 @@ export default function TravelBlog() {
       </div>
 
       {/* Featured Blog Posts */}
-      <section id="featured" className="py-16 bg-white">
+      <section id="featured" className="pt-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
@@ -469,7 +409,7 @@ export default function TravelBlog() {
                   <p className="text-sm text-amber-500 font-semibold">
                     {post.category}
                   </p>
-                  <h3 className="text-xl font-serif text-gray-900">
+                  <h3 className="text-xl font-[var(--font-playfair)] text-gray-900">
                     {post.title}
                   </h3>
                 </div>
@@ -485,62 +425,65 @@ export default function TravelBlog() {
         <div className="w-24 h-1 bg-gray-100" />
       </div>
 
-      {/* Recent Blog Posts with Filters */}
-      <section id="blog" className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-              Recent Stories
-            </h2>
-            <p className="mt-4 text-xl text-gray-600">
-              Explore our latest travel guides and stories
-            </p>
+      {/* Recent Blog */}
+      <section
+        id="blog"
+        className="w-full flex flex-col lg:flex-row lg:flex-nowrap min-h-[700px] space-y-8 lg:space-y-0"
+        style={{
+          backgroundImage: "url('https://i.imgur.com/MaY1rcV.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "bottom",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <div className="w-full lg:w-1/2 h-[300px] lg:h-full bg-cover bg-no-repeat bg-bottom">
+          <div className="flex flex-col justify-between h-full">
+            <img
+              src={recentPost.image}
+              alt={recentPost.title}
+              className="object-cover w-full h-[70%] lg:h-[500px]"
+            />
+            <div className="h-1/4 flex items-center justify-center px-4 pt-6 sm:pt-8 lg:pt-12 lg:pl-8">
+              <p className="text-3xl text-left">
+                If you believe what I say, you will
+                <br />
+                get many benefits!
+              </p>
+            </div>
+            <div className="mb-4"></div>
           </div>
-
-          {/* Category Filter */}
-          <div className="flex flex-wrap justify-center gap-2 mb-12">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-lg font-medium ${
-                  selectedCategory === category
-                    ? "bg-amber-500 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
-                }`}
+        </div>
+        <div className="hidden lg:flex items-center justify-center relative z-10 -ml-12 -mr-12">
+          <img
+            src="https://i.imgur.com/jR2Aai4.jpeg"
+            alt="Middle Decorative Image"
+            className="max-h-[500px] w-auto border-4 border-white shadow-lg transform rotate-[-6deg] -translate-y-2"
+          />
+        </div>
+        <div className="w-full lg:w-1/2 h-[300px] lg:h-full bg-cover bg-no-repeat bg-bottom">
+          <div className="flex h-full max-w-xl mx-auto px-6 items-center justify-center lg:min-h-[700px]">
+            <div className="flex items-center pr-4">
+              <p className="text-black text-xs tracking-wider rotate-[-90deg] whitespace-nowrap">
+                {recentPost.date}
+              </p>
+            </div>
+            <div className="flex flex-col justify-center items-start text-left">
+              <p className="text-sm font-semibold text-amber-500 mb-2">
+                {recentPost.category}
+              </p>
+              <h3 className="text-3xl font-[var(--font-playfair)] text-gray-900 mb-4">
+                {recentPost.title}
+              </h3>
+              <p className="text-gray-700 mb-6 max-w-lg">
+                {recentPost.excerpt}
+              </p>
+              <a
+                href="#featured"
+                className="px-8 py-3 border border-amber-500 text-base font-medium rounded-none text-amber-500 bg-transparent hover:bg-transparent"
               >
-                {category}
-              </button>
-            ))}
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {displayedPosts.map((post) => (
-              <div
-                key={post.id}
-                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-              >
-                <div className="relative h-64">
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-0 left-0 bg-amber-500 text-white px-3 py-1 text-sm font-medium">
-                    {post.category}
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {post.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4">{post.excerpt}</p>
-                  <button className="text-amber-600 font-medium hover:text-amber-700 transition-colors">
-                    Read More →
-                  </button>
-                </div>
-              </div>
-            ))}
+                Read More
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -548,15 +491,6 @@ export default function TravelBlog() {
       {/* Travel Tips Section */}
       <section id="tips" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-              Travel Tips & Advice
-            </h2>
-            <p className="mt-4 text-xl text-gray-600">
-              Practical tips to make your journey smoother
-            </p>
-          </div>
-
           <div className="grid gap-8 md:grid-cols-3">
             <div className="bg-gray-50 p-6 rounded-lg">
               <div className="text-4xl mb-4">?️</div>
@@ -760,56 +694,17 @@ export default function TravelBlog() {
           </div>
         </div>
       </footer>
-
-      {/* Subscribe Modal */}
-      <SubscribeModal
-        isOpen={isSubscribeModalOpen}
-        onClose={() => setIsSubscribeModalOpen(false)}
-      />
-
-      {/* CSS for animations and fonts */}
       <style jsx global>{`
-        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap");
-
-        * {
-          font-family: "Inter", "Playfair Display", serif;
-        }
-
         h1,
         h2,
         h3,
         h4,
         h5,
         h6 {
-          font-family: "Playfair Display", serif !important;
+          font-family: var(--font-playfair), serif !important;
         }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes slideUp {
-          from {
-            transform: translateY(20px);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-
-        .animate-fade-in {
-          animation: fadeIn 1s ease-out forwards;
-        }
-
-        .animate-slide-up {
-          animation: slideUp 0.8s ease-out forwards;
+        body {
+          font-family: var(--font-inter), sans-serif;
         }
       `}</style>
     </div>
