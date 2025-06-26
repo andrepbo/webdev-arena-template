@@ -190,13 +190,12 @@ export default function TravelBlog() {
     "Adventure",
   ];
 
-  const filteredPosts = blogPosts.filter((post) =>
-    selectedCategory === "All" ? true : post.category === selectedCategory
-  );
-
   useEffect(() => {
-    setDisplayedPosts(filteredPosts);
-  }, [selectedCategory, filteredPosts]);
+    const filtered = blogPosts.filter((post) =>
+      selectedCategory === "All" ? true : post.category === selectedCategory
+    );
+    setDisplayedPosts(filtered);
+  }, [selectedCategory]);
 
   const featuredPosts = blogPosts.filter((post) => post.featured);
 
