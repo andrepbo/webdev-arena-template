@@ -205,49 +205,57 @@ export default function TravelBlog() {
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex-shrink-0">
-              <img
-                src="https://i.imgur.com/DevXMXu.png"
-                alt="Travel Beyond Logo"
-                className="h-14"
-              />
-            </div>
-
-            <div className="hidden md:block">
-              <div className="ml-10 flex items-center space-x-8">
-                <a
-                  href="#destinations"
-                  className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
-                >
-                  Destinations
-                </a>
-                <a
-                  href="#blog"
-                  className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
-                >
-                  Blog
-                </a>
-                <a
-                  href="#tips"
-                  className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
-                >
-                  Travel Tips
-                </a>
-                <a
-                  href="#about"
-                  className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
-                >
-                  About
-                </a>
-                <button
-                  onClick={() => setIsSubscribeModalOpen(true)}
-                  className="bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 transition-colors"
-                >
-                  Subscribe
-                </button>
+            <div className="flex items-center space-x-8">
+              <div className="flex-shrink-0">
+                <img
+                  src="https://i.imgur.com/DevXMXu.png"
+                  alt="Travel Beyond Logo"
+                  className="h-14"
+                />
+              </div>
+              <div className="hidden md:block">
+                <div className="flex items-center space-x-8">
+                  <a
+                    href="#"
+                    className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
+                  >
+                    Home
+                  </a>
+                  <a
+                    href="#pages"
+                    className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
+                  >
+                    Pages
+                  </a>
+                  <a
+                    href="#travel"
+                    className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
+                  >
+                    Travel
+                  </a>
+                  <a
+                    href="#blogs"
+                    className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
+                  >
+                    Blogs
+                  </a>
+                  <a
+                    href="#shop"
+                    className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
+                  >
+                    Shop
+                  </a>
+                </div>
               </div>
             </div>
-
+            <div className="hidden md:block">
+              <button
+                onClick={() => setIsSubscribeModalOpen(true)}
+                className="bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 transition-colors"
+              >
+                Subscribe
+              </button>
+            </div>
             <div className="md:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -285,28 +293,34 @@ export default function TravelBlog() {
           <div className="md:hidden bg-white pb-3 px-4">
             <div className="flex flex-col space-y-1">
               <a
-                href="#destinations"
+                href="#"
                 className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
               >
-                Destinations
+                Home
               </a>
               <a
-                href="#blog"
+                href="#pages"
                 className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
               >
-                Blog
+                Pages
               </a>
               <a
-                href="#tips"
+                href="#travel"
                 className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
               >
-                Travel Tips
+                Travel
               </a>
               <a
-                href="#about"
+                href="#blogs"
                 className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
               >
-                About
+                Blogs
+              </a>
+              <a
+                href="#shop"
+                className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
+              >
+                Shop
               </a>
               <button
                 onClick={() => {
