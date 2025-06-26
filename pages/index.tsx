@@ -695,12 +695,21 @@ export default function TravelBlog() {
         onClose={() => setIsSubscribeModalOpen(false)}
       />
 
-      {/* CSS for animations */}
+      {/* CSS for animations and fonts */}
       <style jsx global>{`
-        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap");
 
         * {
-          font-family: "Poppins", sans-serif;
+          font-family: "Inter", "Playfair Display", serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          font-family: "Playfair Display", serif;
         }
 
         @keyframes fadeIn {
