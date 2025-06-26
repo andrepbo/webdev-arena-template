@@ -384,7 +384,7 @@ export default function TravelBlog() {
       </header>
 
       {/* Hero Section with Animation */}
-      <div className="relative bg-gradient-to-r from-blue-600 to-cyan-600 overflow-hidden">
+      <div className="relative bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="relative z-10 pb-8 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
             <div className="pt-10 sm:pt-16 lg:pt-8 lg:pb-14 lg:overflow-hidden">
@@ -394,31 +394,25 @@ export default function TravelBlog() {
                     isLoaded ? "animate-fade-in" : "opacity-0"
                   }`}
                 >
-                  <h1 className="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl">
-                    <span className="block">Explore the</span>
-                    <span className="block text-amber-300">World with Us</span>
+                  <h1 className="text-6xl tracking-tight text-white sm:text-7xl md:text-8xl">
+                    <p className="text-amber-500 text-sm font-semibold tracking-wide mb-2">
+                      Adventure
+                    </p>
+                    <span
+                      className="block text-black"
+                      style={{ fontFamily: "'Playfair Display', serif" }}
+                    >
+                      Explore, Discover, and Dive
+                    </span>
                   </h1>
-                  <p className="mt-3 text-base text-blue-100 sm:mt-5 sm:text-xl lg:mx-0">
-                    Discover amazing destinations, get travel tips, and join our
-                    community of adventurers to make your next trip
-                    unforgettable.
-                  </p>
                   <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start space-y-3 sm:space-y-0 sm:space-x-4">
                     <div className="rounded-md shadow">
                       <a
                         href="#featured"
-                        className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 md:py-4 md:text-lg md:px-10"
+                        className="w-full flex items-center justify-center px-8 py-3 border border-amber-500 text-base font-medium rounded-none text-amber-500 bg-white hover:bg-amber-50 md:py-4 md:text-lg md:px-10"
                       >
-                        Explore Now
+                        Read More
                       </a>
-                    </div>
-                    <div className="rounded-md shadow">
-                      <button
-                        onClick={() => setIsSubscribeModalOpen(true)}
-                        className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-500 border-white hover:bg-blue-400 md:py-4 md:text-lg md:px-10"
-                      >
-                        Subscribe
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -429,7 +423,7 @@ export default function TravelBlog() {
         <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
           <img
             className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full"
-            src="https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=2070&auto=format&fit=crop"
+            src="https://i.imgur.com/XGNLCmC.jpeg"
             alt="Travel destinations around the world"
           />
         </div>
@@ -774,7 +768,7 @@ export default function TravelBlog() {
         h4,
         h5,
         h6 {
-          font-family: "Playfair Display", serif;
+          font-family: "Playfair Display", serif !important;
         }
 
         @keyframes fadeIn {
