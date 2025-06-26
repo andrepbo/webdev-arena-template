@@ -14,22 +14,18 @@ import {
 const blogPosts = [
   {
     id: 1,
-    title: "Discovering Hidden Gems of Bali",
-    excerpt:
-      "Beyond the crowded beaches, Bali holds secret spots waiting to be explored. In this post, we reveal the island's best-kept secrets, from hidden waterfalls to secluded beaches.",
-    image:
-      "https://images.unsplash.com/photo-1540555700478-4dab2a34e5f7?q=80&w=2069&auto=format&fit=crop",
-    category: "Destinations",
+    title: "A Tale Of Backpacking Courage Through Conflict",
+    excerpt: "A Tale Of Backpacking Courage Through Conflict.",
+    image: "https://i.imgur.com/G2HuAiM.png",
+    category: "Tips",
     featured: true,
   },
   {
     id: 2,
-    title: "10 Essential Packing Tips for Long-Term Travel",
-    excerpt:
-      "Packing for an extended adventure doesn't have to be stressful. Learn how to travel light and smart with our expert packing tips that every seasoned traveler swears by.",
-    image:
-      "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2070&auto=format&fit=crop",
-    category: "Tips & Tricks",
+    title: "No Fuss, Blue Heron Bridge Snorkle and Scuba Tours",
+    excerpt: "No Fuss, Blue Heron Bridge Snorkle and Scuba Tours.",
+    image: "https://i.imgur.com/IipShXG.png",
+    category: "Travel",
     featured: true,
   },
   {
@@ -44,12 +40,10 @@ const blogPosts = [
   },
   {
     id: 4,
-    title: "Hiking the Inca Trail: What to Expect on Your Peru Adventure",
-    excerpt:
-      "Prepare for the hike of a lifetime with our guide to trekking the Inca Trail. Discover what to expect, how to prepare, and the breathtaking views that await on this iconic journey.",
-    image:
-      "https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=2070&auto=format&fit=crop",
-    category: "Adventure",
+    title: "A Romantic Escape To Italy's Floating City",
+    excerpt: "A Romantic Escape To Italy's Floating City.",
+    image: "https://i.imgur.com/fZNww7a.png",
+    category: "Hiking",
     featured: true,
   },
   {
@@ -390,26 +384,34 @@ export default function TravelBlog() {
             <div className="pt-10 sm:pt-16 lg:pt-8 lg:pb-14 lg:overflow-hidden">
               <div className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
                 <div
-                  className={`text-left ${
+                  className={`flex flex-col items-start ${
                     isLoaded ? "animate-fade-in" : "opacity-0"
                   }`}
                 >
-                  <h1 className="text-6xl tracking-tight text-white sm:text-7xl md:text-8xl">
-                    <p className="text-amber-500 text-sm font-semibold tracking-wide mb-2">
-                      Adventure
-                    </p>
-                    <span
-                      className="block text-black"
-                      style={{ fontFamily: "'Playfair Display', serif" }}
+                  <div className="flex items-center gap-0">
+                    <div
+                      className="text-black text-xs tracking-wider rotate-[-90deg] origin-left whitespace-nowrap"
+                      style={{ marginRight: "-44px" }}
                     >
-                      Explore, Discover, and Dive
-                    </span>
-                  </h1>
-                  <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start space-y-3 sm:space-y-0 sm:space-x-4">
+                      Dec 06, 2023
+                    </div>
+                    <h1 className="text-6xl tracking-tight text-white sm:text-7xl md:text-8xl">
+                      <p className="text-amber-500 text-sm font-semibold tracking-wide mb-2">
+                        Adventure
+                      </p>
+                      <span
+                        className="block text-black"
+                        style={{ fontFamily: "'Playfair Display', serif" }}
+                      >
+                        Explore, Discover, and Dive
+                      </span>
+                    </h1>
+                  </div>
+                  <div className="mt-5 sm:mt-8 sm:flex sm:justify-start lg:justify-start space-y-3 sm:space-y-0 sm:space-x-4 pl-12">
                     <div className="rounded-md shadow">
                       <a
                         href="#featured"
-                        className="w-full flex items-center justify-center px-8 py-3 border border-amber-500 text-base font-medium rounded-none text-amber-500 bg-white hover:bg-amber-50 md:py-4 md:text-lg md:px-10"
+                        className="flex items-center justify-center px-8 py-3 border border-amber-500 text-base font-medium rounded-none text-amber-500 bg-white hover:bg-amber-50 md:py-4 md:text-lg md:px-10"
                       >
                         Read More
                       </a>
@@ -434,37 +436,29 @@ export default function TravelBlog() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-              Featured Stories
+              Amazing Travel Blog
             </h2>
-            <p className="mt-4 text-xl text-gray-600">
-              Read our most popular travel stories
-            </p>
           </div>
 
           <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {featuredPosts.map((post) => (
-              <div
-                key={post.id}
-                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-              >
-                <div className="relative h-64">
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-0 left-0 bg-amber-500 text-white px-3 py-1 text-sm font-medium">
-                    {post.category}
+              <div key={post.id} className="bg-[#F9F8F6] transition-shadow">
+                <div className="flex bg-[#F9F8F6] overflow-hidden transition-shadow">
+                  <div>
+                    <img
+                      src={post.image}
+                      alt={post.title}
+                      className="w-[420px] h-auto object-cover"
+                    />
+                    <div className="p-4">
+                      <p className="text-sm text-amber-500 font-semibold">
+                        {post.category}
+                      </p>
+                      <h3 className="text-xl font-serif text-gray-900">
+                        {post.title}
+                      </h3>
+                    </div>
                   </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {post.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4">{post.excerpt}</p>
-                  <button className="text-amber-600 font-medium hover:text-amber-700 transition-colors">
-                    Read More →
-                  </button>
                 </div>
               </div>
             ))}
