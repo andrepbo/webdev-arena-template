@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, ShoppingCart } from "lucide-react";
 
 // Sample blog data with full images
 const blogPosts = [
@@ -173,6 +173,7 @@ export default function TravelBlog() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
+  const [cartCount] = useState(0);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -276,12 +277,12 @@ export default function TravelBlog() {
               </div>
             </div>
             <div className="hidden md:block">
-              <button
-                onClick={() => setIsSubscribeModalOpen(true)}
-                className="bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 transition-colors"
-              >
-                Subscribe
-              </button>
+              <div className="relative">
+                <ShoppingCart className="h-6 w-6 text-gray-700 hover:text-amber-500 cursor-pointer" />
+                <span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-amber-500 rounded-full">
+                  {cartCount}
+                </span>
+              </div>
             </div>
             <div className="md:hidden">
               <button
