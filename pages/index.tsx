@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { X, ShoppingCart, Search } from "lucide-react";
 
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaYoutube,
+  FaLinkedinIn,
+  FaTwitter,
+  FaPinterestP,
+} from "react-icons/fa";
+
 // Sample blog data with full images
 const blogPosts = [
   {
@@ -278,6 +287,14 @@ export default function TravelBlog() {
             </div>
             <div className="hidden md:flex items-center space-x-4">
               <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-4 text-gray-500">
+                  <FaFacebookF className="h-4 w-4 hover:text-amber-500 cursor-pointer" />
+                  <FaLinkedinIn className="h-4 w-4 hover:text-amber-500 cursor-pointer" />
+                  <FaInstagram className="h-4 w-4 hover:text-amber-500 cursor-pointer" />
+                  <FaTwitter className="h-4 w-4 hover:text-amber-500 cursor-pointer" />
+                  <FaPinterestP className="h-4 w-4 hover:text-amber-500 cursor-pointer" />
+                  <FaYoutube className="h-4 w-4 hover:text-amber-500 cursor-pointer" />
+                </div>
                 <div className="h-6 w-px bg-gray-300" />
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
