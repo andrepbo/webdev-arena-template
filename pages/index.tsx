@@ -167,6 +167,8 @@ const SubscribeModal = ({
 
 export default function TravelBlog() {
   const [selectedCategory, setSelectedCategory] = useState("All");
+  // Separate state for menu selection (visual highlight)
+  const [selectedMenu, setSelectedMenu] = useState("Home");
   const [displayedPosts, setDisplayedPosts] = useState(blogPosts);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -217,31 +219,56 @@ export default function TravelBlog() {
                 <div className="flex items-center space-x-8">
                   <a
                     href="#"
-                    className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
+                    onClick={() => setSelectedMenu("Home")}
+                    className={`px-3 py-2 font-medium ${
+                      selectedMenu === "Home"
+                        ? "text-amber-500 border-b-2 border-amber-500"
+                        : "text-gray-700 hover:text-amber-500"
+                    }`}
                   >
                     Home
                   </a>
                   <a
                     href="#pages"
-                    className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
+                    onClick={() => setSelectedMenu("Pages")}
+                    className={`px-3 py-2 font-medium ${
+                      selectedMenu === "Pages"
+                        ? "text-amber-500 border-b-2 border-amber-500"
+                        : "text-gray-700 hover:text-amber-500"
+                    }`}
                   >
                     Pages
                   </a>
                   <a
                     href="#travel"
-                    className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
+                    onClick={() => setSelectedMenu("Travel")}
+                    className={`px-3 py-2 font-medium ${
+                      selectedMenu === "Travel"
+                        ? "text-amber-500 border-b-2 border-amber-500"
+                        : "text-gray-700 hover:text-amber-500"
+                    }`}
                   >
                     Travel
                   </a>
                   <a
                     href="#blogs"
-                    className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
+                    onClick={() => setSelectedMenu("Blogs")}
+                    className={`px-3 py-2 font-medium ${
+                      selectedMenu === "Blogs"
+                        ? "text-amber-500 border-b-2 border-amber-500"
+                        : "text-gray-700 hover:text-amber-500"
+                    }`}
                   >
                     Blogs
                   </a>
                   <a
                     href="#shop"
-                    className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
+                    onClick={() => setSelectedMenu("Shop")}
+                    className={`px-3 py-2 font-medium ${
+                      selectedMenu === "Shop"
+                        ? "text-amber-500 border-b-2 border-amber-500"
+                        : "text-gray-700 hover:text-amber-500"
+                    }`}
                   >
                     Shop
                   </a>
