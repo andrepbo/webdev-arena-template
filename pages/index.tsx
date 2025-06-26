@@ -199,7 +199,6 @@ export default function TravelBlog() {
   }, [selectedCategory, filteredPosts]);
 
   const featuredPosts = blogPosts.filter((post) => post.featured);
-  const recentPosts = blogPosts.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -588,7 +587,7 @@ export default function TravelBlog() {
 
             <div className="prose prose-amber max-w-none">
               <p className="text-xl text-gray-700 mb-6">
-                We're a team of passionate travelers and storytellers dedicated
+                We are a team of passionate travelers and storytellers dedicated
                 to sharing the best travel experiences from around the world.
                 Our mission is to inspire and empower travelers to explore new
                 destinations, discover hidden gems, and make meaningful
