@@ -277,13 +277,16 @@ export default function TravelBlog() {
               </div>
             </div>
             <div className="hidden md:flex items-center space-x-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="w-40 pl-10 pr-4 py-1.5 rounded-md bg-transparent border-none focus:outline-none focus:ring-0 text-sm"
-                />
+              <div className="flex items-center space-x-3">
+                <div className="h-6 w-px bg-gray-300" />
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    className="w-40 pl-10 pr-4 py-1.5 rounded-md bg-transparent border-none focus:outline-none focus:ring-0 text-sm"
+                  />
+                </div>
               </div>
               <div className="relative">
                 <ShoppingCart className="h-6 w-6 text-gray-700 hover:text-amber-500 cursor-pointer" />
