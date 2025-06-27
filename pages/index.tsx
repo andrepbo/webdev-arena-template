@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ShoppingCart, Search } from "lucide-react";
+// Import Google Fonts with fallback and performance configuration
 import { Inter, Playfair_Display } from "next/font/google";
 
 import {
@@ -23,7 +24,36 @@ const playfair = Playfair_Display({
   display: "swap",
 });
 
-// Sample blog data with full images
+// Navigation menu items used in the site header
+const headerMenu = [
+  {
+    id: 1,
+    href: "#",
+    name: "Home",
+  },
+  {
+    id: 2,
+    href: "#pages",
+    name: "Pages",
+  },
+  {
+    id: 3,
+    href: "#travel",
+    name: "Travel",
+  },
+  {
+    id: 4,
+    href: "#blogs",
+    name: "Blogs",
+  },
+  {
+    id: 5,
+    href: "#shop",
+    name: "Shop",
+  },
+];
+
+// Sample featured and recent blog posts data
 const blogPosts = [
   {
     id: 1,
@@ -78,82 +108,113 @@ const blogPosts = [
   },
 ];
 
-// Sample sponsor data
-const sponsors = [
+// Travel tips displayed in the 'Travel Tips Section'
+const travelTips = [
   {
     id: 1,
-    name: "TravelGear Co.",
-    logo: "https://placehold.co/120x40?text=TravelGear",
+    name: "Get Inspired",
   },
   {
     id: 2,
-    name: "Adventure Airlines",
-    logo: "https://placehold.co/120x40?text=Adventure+Air",
+    name: "Plan Your Trip",
   },
   {
     id: 3,
-    name: "World Hotels",
-    logo: "https://placehold.co/120x40?text=World+Hotels",
+    name: "Explore Locations",
   },
   {
     id: 4,
-    name: "Backpackers Co.",
-    logo: "https://placehold.co/120x40?text=Backpackers",
+    name: "Travel Tips",
   },
 ];
 
-// Social media links
+// Sponsors logos and information
+const sponsors = [
+  {
+    id: 1,
+    name: "Zoom",
+    logo: "https://i.imgur.com/s1gdhaX.png",
+  },
+  {
+    id: 2,
+    name: "Pilot",
+    logo: "https://i.imgur.com/UYBwV80.png",
+  },
+  {
+    id: 3,
+    name: "Sil",
+    logo: "https://i.imgur.com/IzwxxN9.png",
+  },
+  {
+    id: 4,
+    name: "Moving",
+    logo: "https://i.imgur.com/OtJSj4E.png",
+  },
+  {
+    id: 5,
+    name: "Xplore",
+    logo: "https://i.imgur.com/Xj5FlOU.png",
+  },
+  {
+    id: 6,
+    name: "Rocket",
+    logo: "https://i.imgur.com/uoBWQCX.png",
+  },
+];
+
+// Social media URLs used in header and footer
 const socialLinks = {
   instagram: "https://instagram.com",
+  linkedin: "https://www.linkedin.com",
+  pinterest: "https://www.pinterest.com",
   facebook: "https://facebook.com",
   twitter: "https://twitter.com",
   youtube: "https://youtube.com",
 };
 
-// Footer navigation
+// Navigation links used in footer sections
 const footerNav = {
   company: [
-    { name: "About Us", href: "/about" },
-    { name: "Careers", href: "/careers" },
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
-    { name: "Advertise", href: "/advertise" },
+    { name: "Shop", href: "/shop" },
   ],
-  support: [
-    { name: "Help Center", href: "/help" },
-    { name: "Terms of Service", href: "/terms" },
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Cookie Policy", href: "/cookies" },
-  ],
-  resources: [
-    { name: "Travel Guides", href: "/guides" },
-    { name: "Blog", href: "/blog" },
-    { name: "Newsletter", href: "/newsletter" },
-    { name: "Travel Tips", href: "/tips" },
+  destinations: [
+    { name: "Brazil", href: "/brazil" },
+    { name: "Portugal", href: "/portugal" },
+    { name: "England", href: "/england" },
+    { name: "Spain", href: "/spain" },
   ],
   follow: [
-    { name: "Instagram", href: socialLinks.instagram },
-    { name: "Facebook", href: socialLinks.facebook },
-    { name: "Twitter", href: socialLinks.twitter },
-    { name: "YouTube", href: socialLinks.youtube },
+    { icon: FaFacebookF, name: "Facebook", href: socialLinks.facebook },
+    { icon: FaLinkedinIn, name: "Linkedin", href: socialLinks.linkedin },
+    { icon: FaPinterestP, name: "Pinterest", href: socialLinks.pinterest },
+    { icon: FaInstagram, name: "Instagram", href: socialLinks.instagram },
+    { icon: FaTwitter, name: "Twitter", href: socialLinks.twitter },
+    { icon: FaYoutube, name: "YouTube", href: socialLinks.youtube },
   ],
 };
 
+// Main component for the travel blog homepage
 export default function TravelBlog() {
   const [selectedMenu, setSelectedMenu] = useState("Home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [cartCount] = useState(0);
 
+  // Filter posts to highlight as featured in the homepage
   const featuredPosts = blogPosts.filter((post) => post.featured);
+  // Determine the most recent post for prominent display
   const recentPost = blogPosts.reduce((latest, post) =>
     new Date(post.date) > new Date(latest.date) ? post : latest
   );
 
   return (
     <div
-      className={`${inter.variable} ${playfair.variable} font-sans min-h-screen`}
+      className={`${inter.variable} ${playfair.variable} font-sans min-h-screen bg-white text-black dark:bg-zinc-900 dark:text-white`}
     >
-      {/* Header with Navigation */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
+      {/* Header with navigation menu and logo */}
+      <header className="bg-white dark:bg-zinc-800 shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-8">
@@ -164,69 +225,28 @@ export default function TravelBlog() {
                   className="h-14"
                 />
               </div>
-              <div className="hidden md:block">
+              <div className="hidden lg:block">
                 <div className="flex items-center space-x-8">
-                  <a
-                    href="#"
-                    onClick={() => setSelectedMenu("Home")}
-                    className={`px-3 py-2 font-medium ${
-                      selectedMenu === "Home"
-                        ? "text-amber-500 border-b-2 border-amber-500"
-                        : "text-gray-700 hover:text-amber-500"
-                    }`}
-                  >
-                    Home
-                  </a>
-                  <a
-                    href="#pages"
-                    onClick={() => setSelectedMenu("Pages")}
-                    className={`px-3 py-2 font-medium ${
-                      selectedMenu === "Pages"
-                        ? "text-amber-500 border-b-2 border-amber-500"
-                        : "text-gray-700 hover:text-amber-500"
-                    }`}
-                  >
-                    Pages
-                  </a>
-                  <a
-                    href="#travel"
-                    onClick={() => setSelectedMenu("Travel")}
-                    className={`px-3 py-2 font-medium ${
-                      selectedMenu === "Travel"
-                        ? "text-amber-500 border-b-2 border-amber-500"
-                        : "text-gray-700 hover:text-amber-500"
-                    }`}
-                  >
-                    Travel
-                  </a>
-                  <a
-                    href="#blogs"
-                    onClick={() => setSelectedMenu("Blogs")}
-                    className={`px-3 py-2 font-medium ${
-                      selectedMenu === "Blogs"
-                        ? "text-amber-500 border-b-2 border-amber-500"
-                        : "text-gray-700 hover:text-amber-500"
-                    }`}
-                  >
-                    Blogs
-                  </a>
-                  <a
-                    href="#shop"
-                    onClick={() => setSelectedMenu("Shop")}
-                    className={`px-3 py-2 font-medium ${
-                      selectedMenu === "Shop"
-                        ? "text-amber-500 border-b-2 border-amber-500"
-                        : "text-gray-700 hover:text-amber-500"
-                    }`}
-                  >
-                    Shop
-                  </a>
+                  {headerMenu.map((item) => (
+                    <a
+                      key={item.id}
+                      href={item.href}
+                      onClick={() => setSelectedMenu(item.name)}
+                      className={`px-3 py-2 font-medium ${
+                        selectedMenu === item.name
+                          ? "text-amber-500 border-b-2 border-amber-500"
+                          : "text-gray-700 hover:text-amber-500 dark:text-gray-300"
+                      }`}
+                    >
+                      {item.name}
+                    </a>
+                  ))}
                 </div>
               </div>
             </div>
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden lg:flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-4 text-gray-500">
+                <div className="flex items-center space-x-4 text-gray-500 dark:text-gray-400">
                   <FaFacebookF className="h-4 w-4 hover:text-amber-500 cursor-pointer" />
                   <FaLinkedinIn className="h-4 w-4 hover:text-amber-500 cursor-pointer" />
                   <FaInstagram className="h-4 w-4 hover:text-amber-500 cursor-pointer" />
@@ -234,7 +254,7 @@ export default function TravelBlog() {
                   <FaPinterestP className="h-4 w-4 hover:text-amber-500 cursor-pointer" />
                   <FaYoutube className="h-4 w-4 hover:text-amber-500 cursor-pointer" />
                 </div>
-                <div className="h-6 w-px bg-gray-300" />
+                <div className="h-6 w-px bg-gray-300 dark:bg-gray-600" />
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
@@ -245,16 +265,16 @@ export default function TravelBlog() {
                 </div>
               </div>
               <div className="relative">
-                <ShoppingCart className="h-6 w-6 text-gray-700 hover:text-amber-500 cursor-pointer" />
+                <ShoppingCart className="h-6 w-6 text-gray-700 hover:text-amber-500 cursor-pointer dark:text-gray-300" />
                 <span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-amber-500 rounded-full">
                   {cartCount}
                 </span>
               </div>
             </div>
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-amber-500 focus:outline-none"
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-amber-500 focus:outline-none dark:text-gray-300"
               >
                 <svg
                   className="h-6 w-6"
@@ -285,45 +305,24 @@ export default function TravelBlog() {
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-white pb-3 px-4">
+          <div className="lg:hidden bg-white dark:bg-zinc-800 pb-3 px-4">
             <div className="flex flex-col space-y-1">
-              <a
-                href="#"
-                className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
-              >
-                Home
-              </a>
-              <a
-                href="#pages"
-                className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
-              >
-                Pages
-              </a>
-              <a
-                href="#travel"
-                className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
-              >
-                Travel
-              </a>
-              <a
-                href="#blogs"
-                className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
-              >
-                Blogs
-              </a>
-              <a
-                href="#shop"
-                className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium"
-              >
-                Shop
-              </a>
+              {headerMenu.map((item) => (
+                <a
+                  key={item.id}
+                  href={item.href}
+                  className="text-gray-700 hover:text-amber-500 px-3 py-2 font-medium dark:text-gray-300"
+                >
+                  {item.name}
+                </a>
+              ))}
             </div>
           </div>
         )}
       </header>
 
-      {/* Hero Section with Animation */}
-      <div className="relative bg-white overflow-hidden">
+      {/* Hero section with main CTA and background image */}
+      <div className="relative bg-white dark:bg-zinc-900 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="relative z-10 pb-8 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
             <div className="pt-10 sm:pt-16 lg:pt-8 lg:pb-14 lg:overflow-hidden">
@@ -331,7 +330,7 @@ export default function TravelBlog() {
                 <div className={"flex flex-col items-start"}>
                   <div className="flex items-center gap-0">
                     <div
-                      className="text-black text-xs tracking-wider rotate-[-90deg] origin-left whitespace-nowrap"
+                      className="text-black dark:text-white text-xs tracking-wider font-bold rotate-[-90deg] origin-left whitespace-nowrap"
                       style={{ marginRight: "-44px" }}
                     >
                       Dec 06, 2023
@@ -340,7 +339,7 @@ export default function TravelBlog() {
                       <p className="text-amber-500 text-sm font-semibold tracking-wide mb-2">
                         Adventure
                       </p>
-                      <span className="block text-black font-[var(--font-playfair)]">
+                      <span className="block text-black dark:text-white font-[var(--font-playfair)]">
                         Explore, Discover, and Dive
                       </span>
                     </h1>
@@ -349,13 +348,13 @@ export default function TravelBlog() {
                     <div className="rounded-md shadow">
                       <a
                         href="#featured"
-                        className="flex items-center justify-center px-8 py-3 border border-amber-500 text-base font-medium rounded-none text-amber-500 bg-white hover:bg-amber-50 md:py-4 md:text-lg md:px-10"
+                        className="flex items-center justify-center px-8 py-3 border border-amber-500 text-base font-medium rounded-none text-amber-500 bg-white dark:bg-zinc-900 hover:bg-amber-50 dark:hover:bg-zinc-800 md:py-4 md:text-lg md:px-10"
                       >
                         Read More
                       </a>
                     </div>
                   </div>
-                  <div className="hidden lg:block absolute bottom-0 right-8 z-20 pr-4 pb-4">
+                  <div className="hidden lg:block absolute bottom-0 right-8 z-20 pr-4 lg:flex">
                     <img
                       src="https://i.imgur.com/bpIp8rz.png"
                       alt="Decorative"
@@ -376,11 +375,11 @@ export default function TravelBlog() {
         </div>
       </div>
 
-      {/* Featured Blog Posts */}
-      <section id="featured" className="pt-16 bg-white">
+      {/* Featured blog posts section */}
+      <section id="featured" className="pt-16 bg-white dark:bg-zinc-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
               Amazing Travel Blog
             </h2>
           </div>
@@ -389,11 +388,11 @@ export default function TravelBlog() {
             {featuredPosts.map((post) => (
               <div
                 key={post.id}
-                className="bg-[#F9F8F6] shadow-none overflow-hidden"
+                className="bg-[#F9F8F6] dark:bg-zinc-800 shadow-none overflow-hidden"
               >
                 <div className="flex h-64">
-                  <div className="flex items-center justify-center px-4 bg-[#F9F8F6]">
-                    <span className="text-sm text-gray-500 rotate-[-90deg] whitespace-nowrap">
+                  <div className="flex items-center justify-center px-4 bg-[#F9F8F6] dark:bg-zinc-800">
+                    <span className="text-sm text-gray-500 dark:text-gray-400 font-bold rotate-[-90deg] whitespace-nowrap">
                       {post.date}
                     </span>
                   </div>
@@ -409,7 +408,7 @@ export default function TravelBlog() {
                   <p className="text-sm text-amber-500 font-semibold">
                     {post.category}
                   </p>
-                  <h3 className="text-xl font-[var(--font-playfair)] text-gray-900">
+                  <h3 className="text-xl font-[var(--font-playfair)] text-gray-900 dark:text-white">
                     {post.title}
                   </h3>
                 </div>
@@ -419,13 +418,13 @@ export default function TravelBlog() {
         </div>
       </section>
 
-      {/* Separator */}
+      {/* Divider with visual separator lines */}
       <div className="flex items-center justify-center space-x-4 my-16">
         <div className="w-24 h-1 bg-yellow-400" />
-        <div className="w-24 h-1 bg-gray-100" />
+        <div className="w-24 h-1 bg-gray-100 dark:bg-zinc-700" />
       </div>
 
-      {/* Recent Blog */}
+      {/* Recent blog post highlighted section */}
       <section
         id="blog"
         className="w-full flex flex-col lg:flex-row lg:flex-nowrap min-h-[700px] space-y-8 lg:space-y-0"
@@ -463,7 +462,7 @@ export default function TravelBlog() {
         <div className="w-full lg:w-1/2 h-[300px] lg:h-full bg-cover bg-no-repeat bg-bottom">
           <div className="flex h-full max-w-xl mx-auto px-6 items-center justify-center lg:min-h-[700px]">
             <div className="flex items-center pr-4">
-              <p className="text-black text-xs tracking-wider rotate-[-90deg] whitespace-nowrap">
+              <p className="text-black dark:text-black text-xs font-bold tracking-wider rotate-[-90deg] whitespace-nowrap">
                 {recentPost.date}
               </p>
             </div>
@@ -471,10 +470,10 @@ export default function TravelBlog() {
               <p className="text-sm font-semibold text-amber-500 mb-2">
                 {recentPost.category}
               </p>
-              <h3 className="text-3xl font-[var(--font-playfair)] text-gray-900 mb-4">
+              <h3 className="text-3xl font-[var(--font-playfair)] text-gray-900 dark:text-black mb-4">
                 {recentPost.title}
               </h3>
-              <p className="text-gray-700 mb-6 max-w-lg">
+              <p className="text-gray-700 dark:text-gray-600 mb-6 max-w-lg">
                 {recentPost.excerpt}
               </p>
               <a
@@ -488,77 +487,122 @@ export default function TravelBlog() {
         </div>
       </section>
 
-      {/* Travel Tips Section */}
-      <section id="tips" className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 md:grid-cols-3">
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <div className="text-4xl mb-4">?️</div>
-              <h3 className="text-xl font-bold mb-2">Flight Tips</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>• Book flights 54 days in advance for the best prices</li>
-                <li>• Use flexible dates to find cheaper options</li>
-                <li>• Choose seats with extra legroom wisely</li>
-              </ul>
+      {/* Travel Tips section with recent post and tips list */}
+      <section
+        id="tips"
+        className="container mx-auto px-4 bg-[#F9F8F6] dark:bg-zinc-800 relative"
+      >
+        <div className="relative">
+          <div className="hidden lg:block absolute top-0 right-0 translate-y-[-20%] rotate-6 border-4 border-[#E7E0DD] z-10">
+            <img
+              src="https://i.imgur.com/G2HuAiM.png"
+              alt="Scuba Diver"
+              className="object-cover h-[300px] w-auto"
+            />
+          </div>
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div className="flex flex-col h-full justify-start">
+              <div className="flex h-full max-w-xl mx-auto px-6 items-center justify-center lg:min-h-[700px]">
+                <div className="flex items-center pr-4">
+                  <p className="text-black dark:text-white text-xs tracking-wider font-bold rotate-[-90deg] whitespace-nowrap">
+                    {recentPost.date}
+                  </p>
+                </div>
+                <div className="flex flex-col justify-center items-start text-left">
+                  <p className="text-sm font-semibold text-amber-500 mb-2">
+                    {recentPost.category}
+                  </p>
+                  <h3 className="text-3xl font-[var(--font-playfair)] text-gray-900 dark:text-white mb-4">
+                    {recentPost.title}
+                  </h3>
+                  <p className="text-gray-700 dark:text-gray-300 mb-6 max-w-lg">
+                    {recentPost.excerpt}
+                  </p>
+                  <a
+                    href="#featured"
+                    className="px-8 py-3 text-base font-medium text-white bg-yellow-400 hover:bg-yellow-500 transition-colors duration-200 dark:text-zinc-900 dark:bg-yellow-300 dark:hover:bg-yellow-400"
+                  >
+                    Read More
+                  </a>
+                </div>
+              </div>
             </div>
-
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <div className="text-4xl mb-4">?</div>
-              <h3 className="text-xl font-bold mb-2">Packing Hacks</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>• Use packing cubes to stay organized</li>
-                <li>• Roll clothes to save space and reduce wrinkles</li>
-                <li>• Wear bulky items on the plane</li>
-              </ul>
+            {/* Right-hand column: tips list */}
+            <div className="flex flex-col h-full justify-end lg:pb-12">
+              <div className="relative px-4 pb-4 mt-8 md:mt-16 md:static">
+                <h3 className="text-3xl font-bold mb-2 dark:text-white">
+                  Start Planning Your Tips
+                </h3>
+                <ul className="grid grid-cols-2 gap-4 font-bold text-gray-500 dark:text-gray-300">
+                  {travelTips.map((tip) => (
+                    <li key={tip.id} className="flex items-center space-x-2">
+                      <span className="text-green-500">✳</span>
+                      <span>{tip.name}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <div className="text-4xl mb-4">?</div>
-              <h3 className="text-xl font-bold mb-2">Budget Travel</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>• Use credit cards with no foreign transaction fees</li>
-                <li>• Exchange some money before your trip</li>
-                <li>• Use budget accommodation booking platforms</li>
-              </ul>
-            </div>
+          </div>
+          <div className="hidden lg:block absolute bottom-[-10%] left-0 translate-x-[-40%] rotate-[-6deg] border-4 border-[#E7E0DD] z-10">
+            <img
+              src="https://i.imgur.com/IipShXG.png"
+              alt="Scuba Diver"
+              className="object-cover h-[250px] w-auto"
+            />
           </div>
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="py-16 bg-amber-600 text-white">
+      {/* Featured blog cards list */}
+      <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-extrabold sm:text-4xl">
-              Stay Inspired
+            <h2 className="text-3xl font-extrabold sm:text-4xl dark:text-white">
+              Featured From The Blog
             </h2>
-            <p className="mt-4 text-lg">
-              Get our best travel stories, tips, and guides delivered to your
-              inbox.
-            </p>
-            <form className="mt-8 sm:flex">
-              <input
-                type="email"
-                placeholder="Your email address"
-                className="w-full px-5 py-3 placeholder-gray-400 border border-white rounded-md focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent sm:max-w-xs"
-                required
-              />
-              <button
-                type="submit"
-                className="mt-3 w-full px-6 py-3 font-medium text-amber-600 bg-white rounded-md hover:bg-gray-100 sm:mt-0 sm:ml-3 sm:w-auto"
+          </div>
+          <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {featuredPosts.map((post) => (
+              <div
+                key={post.id}
+                className="bg-[#F9F8F6] dark:bg-zinc-800 shadow-none overflow-hidden"
               >
-                Subscribe
-              </button>
-            </form>
+                <div className="flex h-64">
+                  <div className="flex items-center justify-center px-4 bg-[#F9F8F6] dark:bg-zinc-800">
+                    <span className="text-sm text-gray-500 dark:text-gray-400 rotate-[-90deg] whitespace-nowrap">
+                      {post.date}
+                    </span>
+                  </div>
+                  <div className="flex-1">
+                    <img
+                      src={post.image}
+                      alt={post.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-amber-500 font-semibold">
+                    {post.category}
+                  </p>
+                  <h3 className="text-xl font-[var(--font-playfair)] text-gray-900 dark:text-white">
+                    {post.title}
+                  </h3>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Sponsors Section */}
-      <section className="py-12 bg-white">
+      {/* Sponsors logos grid */}
+      <section className="py-12 bg-[#FAF8F6] dark:bg-zinc-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <h2 className="text-xl font-bold text-gray-900">Our Partners</h2>
+            <h2 className="text-3xl font-extrabold sm:text-4xl dark:text-white">
+              Our Sponsors
+            </h2>
           </div>
           <div className="flex flex-wrap justify-center items-center gap-8">
             {sponsors.map((sponsor) => (
@@ -569,7 +613,7 @@ export default function TravelBlog() {
                 <img
                   src={sponsor.logo}
                   alt={`${sponsor.name} logo`}
-                  className="h-10 w-auto"
+                  className="h-20 w-auto"
                 />
               </div>
             ))}
@@ -577,70 +621,21 @@ export default function TravelBlog() {
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="py-16 bg-gray-50">
+      {/* Footer with navigation and social links */}
+      <footer className="text-gray-700 dark:text-gray-300 py-12 dark:bg-zinc-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                Our Story
-              </h2>
-              <p className="mt-4 text-xl text-gray-600">
-                Who we are and what we do
-              </p>
-            </div>
-
-            <div className="prose prose-amber max-w-none">
-              <p className="text-xl text-gray-700 mb-6">
-                We are a team of passionate travelers and storytellers dedicated
-                to sharing the best travel experiences from around the world.
-                Our mission is to inspire and empower travelers to explore new
-                destinations, discover hidden gems, and make meaningful
-                connections along the way.
-              </p>
-
-              <div className="grid md:grid-cols-3 gap-6 mt-8">
-                <div className="text-center p-6 bg-white rounded-lg">
-                  <div className="text-3xl mb-2">50+</div>
-                  <div className="text-gray-600">Countries Explored</div>
-                </div>
-
-                <div className="text-center p-6 bg-white rounded-lg">
-                  <div className="text-3xl mb-2">100K+</div>
-                  <div className="text-gray-600">Monthly Readers</div>
-                </div>
-
-                <div className="text-center p-6 bg-white rounded-lg">
-                  <div className="text-3xl mb-2">10</div>
-                  <div className="text-gray-600">Years Experience</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white">
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="col-span-2 md:col-span-1">
-              <h3 className="text-lg font-semibold mb-4">Travel Beyond</h3>
-              <p className="text-gray-400 text-sm">
-                Inspiring global adventures through stories, tips, and guides.
-              </p>
-            </div>
-
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+            {/* Explore Column */}
             <div>
-              <h4 className="text-sm font-semibold uppercase tracking-wider">
-                Company
-              </h4>
-              <ul className="mt-4 space-y-3">
+              <h3 className="text-xl font-serif mb-4 dark:text-white">
+                Explore
+              </h3>
+              <ul className="space-y-2">
                 {footerNav.company.map((item) => (
                   <li key={item.name}>
                     <a
                       href={item.href}
-                      className="text-gray-400 hover:text-white text-sm"
+                      className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                     >
                       {item.name}
                     </a>
@@ -649,36 +644,40 @@ export default function TravelBlog() {
               </ul>
             </div>
 
-            <div>
-              <h4 className="text-sm font-semibold uppercase tracking-wider">
-                Resources
-              </h4>
-              <ul className="mt-4 space-y-3">
-                {footerNav.resources.map((item) => (
-                  <li key={item.name}>
-                    <a
-                      href={item.href}
-                      className="text-gray-400 hover:text-white text-sm"
-                    >
-                      {item.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-semibold uppercase tracking-wider">
-                Follow Us
-              </h4>
-              <ul className="mt-4 space-y-3">
+            {/* Logo and Social Column */}
+            <div className="flex flex-col items-center justify-center">
+              <img
+                src="https://i.imgur.com/DevXMXu.png"
+                alt="Logo"
+                className="h-20 mb-4"
+              />
+              <div className="grid grid-cols-3 gap-4 text-center">
                 {footerNav.follow.map((item) => (
-                  <li key={item.name}>
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white flex items-center justify-center space-x-2"
+                  >
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.name}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Top Destination Column */}
+            <div className="md:col-start-3 md:text-right">
+              <h3 className="text-xl font-serif mb-4 dark:text-white">
+                Top Destination
+              </h3>
+              <ul className="space-y-2">
+                {footerNav.destinations.map((destination) => (
+                  <li key={destination.name}>
                     <a
-                      href={item.href}
-                      className="text-gray-400 hover:text-white text-sm"
+                      href={destination.href}
+                      className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                     >
-                      {item.name}
+                      {destination.name}
                     </a>
                   </li>
                 ))}
@@ -686,15 +685,20 @@ export default function TravelBlog() {
             </div>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-gray-800">
-            <p className="text-center text-gray-400 text-sm">
-              &copy; {new Date().getFullYear()} Travel Beyond. All rights
-              reserved.
+          {/* Footer Bottom */}
+          <div className="mt-12 text-center text-sm text-gray-600 dark:text-gray-400">
+            <p>
+              <span className="font-semibold">©Scuba Joey</span> is proudly
+              owned by Jannatul Ferdous
             </p>
           </div>
         </div>
       </footer>
+
       <style jsx global>{`
+        html {
+          color-scheme: light dark;
+        }
         h1,
         h2,
         h3,
