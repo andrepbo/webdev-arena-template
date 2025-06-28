@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ArrowUp,
   ArrowDown,
@@ -361,9 +361,35 @@ const App = () => {
     return theme === "light" ? lightClasses : darkClasses;
   };
 
-  const filteredPosts = posts.filter((post) =>
-    post.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Post filter state: "Hot" | "Latest" | "Top"
+  const [selectedFilter, setSelectedFilter] = useState<
+    "Hot" | "Latest" | "Top"
+  >("Hot");
+
+  // Compute filtered and sorted posts based on selectedFilter and searchTerm
+  const filteredPosts = posts
+    .slice()
+    .sort((a, b) => {
+      if (selectedFilter === "Hot") {
+        // Hot: sort by upvotes descending, then comments descending, then id descending (to break ties)
+        if (b.upvotes !== a.upvotes) return b.upvotes - a.upvotes;
+        if (b.comments !== a.comments) return b.comments - a.comments;
+        return b.id - a.id;
+      }
+      if (selectedFilter === "Latest") {
+        // Latest: sort by id descending (assuming higher id is newer)
+        return b.id - a.id;
+      }
+      if (selectedFilter === "Top") {
+        // Top: sort by upvotes descending, then id descending
+        if (b.upvotes !== a.upvotes) return b.upvotes - a.upvotes;
+        return b.id - a.id;
+      }
+      return 0;
+    })
+    .filter((post) =>
+      post.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   return (
     <div
@@ -1100,36 +1126,56 @@ const App = () => {
               </button>
             </div>
             <ul className="space-y-2">
-              {["Hot", "Latest", "Top"].map((item) => (
+              {(["Hot", "Latest", "Top"] as const).map((item) => (
                 <li
                   key={item}
-                  className={`flex items-center space-x-2 cursor-pointer hover:text-orange-500 ${getThemeClasses(
-                    "",
-                    "text-gray-200"
-                  )}`}
-                  onClick={handleFeatureComingSoon}
+                  className={`flex items-center space-x-2 cursor-pointer hover:text-orange-500 transition
+                    ${
+                      selectedFilter === item
+                        ? getThemeClasses(
+                            "bg-orange-100 text-orange-600 font-bold",
+                            "bg-orange-900 text-orange-400 font-bold"
+                          )
+                        : ""
+                    }
+                    rounded-lg px-2 py-1
+                    ${getThemeClasses("", "text-gray-200")}
+                  `}
+                  onClick={() => setSelectedFilter(item)}
                 >
                   {item === "Hot" && (
                     <Flame
                       className={getThemeClasses(
-                        "text-gray-400",
-                        "text-gray-300"
+                        selectedFilter === "Hot"
+                          ? "text-orange-500"
+                          : "text-gray-400",
+                        selectedFilter === "Hot"
+                          ? "text-orange-400"
+                          : "text-gray-300"
                       )}
                     />
                   )}
                   {item === "Latest" && (
                     <Clock
                       className={getThemeClasses(
-                        "text-gray-400",
-                        "text-gray-300"
+                        selectedFilter === "Latest"
+                          ? "text-orange-500"
+                          : "text-gray-400",
+                        selectedFilter === "Latest"
+                          ? "text-orange-400"
+                          : "text-gray-300"
                       )}
                     />
                   )}
                   {item === "Top" && (
                     <TrendingUp
                       className={getThemeClasses(
-                        "text-gray-400",
-                        "text-gray-300"
+                        selectedFilter === "Top"
+                          ? "text-orange-500"
+                          : "text-gray-400",
+                        selectedFilter === "Top"
+                          ? "text-orange-400"
+                          : "text-gray-300"
                       )}
                     />
                   )}
@@ -1139,97 +1185,13 @@ const App = () => {
             </ul>
           </div>
 
-          <div
-            className={`${getThemeClasses(
-              "bg-white",
-              "bg-gray-800"
-            )} p-4 rounded-xl shadow-sm`}
-          >
-            <div className="flex justify-between mb-4">
-              <h3 className="font-semibold">Reddit Live</h3>
-              <button
-                className={`${getThemeClasses(
-                  "text-gray-400 hover:bg-gray-200",
-                  "text-gray-300 hover:bg-gray-700"
-                )} rounded-full p-1`}
-                onClick={handleFeatureComingSoon}
-              >
-                <MoreHorizontal className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="relative mb-4">
-              <img
-                className="w-full h-32 object-cover rounded"
-                src="https://i.ytimg.com/vi/lLWEXRAnQd0/maxresdefault.jpg"
-                alt="Bob Ross Painting Live Stream"
-              />
-              <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">
-                Live
-              </span>
-            </div>
-            <p className="font-medium">Bob Ross Painting</p>
-            <p
-              className={`text-sm ${getThemeClasses(
-                "text-gray-500",
-                "text-gray-400"
-              )}`}
-            >
-              by <span className="text-orange-500">r/</span>BobRossArtist
-            </p>
-            <p
-              className={`text-xs ${getThemeClasses(
-                "text-gray-400",
-                "text-gray-300"
-              )}`}
-            >
-              21,014 watching
-            </p>
-            <hr
-              className={`my-4 ${getThemeClasses(
-                "border-gray-200",
-                "border-gray-700"
-              )}`}
-            />
-            <ul className="space-y-3">
-              {(
-                [
-                  {
-                    id: 1,
-                    title: "Live Coding a Reddit Clone",
-                    imageUrl:
-                      "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1170",
-                    watching: 6000,
-                  },
-                  {
-                    id: 2,
-                    title: "Gaming Stream: Valorant",
-                    imageUrl:
-                      "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Z2FtaW5nfGVufDB8fDB8fHww",
-                    watching: 12000,
-                  },
-                ] as LiveEvent[]
-              ).map((event) => (
-                <li key={event.id} className="flex items-center space-x-3">
-                  <img
-                    className="w-12 h-12 rounded object-cover"
-                    src={event.imageUrl}
-                    alt={event.title}
-                  />
-                  <div>
-                    <p className="font-medium">{event.title}</p>
-                    <p
-                      className={`text-xs ${getThemeClasses(
-                        "text-gray-400",
-                        "text-gray-300"
-                      )}`}
-                    >
-                      {event.watching}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/*
+            Reddit Live Section - refactored to use state and update watching counts
+          */}
+          <RedditLiveSection
+            getThemeClasses={getThemeClasses}
+            handleFeatureComingSoon={handleFeatureComingSoon}
+          />
         </aside>
       </main>
     </div>
@@ -1237,3 +1199,122 @@ const App = () => {
 };
 
 export default App;
+
+// RedditLiveSection component for right sidebar
+const initialLiveEvents: LiveEvent[] = [
+  {
+    id: 1,
+    title: "Live Coding a Reddit Clone",
+    imageUrl:
+      "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1170",
+    watching: 6000,
+  },
+  {
+    id: 2,
+    title: "Gaming Stream: Valorant",
+    imageUrl:
+      "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Z2FtaW5nfGVufDB8fDB8fHww",
+    watching: 12000,
+  },
+];
+
+const RedditLiveSection = ({
+  getThemeClasses,
+  handleFeatureComingSoon,
+}: {
+  getThemeClasses: (lightClasses: string, darkClasses: string) => string;
+  handleFeatureComingSoon: () => void;
+}) => {
+  const [liveEvents, setLiveEvents] = useState<LiveEvent[]>(initialLiveEvents);
+
+  useEffect(() => {
+    // Set an interval to simulate real-time updates
+    const interval = setInterval(() => {
+      setLiveEvents((prevEvents) =>
+        prevEvents.map((event) => ({
+          ...event,
+          // Randomly increment watching by 0-20
+          watching: event.watching + Math.floor(Math.random() * 21),
+        }))
+      );
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div
+      className={`${getThemeClasses(
+        "bg-white",
+        "bg-gray-800"
+      )} p-4 rounded-xl shadow-sm`}
+    >
+      <div className="flex justify-between mb-4">
+        <h3 className="font-semibold">Reddit Live</h3>
+        <button
+          className={`${getThemeClasses(
+            "text-gray-400 hover:bg-gray-200",
+            "text-gray-300 hover:bg-gray-700"
+          )} rounded-full p-1`}
+          onClick={handleFeatureComingSoon}
+        >
+          <MoreHorizontal className="w-5 h-5" />
+        </button>
+      </div>
+      <div className="relative mb-4">
+        <img
+          className="w-full h-32 object-cover rounded"
+          src="https://i.ytimg.com/vi/lLWEXRAnQd0/maxresdefault.jpg"
+          alt="Bob Ross Painting Live Stream"
+        />
+        <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">
+          Live
+        </span>
+      </div>
+      <p className="font-medium">Bob Ross Painting</p>
+      <p
+        className={`text-sm ${getThemeClasses(
+          "text-gray-500",
+          "text-gray-400"
+        )}`}
+      >
+        by <span className="text-orange-500">r/</span>BobRossArtist
+      </p>
+      <p
+        className={`text-xs ${getThemeClasses(
+          "text-gray-400",
+          "text-gray-300"
+        )}`}
+      >
+        21,014 watching
+      </p>
+      <hr
+        className={`my-4 ${getThemeClasses(
+          "border-gray-200",
+          "border-gray-700"
+        )}`}
+      />
+      <ul className="space-y-3">
+        {liveEvents.map((event) => (
+          <li key={event.id} className="flex items-center space-x-3">
+            <img
+              className="w-12 h-12 rounded object-cover"
+              src={event.imageUrl}
+              alt={event.title}
+            />
+            <div>
+              <p className="font-medium">{event.title}</p>
+              <p
+                className={`text-xs ${getThemeClasses(
+                  "text-gray-400",
+                  "text-gray-300"
+                )}`}
+              >
+                {event.watching}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
