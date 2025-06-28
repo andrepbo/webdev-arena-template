@@ -556,112 +556,156 @@ const App = () => {
       </header>
 
       {/* Profile Modal */}
-      {isProfileModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-          onClick={() => setIsProfileModalOpen(false)}
-        >
-          <div
-            className={`${getThemeClasses(
-              "bg-white",
-              "bg-gray-800"
-            )} w-full max-w-2xl flex items-center space-x-4 rounded-xl shadow p-4 md:p-6 relative`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+      {isProfileModalOpen &&
+        (() => {
+          // Real user stats for modal
+          // We assume that "userId" is the identifier for the user in posts/comments (but in mock, we have only "username").
+          // We'll use "username" === currentUser.name as the user id for posts/comments.
+          // For posts, upvotes property is "upvotes".
+          // For comments, we don't have a global comments array, but only per post: commentsList.
+          // So, to get all comments, we need to flatten all commentsList arrays.
+          // We'll define userId as currentUser.name.
+          const userId = currentUser.name;
+          // User's posts
+          const userPosts = posts.filter((post) => post.username === userId);
+          // All comments from all posts
+          const allComments = posts.flatMap((post) =>
+            post.commentsList.map((comment) => ({
+              ...comment,
+              postId: post.id,
+            }))
+          );
+          // User's comments
+          const userComments = allComments.filter(
+            (comment) => comment.author === userId
+          );
+          // Total upvotes received on user's posts
+          const totalUpvotes = userPosts.reduce(
+            (acc, post) => acc + (post.upvotes || 0),
+            0
+          );
+          return (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
               onClick={() => setIsProfileModalOpen(false)}
-              aria-label="Close profile modal"
-              type="button"
             >
-              <X
-                className={getThemeClasses("text-gray-600", "text-gray-300")}
-              />
-            </button>
-            {currentUser.imageUrl ? (
-              <img
-                className="w-16 h-16 rounded-full object-cover flex-shrink-0 border-2 border-orange-400"
-                src={currentUser.imageUrl}
-                alt={currentUser.name}
-                onError={(e) =>
-                  (e.currentTarget.src = getFallbackImageUrl(
-                    64,
-                    64,
-                    currentUser.avatarInitial
-                  ))
-                }
-              />
-            ) : (
-              <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-2xl flex-shrink-0 border-2 border-orange-400">
-                {currentUser.avatarInitial}
-              </div>
-            )}
-            <div className="flex flex-col justify-center flex-grow min-w-0">
-              <span className="font-bold text-lg truncate">
-                {currentUser.name}
-              </span>
-              <span
-                className={`text-sm mt-1 ${getThemeClasses(
-                  "text-gray-500",
-                  "text-gray-400"
-                )}`}
+              <div
+                className={`${getThemeClasses(
+                  "bg-white",
+                  "bg-gray-800"
+                )} w-full max-w-2xl flex items-center space-x-4 rounded-xl shadow p-4 md:p-6 relative`}
+                onClick={(e) => e.stopPropagation()}
               >
-                <span className="font-medium text-orange-500">
-                  {currentUser.karma}
-                </span>{" "}
-                Karma
-              </span>
-              <span
-                className={`text-xs mt-2 ${getThemeClasses(
-                  "text-gray-400",
-                  "text-gray-300"
-                )}`}
-              >
-                Welcome back to Reddit, {currentUser.name.split(" ")[0]}!
-              </span>
-              {/* Joined Communities Block */}
-              <div className="mt-4">
-                <h4 className="font-semibold text-sm mb-2">
-                  Joined Communities
-                </h4>
-                <div className="flex flex-row gap-3 overflow-x-auto">
-                  {communities.filter((c) => joinedCommunities[c.id]).length ===
-                  0 ? (
-                    <span
-                      className={`text-xs ${getThemeClasses(
-                        "text-gray-400",
-                        "text-gray-500"
-                      )}`}
-                    >
-                      Not a member of any community yet.
-                    </span>
-                  ) : (
-                    communities
-                      .filter((c) => joinedCommunities[c.id])
-                      .map((c) => (
-                        <div
-                          key={c.id}
-                          className="flex flex-col items-center min-w-[60px]"
-                        >
-                          <img
-                            src={c.imageUrl}
-                            alt={c.name}
-                            className="w-8 h-8 rounded-full object-cover border border-orange-400 mb-1"
-                          />
-                          <span className="text-xs truncate max-w-[56px]">
-                            <span className="text-orange-500">r/</span>
-                            {c.name}
-                          </span>
-                        </div>
+                <button
+                  className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+                  onClick={() => setIsProfileModalOpen(false)}
+                  aria-label="Close profile modal"
+                  type="button"
+                >
+                  <X
+                    className={getThemeClasses(
+                      "text-gray-600",
+                      "text-gray-300"
+                    )}
+                  />
+                </button>
+                {currentUser.imageUrl ? (
+                  <img
+                    className="w-16 h-16 rounded-full object-cover flex-shrink-0 border-2 border-orange-400"
+                    src={currentUser.imageUrl}
+                    alt={currentUser.name}
+                    onError={(e) =>
+                      (e.currentTarget.src = getFallbackImageUrl(
+                        64,
+                        64,
+                        currentUser.avatarInitial
                       ))
-                  )}
+                    }
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-2xl flex-shrink-0 border-2 border-orange-400">
+                    {currentUser.avatarInitial}
+                  </div>
+                )}
+                <div className="flex flex-col justify-center flex-grow min-w-0">
+                  <span className="font-bold text-lg truncate">
+                    {currentUser.name}
+                  </span>
+                  <span
+                    className={`text-sm mt-1 ${getThemeClasses(
+                      "text-gray-500",
+                      "text-gray-400"
+                    )}`}
+                  >
+                    <span className="font-medium text-orange-500">
+                      {currentUser.karma}
+                    </span>{" "}
+                    Karma
+                  </span>
+                  <span
+                    className={`text-xs mt-2 ${getThemeClasses(
+                      "text-gray-400",
+                      "text-gray-300"
+                    )}`}
+                  >
+                    Welcome back to Reddit, {currentUser.name.split(" ")[0]}!
+                  </span>
+                  {/* Joined Communities Block */}
+                  <div className="mt-4">
+                    <h4 className="font-semibold text-sm mb-2">
+                      Joined Communities
+                    </h4>
+                    <div className="flex flex-row gap-3 overflow-x-auto">
+                      {communities.filter((c) => joinedCommunities[c.id])
+                        .length === 0 ? (
+                        <span
+                          className={`text-xs ${getThemeClasses(
+                            "text-gray-400",
+                            "text-gray-500"
+                          )}`}
+                        >
+                          Not a member of any community yet.
+                        </span>
+                      ) : (
+                        communities
+                          .filter((c) => joinedCommunities[c.id])
+                          .map((c) => (
+                            <div
+                              key={c.id}
+                              className="flex flex-col items-center min-w-[60px]"
+                            >
+                              <img
+                                src={c.imageUrl}
+                                alt={c.name}
+                                className="w-8 h-8 rounded-full object-cover border border-orange-400 mb-1"
+                              />
+                              <span className="text-xs truncate max-w-[56px]">
+                                <span className="text-orange-500">r/</span>
+                                {c.name}
+                              </span>
+                            </div>
+                          ))
+                      )}
+                    </div>
+                  </div>
+                  {/* End Joined Communities Block */}
+                  {/* Activity Stats Block */}
+                  <div className="mt-4">
+                    <h3 className="text-sm font-semibold mb-2">
+                      Activity Stats
+                    </h3>
+                    <ul className="text-sm space-y-1">
+                      <li>Posts created: {userPosts.length}</li>
+                      <li>Total comments: {userComments.length}</li>
+                      <li>Upvotes received: {totalUpvotes}</li>
+                    </ul>
+                  </div>
+                  {/* End Activity Stats Block */}
                 </div>
               </div>
-              {/* End Joined Communities Block */}
             </div>
-          </div>
-        </div>
-      )}
+          );
+        })()}
 
       {/* Retractable Sidebar for Mobile */}
       {isSidebarOpen && (
@@ -1456,13 +1500,21 @@ const CreatePostArea = ({
 
   // Reset file on post submit
   const handleCreate = () => {
-    // Only allow post creation if a title is entered (regardless of image/link)
+    // Allow post creation if a title is entered and at least one content field (text, image, or link) is present.
     if (!newPostTitle.trim()) {
       alert("Please enter a title for your post.");
       return;
     }
-    if (!newPostImageUrl && !newPostLinkUrl && !selectedFile) {
-      alert("Please add an image, link, or file for your post.");
+    // At least one meaningful content: title is always required, but allow post with only text (title).
+    // Optionally, you could require at least one of [title, image, link] to be non-empty (but title alone is enough).
+    // If you want to require at least some content, e.g. not only an empty title, you could do:
+    if (
+      !newPostTitle.trim() &&
+      !newPostImageUrl &&
+      !newPostLinkUrl &&
+      !selectedFile
+    ) {
+      alert("Please enter some content for your post.");
       return;
     }
     let imageUrl = newPostImageUrl;
