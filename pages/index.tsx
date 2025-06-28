@@ -896,6 +896,7 @@ export default function HomePage() {
                 <img
                   src={img}
                   className="aspect-video w-full object-cover transition-transform duration-300 hover:scale-[1.04]"
+                  alt={title}
                 />
               </div>
             </article>
@@ -975,6 +976,7 @@ export default function HomePage() {
                   <img
                     src={img}
                     className="aspect-[4/3] w-full object-cover transition-transform duration-300 hover:scale-105"
+                    alt={title}
                   />
                   {/* read-time badge */}
                   <span className="absolute right-3 top-3 rounded-full bg-black/70 px-3 py-0.5 text-[10px] font-semibold text-white">
