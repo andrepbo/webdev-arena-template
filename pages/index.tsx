@@ -36,6 +36,7 @@ interface Community {
   id: number;
   name: string;
   imageUrl: string;
+  joined?: boolean;
 }
 
 interface Post {
@@ -103,40 +104,63 @@ const communities: Community[] = [
     name: "reactjs",
     imageUrl:
       "https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmVhY3Rqc3xlbnwwfHwwfHx8MA%3D%3D",
+    joined: false,
   },
   {
     id: 2,
     name: "typescript",
     imageUrl:
       "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8anN8ZW58MHx8MHx8fDA%3D",
+    joined: false,
   },
   {
     id: 3,
     name: "Movies",
     imageUrl:
       "https://images.unsplash.com/photo-1616530940355-351fabd9524b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bW92aWVzfGVufDB8fDB8fHww",
+    joined: false,
   },
   {
     id: 4,
     name: "Music",
     imageUrl:
       "https://plus.unsplash.com/premium_photo-1677545820818-f1639f3e5b65?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8bXVzaWN8ZW58MHx8MHx8fDA%3D",
+    joined: false,
   },
   {
     id: 5,
     name: "Memes",
     imageUrl:
       "https://images.unsplash.com/photo-1469598614039-ccfeb0a21111?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8bWVtZXN8ZW58MHx8MHx8fDA%3D",
+    joined: false,
   },
   {
     id: 6,
     name: "Politics",
     imageUrl:
       "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cG9saXRpY3N8ZW58MHx8MHx8fDA%3D",
+    joined: false,
   },
 ];
 
 const App = () => {
+  // State to manage joined communities (by id)
+  const [joinedCommunities, setJoinedCommunities] = useState<{
+    [id: number]: boolean;
+  }>(() => {
+    const initialState: { [id: number]: boolean } = {};
+    communities.forEach((c) => {
+      initialState[c.id] = !!c.joined;
+    });
+    return initialState;
+  });
+
+  const handleToggleJoin = (communityId: number) => {
+    setJoinedCommunities((prev) => ({
+      ...prev,
+      [communityId]: !prev[communityId],
+    }));
+  };
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [posts, setPosts] = useState<Post[]>([
@@ -639,6 +663,23 @@ const App = () => {
                     <span className="text-orange-500">r/</span>
                     {community.name}
                   </div>
+                  <button
+                    className={`absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold shadow ${
+                      joinedCommunities[community.id]
+                        ? getThemeClasses(
+                            "bg-green-500 text-white",
+                            "bg-green-500 text-white"
+                          )
+                        : getThemeClasses(
+                            "bg-white text-orange-500 border border-orange-500 hover:bg-orange-50",
+                            "bg-gray-700 text-orange-400 border border-orange-400 hover:bg-orange-800"
+                          )
+                    }`}
+                    style={{ zIndex: 2 }}
+                    onClick={() => handleToggleJoin(community.id)}
+                  >
+                    {joinedCommunities[community.id] ? "Joined" : "Join"}
+                  </button>
                 </div>
               ))}
             </div>
