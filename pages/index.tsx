@@ -1,779 +1,861 @@
-import React, { useState, useEffect } from "react";
-import {
-  FaChevronLeft,
-  FaChevronRight,
-  FaShoppingCart,
-  FaHeart,
-  FaSearch,
-  FaUser,
-  FaBars,
-  FaTimes,
-  FaStar,
-} from "react-icons/fa";
-import { FiTruck, FiRefreshCcw, FiShield, FiHeadphones } from "react-icons/fi";
+/* eslint-disable @next/next/no-page-custom-font */
 
-// Types
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  rating: number;
-  image: string;
-  colors: string[];
-}
+import Head from "next/head";
+import { useEffect, useState } from "react";
+import { Montserrat, Roboto } from "next/font/google";
 
-interface Deal {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  endTime: Date;
-}
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-montserrat",
+});
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-roboto",
+});
 
-interface BlogPost {
-  id: number;
-  title: string;
-  excerpt: string;
-  image: string;
-  date: Date;
-}
+const NAV_LINKS = [
+  { name: "Shop", href: "#" },
+  { name: "Collections", href: "#" },
+  { name: "Pages", href: "#" },
+  { name: "Blog", href: "#" },
+  { name: "Features", href: "#" },
+];
 
-// Mock data
-const products: Product[] = [
+const COLLECTIONS = [
+  {
+    title: "Summer collection",
+    image:
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80",
+    href: "#",
+    highlight: false,
+  },
+  {
+    title: "Women collection",
+    image:
+      "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80",
+    href: "#",
+    highlight: true,
+  },
+  {
+    title: "Men's hoodies",
+    image:
+      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80",
+    href: "#",
+    highlight: false,
+  },
+  {
+    title: "Limited sale",
+    image: "",
+    href: "#",
+    highlight: false,
+    sale: true,
+  },
+];
+
+const FEATURED_PRODUCTS = [
   {
     id: 1,
-    name: "Premium Cotton T-Shirt",
+    name: "Crewneck Sweatshirt",
+    image:
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80",
     price: 49.99,
-    rating: 4.8,
-    image: "https://placehold.co/600x600",
-    colors: ["white", "black", "navy"],
+    rating: 4.5,
+    colors: ["#232326", "#ececec", "#ef4444"],
+    href: "#",
+    isNew: true,
   },
   {
     id: 2,
-    name: "Slim Fit Jeans",
-    price: 89.99,
-    rating: 4.6,
-    image: "https://placehold.co/600x600",
-    colors: ["blue", "black", "gray"],
+    name: "Classic Tee",
+    image:
+      "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=400&q=80",
+    price: 29.99,
+    rating: 4.0,
+    colors: ["#dad9d3", "#232326"],
+    href: "#",
+    isNew: false,
   },
   {
     id: 3,
-    name: "Elegant Blouse",
-    price: 69.99,
-    rating: 4.7,
-    image: "https://placehold.co/600x600",
-    colors: ["white", "pink", "beige"],
+    name: "Oversized Shirt",
+    image:
+      "https://images.unsplash.com/photo-1469398715555-76331a1cc0c6?auto=format&fit=crop&w=400&q=80",
+    price: 59.99,
+    rating: 5.0,
+    colors: ["#ef4444", "#ececec"],
+    href: "#",
+    isNew: true,
   },
   {
     id: 4,
-    name: "Designer Handbag",
-    price: 199.99,
-    rating: 4.9,
-    image: "https://placehold.co/600x600",
-    colors: ["brown", "black", "red"],
+    name: "Linen Pants",
+    image:
+      "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80",
+    price: 39.99,
+    rating: 4.2,
+    colors: ["#232326", "#dad9d3"],
+    href: "#",
+    isNew: false,
   },
   {
     id: 5,
-    name: "Sportswear Hoodie",
-    price: 79.99,
-    rating: 4.5,
-    image: "https://placehold.co/600x600",
-    colors: ["gray", "green", "blue"],
+    name: "Cotton Polo",
+    image:
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80",
+    price: 34.99,
+    rating: 4.7,
+    colors: ["#ececec", "#ef4444"],
+    href: "#",
+    isNew: false,
   },
   {
     id: 6,
-    name: "Women's Dress",
-    price: 129.99,
-    rating: 4.7,
-    image: "https://placehold.co/600x600",
-    colors: ["red", "black", "yellow"],
+    name: "Summer Dress",
+    image:
+      "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80",
+    price: 69.99,
+    rating: 4.9,
+    colors: ["#dad9d3", "#232326", "#ef4444"],
+    href: "#",
+    isNew: true,
   },
   {
     id: 7,
-    name: "Men's Watch",
-    price: 149.99,
-    rating: 4.9,
-    image: "https://placehold.co/600x600",
-    colors: ["black", "brown", "silver"],
+    name: "Basic Hoodie",
+    image:
+      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80",
+    price: 44.99,
+    rating: 4.3,
+    colors: ["#232326", "#ececec"],
+    href: "#",
+    isNew: false,
   },
   {
     id: 8,
-    name: "Sneakers",
-    price: 99.99,
-    rating: 4.5,
-    image: "https://placehold.co/600x600",
-    colors: ["white", "black", "blue"],
+    name: "Relaxed Fit Shirt",
+    image:
+      "https://images.unsplash.com/photo-1469398715555-76331a1cc0c6?auto=format&fit=crop&w=400&q=80",
+    price: 54.99,
+    rating: 4.6,
+    colors: ["#ef4444", "#dad9d3"],
+    href: "#",
+    isNew: false,
   },
 ];
 
-const deals: Deal[] = [
+const NEW_ARRIVALS = [
   {
-    id: 1,
-    title: "50% OFF SUMMER SALE",
-    description: "Selected summer clothing",
-    image: "https://placehold.co/600x400",
-    endTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 2,
-    title: "SPRING COLLECTION",
-    description: "New arrivals this season",
-    image: "https://placehold.co/600x400",
-    endTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 3,
-    title: "WINTER ESSENTIALS",
-    description: "Cozy winter clothing",
-    image: "https://placehold.co/600x400",
-    endTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    name: "Winter Collection",
+    desc: "New arrival winter collection",
+    image:
+      "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80",
+    href: "#",
   },
 ];
 
-const blogPosts: BlogPost[] = [
+const BLOG_POSTS = [
   {
-    id: 1,
-    title: "Summer Fashion Trends 2025",
-    excerpt: "Discover the hottest trends for this summer season.",
-    image: "https://placehold.co/600x400",
-    date: new Date(2025, 3, 15),
+    title: "Everything I know about minimalism in fashion",
+    image:
+      "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80",
+    href: "#",
   },
   {
-    id: 2,
-    title: "How to Style a White Shirt",
-    excerpt: "7 ways to wear your favorite white shirt.",
-    image: "https://placehold.co/600x400",
-    date: new Date(2025, 3, 10),
+    title: "A design is only as good as its details",
+    image:
+      "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80",
+    href: "#",
   },
   {
-    id: 3,
-    title: "Sustainable Fashion Guide",
-    excerpt: "Make eco-friendly choices in your wardrobe.",
-    image: "https://placehold.co/600x400",
-    date: new Date(2025, 3, 5),
+    title: "How to style your wardrobe for summer",
+    image:
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80",
+    href: "#",
   },
 ];
 
-const keyValues = [
-  {
-    icon: <FiTruck size={24} />,
-    title: "Free Shipping",
-    description: "On all orders above $100",
-  },
-  {
-    icon: <FiRefreshCcw size={24} />,
-    title: "30 Days Return",
-    description: "Easy return policy",
-  },
-  {
-    icon: <FiShield size={24} />,
-    title: "Buyer Protection",
-    description: "Secure payment methods",
-  },
-  {
-    icon: <FiHeadphones size={24} />,
-    title: "Customer Service",
-    description: "24/7 support available",
-  },
+const BRANDS = [
+  { name: "NORD", logo: "N", href: "#" },
+  { name: "WHITE", logo: "WHITE", href: "#" },
+  { name: "NORD STUDIO", logo: "NORD STUDIO", href: "#" },
 ];
 
-// Components
-const Navbar: React.FC = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+function StarRating({ rating }: { rating: number }) {
+  const fullStars = Math.floor(rating);
+  const halfStar = rating % 1 >= 0.5;
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">FASHION STORE</h1>
-            </div>
-            <nav className="hidden md:ml-6 md:flex md:items-center md:space-x-8">
-              <a
-                href="#"
-                className="text-gray-700 hover:text-indigo-600 px-3 py-2 font-medium"
-              >
-                Women
-              </a>
-              <a
-                href="#"
-                className="text-gray-700 hover:text-indigo-600 px-3 py-2 font-medium"
-              >
-                Men
-              </a>
-              <a
-                href="#"
-                className="text-gray-700 hover:text-indigo-600 px-3 py-2 font-medium"
-              >
-                Accessories
-              </a>
-              <a
-                href="#"
-                className="text-gray-700 hover:text-indigo-600 px-3 py-2 font-medium"
-              >
-                Sale
-              </a>
-            </nav>
-          </div>
-
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FaSearch className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search"
-                className="bg-gray-100 rounded-full py-2 pl-10 pr-4 w-64 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-            <button className="text-gray-700 hover:text-indigo-600 p-2">
-              <FaUser className="h-6 w-6" />
-            </button>
-            <button className="text-gray-700 hover:text-indigo-600 p-2">
-              <FaHeart className="h-6 w-6" />
-            </button>
-            <button className="text-gray-700 hover:text-indigo-600 p-2">
-              <FaShoppingCart className="h-6 w-6" />
-              <span className="ml-1 font-medium">Cart</span>
-            </button>
-          </div>
-
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-indigo-600 focus:outline-none"
-            >
-              {isMobileMenuOpen ? (
-                <FaTimes className="h-6 w-6" />
-              ) : (
-                <FaBars className="h-6 w-6" />
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {isMobileMenuOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-white">
-            <a
-              href="#"
-              className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-indigo-600 rounded-md"
-            >
-              Women
-            </a>
-            <a
-              href="#"
-              className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-indigo-600 rounded-md"
-            >
-              Men
-            </a>
-            <a
-              href="#"
-              className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-indigo-600 rounded-md"
-            >
-              Accessories
-            </a>
-            <a
-              href="#"
-              className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-indigo-600 rounded-md"
-            >
-              Sale
-            </a>
-            <div className="px-3 py-2">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaSearch className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="bg-gray-100 rounded-full py-2 pl-10 pr-4 w-full focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </header>
-  );
-};
-
-const HeroSlider: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const slides = [
-    {
-      title: "SUMMER SALE",
-      subtitle: "GET UP TO 50% OFF",
-      image: "https://placehold.co/1920x1080",
-      cta: "Shop Now",
-    },
-    {
-      title: "SPRING COLLECTION",
-      subtitle: "NEW ARRIVALS THIS SEASON",
-      image: "https://placehold.co/1920x1080",
-      cta: "Discover More",
-    },
-    {
-      title: "WINTER ESSENTIALS",
-      subtitle: "COZY WINTER CLOTHING",
-      image: "https://placehold.co/1920x1080",
-      cta: "Shop Collection",
-    },
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
-    }, 5000);
-
-    return () => clearInterval(timer);
-  }, [slides.length]);
-
-  const handlePrevClick = () => {
-    setCurrentSlide(
-      (prevSlide) => (prevSlide - 1 + slides.length) % slides.length
-    );
-  };
-
-  const handleNextClick = () => {
-    setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
-  };
-
-  return (
-    <div className="relative h-[500px] overflow-hidden">
-      {slides.map((slide, index) => (
-        <div
-          key={index}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentSlide ? "opacity-100" : "opacity-0"
-          }`}
+    <div className="flex items-center gap-0.5">
+      {[...Array(fullStars)].map((_, i) => (
+        <svg
+          key={i}
+          className="w-4 h-4 text-yellow-400"
+          fill="currentColor"
+          viewBox="0 0 20 20"
         >
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${slide.image})` }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
-          </div>
-
-          <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-            <div className="max-w-lg">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                {slide.title}
-              </h2>
-              <p className="text-xl md:text-2xl text-white mb-8">
-                {slide.subtitle}
-              </p>
-              <button className="bg-white text-gray-900 px-8 py-3 rounded-full font-medium hover:bg-gray-100 transition-colors">
-                {slide.cta}
-              </button>
-            </div>
-          </div>
-        </div>
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" />
+        </svg>
       ))}
-
-      <button
-        onClick={handlePrevClick}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 rounded-full p-2 transition-colors"
-      >
-        <FaChevronLeft className="h-6 w-6 text-white" />
-      </button>
-      <button
-        onClick={handleNextClick}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 rounded-full p-2 transition-colors"
-      >
-        <FaChevronRight className="h-6 w-6 text-white" />
-      </button>
-
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-colors ${
-              index === currentSlide ? "bg-white" : "bg-white/50"
-            }`}
-          />
-        ))}
-      </div>
+      {halfStar && (
+        <svg
+          className="w-4 h-4 text-yellow-400"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path d="M10 2.927V15.5l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967c.15-.46.53-.69.95-.69z" />
+        </svg>
+      )}
     </div>
   );
-};
+}
 
-const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
+function ColorDots({ colors }: { colors: string[] }) {
   return (
-    <div className="group">
-      <div className="aspect-square relative overflow-hidden">
+    <div className="flex gap-1 mt-1">
+      {colors.map((color, i) => (
+        <span
+          key={i}
+          className="w-3 h-3 rounded-full border border-gray-200 dark:border-gray-700"
+          style={{ background: color }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ProductCard({
+  product,
+  handleAddToCart,
+}: {
+  product: (typeof FEATURED_PRODUCTS)[0];
+  handleAddToCart: (product: (typeof FEATURED_PRODUCTS)[0]) => void;
+}) {
+  return (
+    <div className="bg-card rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-4 flex flex-col group transition hover:shadow-2xl hover:-translate-y-1 hover:border-primary/40 duration-200">
+      <div className="relative aspect-[4/5] rounded-xl overflow-hidden">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-200"
         />
-        <div className="absolute top-2 right-2 flex space-y-2 flex-col">
-          <button className="bg-white rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
-            <FaHeart className="h-4 w-4 text-gray-700" />
+        {product.isNew && (
+          <span className="absolute top-2 left-2 bg-primary text-white text-xs px-2 py-0.5 rounded">
+            New
+          </span>
+        )}
+        <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button className="bg-white dark:bg-gray-900 p-1 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-800">
+            <svg
+              className="w-4 h-4 text-gray-700 dark:text-gray-200"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 15l7-7 7 7"
+              />
+            </svg>
           </button>
-          <button className="bg-white rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-opacity delay-75">
-            <FaShoppingCart className="h-4 w-4 text-gray-700" />
+          <button className="bg-white dark:bg-gray-900 p-1 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-800">
+            <svg
+              className="w-4 h-4 text-gray-700 dark:text-gray-200"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
           </button>
         </div>
       </div>
-      <div className="mt-3">
-        <div className="flex justify-between items-center">
-          <h3 className="text-gray-800 font-medium">{product.name}</h3>
-          <div className="flex items-center">
-            <span className="text-sm text-gray-600 mr-1">{product.rating}</span>
-            <FaStar className="h-4 w-4 text-yellow-400" />
-          </div>
-        </div>
-        <div className="flex justify-between items-center mt-1">
-          <span className="text-gray-900 font-bold">
+      <div className="mt-4 flex-1 flex flex-col">
+        <a
+          href={product.href}
+          className={`${montserrat.className} font-extrabold text-lg md:text-xl text-foreground hover:underline leading-tight`}
+        >
+          {product.name}
+        </a>
+        <div className="flex items-center gap-3 mt-2 overflow-hidden flex-wrap">
+          <span
+            className={`${roboto.className} text-xl font-black text-primary`}
+          >
             ${product.price.toFixed(2)}
           </span>
-          <div className="flex space-x-1">
-            {product.colors.map((color) => (
-              <div
-                key={color}
-                className="w-3 h-3 rounded-full border border-gray-200"
-                style={{ backgroundColor: color }}
-              />
-            ))}
+          <div className="overflow-hidden">
+            <StarRating rating={product.rating} />
           </div>
         </div>
-      </div>
-    </div>
-  );
-};
-
-const DealCard: React.FC<{ deal: Deal }> = ({ deal }) => {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const difference = deal.endTime.getTime() - new Date().getTime();
-
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor(
-            (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-          ),
-          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((difference % (1000 * 60)) / 1000),
-        });
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [deal.endTime]);
-
-  return (
-    <div className="bg-gray-50 rounded-lg overflow-hidden group">
-      <div className="relative">
-        <img
-          src={deal.image}
-          alt={deal.title}
-          className="w-full aspect-video object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
-        <div className="absolute bottom-4 left-4 right-4">
-          <h3 className="text-white text-xl font-bold">{deal.title}</h3>
-          <p className="text-white/80">{deal.description}</p>
-        </div>
-      </div>
-      <div className="p-4">
-        <div className="flex justify-between items-center">
-          <div className="flex space-x-2">
-            <div className="text-center">
-              <div className="text-gray-800 font-bold">{timeLeft.days}</div>
-              <div className="text-xs text-gray-600">Days</div>
-            </div>
-            <div className="text-center">
-              <div className="text-gray-800 font-bold">{timeLeft.hours}</div>
-              <div className="text-xs text-gray-600">Hours</div>
-            </div>
-            <div className="text-center">
-              <div className="text-gray-800 font-bold">{timeLeft.minutes}</div>
-              <div className="text-xs text-gray-600">Min</div>
-            </div>
-            <div className="text-center">
-              <div className="text-gray-800 font-bold">{timeLeft.seconds}</div>
-              <div className="text-xs text-gray-600">Sec</div>
-            </div>
-          </div>
-          <button className="bg-black text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors">
-            Shop Now
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const BlogCard: React.FC<{ post: BlogPost }> = ({ post }) => {
-  return (
-    <div className="bg-white rounded-lg overflow-hidden group hover:shadow-lg transition-shadow">
-      <div className="relative">
-        <img
-          src={post.image}
-          alt={post.title}
-          className="w-full aspect-video object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-      </div>
-      <div className="p-4">
-        <div className="text-xs text-gray-500 mb-2">
-          {new Date(post.date).toLocaleDateString("en-US", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-          })}
-        </div>
-        <h3 className="text-gray-900 font-bold text-lg mb-2">{post.title}</h3>
-        <p className="text-gray-600 text-sm mb-4">{post.excerpt}</p>
-        <button className="text-indigo-600 font-medium hover:text-indigo-800 transition-colors">
-          Read More →
+        <ColorDots colors={product.colors} />
+        <button
+          onClick={() => handleAddToCart(product)}
+          className="mt-3 bg-primary text-white text-sm px-4 py-2 rounded hover:bg-primary/90 transition"
+        >
+          Add to cart
         </button>
       </div>
     </div>
   );
-};
+}
 
-const NewsletterForm: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      setSubscribed(true);
-      setEmail("");
-      setTimeout(() => setSubscribed(false), 3000);
-    }
-  };
-
+function CollectionCard({
+  collection,
+}: {
+  collection: (typeof COLLECTIONS)[0];
+}) {
+  if (collection.sale) {
+    return (
+      <div className="bg-primary text-white rounded-lg flex flex-col items-center justify-center p-6 min-h-[180px]">
+        <span className={`${montserrat.className} text-lg font-bold mb-2`}>
+          Limited Sale
+        </span>
+        <span className={`${roboto.className} text-2xl font-extrabold mb-2`}>
+          Save up to 30% off
+        </span>
+        <a
+          href={collection.href}
+          className={`${montserrat.className} bg-white text-primary font-semibold px-4 py-2 rounded hover:bg-gray-100 transition`}
+        >
+          Shop now
+        </a>
+      </div>
+    );
+  }
   return (
-    <div className="bg-gray-50 p-6 rounded-lg">
-      <h3 className="text-gray-900 font-bold text-lg mb-2">Newsletter</h3>
-      <p className="text-gray-600 text-sm mb-4">
-        Get the latest offers and updates delivered straight to your inbox.
-      </p>
-      {subscribed ? (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
-          Thank you for subscribing!
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="flex">
-          <input
-            type="email"
-            placeholder="Your email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="bg-white px-4 py-2 rounded-l-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-          <button
-            type="submit"
-            className="bg-black text-white px-4 py-2 rounded-r-lg hover:bg-gray-800 transition-colors"
-          >
-            Subscribe
-          </button>
-        </form>
-      )}
+    <div className="relative rounded-lg overflow-hidden group min-h-[180px]">
+      <img
+        src={collection.image}
+        alt={collection.title}
+        className="object-cover w-full h-full group-hover:scale-105 transition-transform"
+      />
+      <a
+        href={collection.href}
+        className="absolute inset-0 bg-black/30 flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        <span
+          className={`${montserrat.className} text-white text-lg font-semibold`}
+        >
+          {collection.title}
+        </span>
+      </a>
     </div>
   );
-};
+}
 
-const ValueHighlights: React.FC = () => {
+function DealCountdown() {
+  const [time, setTime] = useState(60 * 60 * 24 + 60 * 14 + 53); // 1 day, 14 min, 53 sec
+  useEffect(() => {
+    const interval = setInterval(
+      () => setTime((t) => (t > 0 ? t - 1 : 0)),
+      1000
+    );
+    return () => clearInterval(interval);
+  }, []);
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time % 3600) / 60);
+  const seconds = time % 60;
   return (
-    <div className="bg-white py-12 border-t border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {keyValues.map((value) => (
-            <div key={value.title} className="flex items-start space-x-4">
-              <div className="text-indigo-600">{value.icon}</div>
-              <div>
-                <h3 className="text-gray-900 font-bold">{value.title}</h3>
-                <p className="text-gray-600 text-sm mt-1">
-                  {value.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div
+      className={`${roboto.className} flex gap-2 text-center text-lg font-bold`}
+    >
+      <div>
+        <div>{hours.toString().padStart(2, "0")}</div>
+        <div className="text-xs font-normal">h</div>
+      </div>
+      <span>:</span>
+      <div>
+        <div>{minutes.toString().padStart(2, "0")}</div>
+        <div className="text-xs font-normal">m</div>
+      </div>
+      <span>:</span>
+      <div>
+        <div>{seconds.toString().padStart(2, "0")}</div>
+        <div className="text-xs font-normal">s</div>
       </div>
     </div>
   );
-};
+}
 
-const App: React.FC = () => {
+export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState(FEATURED_PRODUCTS);
+  const [cartItems, setCartItems] = useState<(typeof FEATURED_PRODUCTS)[0][]>(
+    []
+  );
+
+  const handleAddToCart = (product: (typeof FEATURED_PRODUCTS)[0]) => {
+    setCartItems((prev) => [...prev, product]);
+  };
+
+  const handleRemoveFromCart = (id: number) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  useEffect(() => {
+    const results = FEATURED_PRODUCTS.filter((product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredProducts(results);
+  }, [searchTerm]);
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar />
-      <main>
-        <HeroSlider />
-
-        <section className="py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">
-              Featured Products
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="py-12 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">
-              Limited Time Offers
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {deals.map((deal) => (
-                <DealCard key={deal.id} deal={deal} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
-                <h2 className="text-2xl font-bold text-gray-900 mb-8">
-                  New Arrivals
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                  {products.slice(0, 6).map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-8">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                    Todays Deal
-                  </h2>
-                  <DealCard deal={deals[0]} />
-                </div>
-
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                    From The Blog
-                  </h2>
-                  <div className="space-y-4">
-                    {blogPosts.map((post) => (
-                      <BlogCard key={post.id} post={post} />
-                    ))}
-                  </div>
-                </div>
-
-                <NewsletterForm />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <ValueHighlights />
-      </main>
-
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-lg font-bold mb-4">FASHION STORE</h3>
-              <p className="text-gray-400">
-                Your destination for quality clothing and accessories at
-                affordable prices.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold mb-4">Shop</h3>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">
-                    Women
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">
-                    Men
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">
-                    Accessories
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">
-                    Sale
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold mb-4">Information</h3>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">
-                    About Us
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">
-                    Contact Us
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">
-                    FAQs
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-white">
-                    Shipping Policy
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold mb-4">Follow Us</h3>
-              <div className="flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-white">
-                  Facebook
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  Instagram
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  Twitter
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  Pinterest
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
-            <p>© 2025 Fashion Store. All rights reserved.</p>
+    <>
+      <Head>
+        <title>Fashion E-Commerce</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+      </Head>
+      <div
+        className={`${montserrat.variable} ${roboto.variable} min-h-screen bg-background text-foreground transition-colors duration-300`}
+      >
+        {/* Topbar */}
+        <div className="w-full bg-muted text-xs py-2 px-4 flex flex-wrap justify-between items-center text-center gap-y-1 border-b border-gray-200 dark:border-gray-800">
+          <div className="w-full flex flex-wrap justify-between items-center gap-2 sm:flex-nowrap">
+            <span>📞 Support</span>
+            <span>
+              Shop at one of the largest fashion houses!{" "}
+              <a href="#" className="underline">
+                See all products
+              </a>
+            </span>
+            <span>🌍 Location</span>
           </div>
         </div>
-      </footer>
-    </div>
+        {/* Navbar */}
+        <header className="w-full bg-white/90 dark:bg-gray-900/90 shadow-sm sticky top-0 z-30 backdrop-blur-md transition-colors duration-300">
+          <div className="max-w-7xl mx-auto w-full">
+            <nav className="flex items-center justify-between px-4 py-4">
+              <div className="flex items-center gap-4">
+                <a
+                  href="#"
+                  className={`${montserrat.className} text-2xl font-extrabold tracking-tight text-primary`}
+                >
+                  HONGO
+                </a>
+                <button
+                  className="lg:hidden text-gray-700 dark:text-gray-200 focus:outline-none"
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  aria-label="Toggle Menu"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    {menuOpen ? (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    ) : (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4 6h16M4 12h16M4 18h16"
+                      />
+                    )}
+                  </svg>
+                </button>
+                <ul
+                  className={`${montserrat.className} hidden lg:flex flex-wrap gap-6 text-base font-medium`}
+                >
+                  {NAV_LINKS.map((link) => (
+                    <li key={link.name}>
+                      <a
+                        href={link.href}
+                        className="hover:text-primary transition-colors"
+                      >
+                        {link.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="relative hidden md:block">
+                  <svg
+                    className="absolute left-2 top-1.5 w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="M21 21l-4.35-4.35" />
+                  </svg>
+                  <input
+                    type="search"
+                    placeholder="Search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className={`${roboto.className} rounded-full pl-7 pr-3 py-1.5 bg-muted text-sm focus:outline-none focus:ring-2 focus:ring-primary`}
+                  />
+                </div>
+                <a
+                  href="#"
+                  className={`${montserrat.className} hidden md:inline text-sm hover:text-primary transition-colors`}
+                >
+                  Account
+                </a>
+                <a
+                  href="#"
+                  className={`${montserrat.className} hidden md:inline text-sm hover:text-primary transition-colors`}
+                >
+                  Wishlist
+                </a>
+                <div className="relative">
+                  <a
+                    href="#"
+                    className={`${montserrat.className} relative inline-flex items-center gap-1 text-sm hover:text-primary transition-colors`}
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4"
+                      />
+                      <circle cx="7" cy="21" r="1" />
+                      <circle cx="17" cy="21" r="1" />
+                    </svg>
+                    {cartItems.length > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                        {cartItems.length}
+                      </span>
+                    )}
+                  </a>
+                  {cartItems.length > 0 && (
+                    <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 z-40 p-4 text-sm">
+                      <ul className="divide-y divide-gray-200 dark:divide-gray-700 max-h-64 overflow-y-auto">
+                        {cartItems.map((item) => (
+                          <li
+                            key={item.id}
+                            className="py-2 flex justify-between items-center"
+                          >
+                            <span className="truncate">{item.name}</span>
+                            <button
+                              onClick={() => handleRemoveFromCart(item.id)}
+                              className="text-red-500 hover:underline"
+                            >
+                              Remove
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </nav>
+            {menuOpen && (
+              <ul className="lg:hidden flex flex-col gap-4 px-4 pb-4 text-base font-medium">
+                {NAV_LINKS.map((link) => (
+                  <li key={link.name}>
+                    <a
+                      href={link.href}
+                      className="block text-foreground hover:text-primary transition-colors"
+                    >
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
+                <li className="md:hidden">
+                  <a
+                    href="#"
+                    className="block text-foreground hover:text-primary transition-colors"
+                  >
+                    Account
+                  </a>
+                </li>
+                <li className="md:hidden">
+                  <a
+                    href="#"
+                    className="block text-foreground hover:text-primary transition-colors"
+                  >
+                    Wishlist
+                  </a>
+                </li>
+              </ul>
+            )}
+          </div>
+        </header>
+        {/* Hero Banner */}
+        <section className="relative w-full bg-black/80 dark:bg-black/90 min-h-[380px] flex items-center justify-center overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80"
+            alt="Hero"
+            className="absolute inset-0 w-full h-full object-cover opacity-60"
+          />
+          <div className="relative z-10 max-w-7xl w-full flex flex-col sm:flex-col md:flex-row items-start justify-between px-4 py-16 gap-8">
+            <div className="flex-1 flex flex-col gap-6">
+              <span className={`${roboto.className} text-lg text-white/80`}>
+                This month from $29
+              </span>
+              <h1
+                className={`${montserrat.className} text-4xl md:text-5xl font-extrabold text-white`}
+              >
+                Summer overcoat
+              </h1>
+              <a
+                href="#"
+                className={`${montserrat.className} inline-block bg-primary text-white px-6 py-3 rounded font-semibold text-lg shadow hover:bg-primary/90 transition`}
+              >
+                Shop collection
+              </a>
+            </div>
+            <div className="flex-1 flex justify-center sm:justify-end items-center gap-4 pt-10 sm:pt-20 md:pt-0">
+              <img
+                src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80"
+                alt="Model 1"
+                className="rounded-lg w-40 md:w-56 shadow-lg object-cover"
+              />
+              <img
+                src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80"
+                alt="Model 2"
+                className="rounded-lg w-40 md:w-56 shadow-lg object-cover"
+              />
+            </div>
+          </div>
+        </section>
+        {/* Value Offers Section */}
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-4 my-10 text-center">
+          <div className="flex flex-col items-center gap-2">
+            <svg
+              className="w-8 h-8 text-primary"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 3h18M3 9h18M3 15h18M3 21h18"
+              />
+            </svg>
+            <span className="font-semibold text-sm">Free Shipping</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <svg
+              className="w-8 h-8 text-primary"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 8v4l3 3"
+              />
+              <circle cx="12" cy="12" r="10" />
+            </svg>
+            <span className="font-semibold text-sm">Special Discounts</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <svg
+              className="w-8 h-8 text-primary"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 11c1.656 0 3-1.567 3-3.5S13.656 4 12 4s-3 1.567-3 3.5S10.344 11 12 11z"
+              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 11v7" />
+            </svg>
+            <span className="font-semibold text-sm">Buyer Protection</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <svg
+              className="w-8 h-8 text-primary"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M18.364 5.636a9 9 0 11-12.728 0"
+              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v4" />
+            </svg>
+            <span className="font-semibold text-sm">24/7 Support</span>
+          </div>
+        </section>
+        {/* Main Content */}
+        <main className="max-w-7xl mx-auto px-4 py-12 flex flex-col gap-14">
+          {/* Collections */}
+          <section className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            {COLLECTIONS.map((col, i) => (
+              <CollectionCard key={i} collection={col} />
+            ))}
+          </section>
+          {/* Featured Products */}
+          <section>
+            <h2
+              className={`${montserrat.className} text-3xl font-extrabold tracking-wide uppercase mb-7 text-primary`}
+              style={{ letterSpacing: 2 }}
+            >
+              Featured products
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-7">
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  handleAddToCart={handleAddToCart}
+                />
+              ))}
+            </div>
+          </section>
+          {/* New Arrivals */}
+          <section className="bg-card rounded-2xl shadow-lg p-7 flex flex-col gap-5 items-center border border-gray-100 dark:border-gray-800">
+            <h3
+              className={`${montserrat.className} font-bold text-xl mb-2 tracking-wide text-foreground`}
+              style={{ letterSpacing: 1 }}
+            >
+              New Arrival
+            </h3>
+            {NEW_ARRIVALS.map((item, i) => (
+              <div key={i} className="flex flex-col gap-2 items-center">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="rounded-xl object-cover w-40 h-28 shadow"
+                />
+                <span className={`${montserrat.className} font-bold text-lg`}>
+                  {item.name}
+                </span>
+                <span
+                  className={`${roboto.className} text-xs text-gray-500 dark:text-gray-400`}
+                >
+                  {item.desc}
+                </span>
+                <a
+                  href={item.href}
+                  className={`${montserrat.className} text-primary text-sm font-semibold hover:underline`}
+                >
+                  Shop the collection
+                </a>
+              </div>
+            ))}
+            <div className="flex gap-2 mt-2">
+              {BRANDS.map((brand) => (
+                <span
+                  key={brand.name}
+                  className={`${roboto.className} bg-muted rounded px-2 py-1 text-xs font-semibold`}
+                >
+                  {brand.logo}
+                </span>
+              ))}
+            </div>
+          </section>
+          {/* Deal of the Day */}
+          <section className="bg-card rounded-2xl shadow-lg p-7 flex flex-col gap-5 items-center border border-gray-100 dark:border-gray-800">
+            <h3
+              className={`${montserrat.className} font-bold text-xl tracking-wide text-foreground`}
+              style={{ letterSpacing: 1 }}
+            >
+              Deal of the day!
+            </h3>
+            <DealCountdown />
+            <a
+              href="#"
+              className={`${montserrat.className} bg-primary text-white px-5 py-2 rounded font-semibold hover:bg-primary/90 transition text-base`}
+            >
+              Shop collection
+            </a>
+          </section>
+          {/* Blog Preview */}
+          <section className="bg-card rounded-2xl shadow-lg p-7 flex flex-col gap-5 border border-gray-100 dark:border-gray-800">
+            <h3
+              className={`${montserrat.className} font-bold text-xl mb-2 tracking-wide text-foreground`}
+              style={{ letterSpacing: 1 }}
+            >
+              Blog of fashion
+            </h3>
+            <div className="flex flex-col gap-3">
+              {BLOG_POSTS.map((post, i) => (
+                <a
+                  key={i}
+                  href={post.href}
+                  className="flex gap-3 items-center hover:bg-muted rounded-lg p-2 transition shadow-sm"
+                >
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-14 h-14 rounded object-cover shadow"
+                  />
+                  <span className={`${roboto.className} text-base font-medium`}>
+                    {post.title}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </section>
+          {/* Newsletter */}
+          <section className="bg-card rounded-2xl shadow-lg p-7 flex flex-col gap-3 items-center border border-gray-100 dark:border-gray-800">
+            <h3
+              className={`${montserrat.className} font-bold text-xl tracking-wide text-foreground`}
+              style={{ letterSpacing: 1 }}
+            >
+              Subscribe to get 30% discount!
+            </h3>
+            <form
+              className="flex flex-col gap-3 w-full max-w-xs"
+              onSubmit={(e) => {
+                e.preventDefault();
+                alert("Thank you for subscribing!");
+              }}
+            >
+              <input
+                type="email"
+                required
+                placeholder="Your email"
+                className={`${roboto.className} rounded px-3 py-2 border border-gray-200 dark:border-gray-700 bg-muted text-sm focus:outline-none focus:ring-2 focus:ring-primary`}
+              />
+              <button
+                type="submit"
+                className={`${montserrat.className} bg-primary text-white px-4 py-2 rounded font-semibold hover:bg-primary/90 transition`}
+              >
+                Subscribe
+              </button>
+            </form>
+          </section>
+        </main>
+        {/* Footer */}
+        <footer
+          className={`${roboto.className} w-full bg-muted text-gray-500 dark:text-gray-400 text-xs py-4 text-center mt-8`}
+        >
+          © {new Date().getFullYear()} Fashion E-Commerce. All rights reserved.
+        </footer>
+      </div>
+    </>
   );
-};
-
-export default App;
+}
