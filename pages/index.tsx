@@ -162,6 +162,8 @@ const App = () => {
     }));
   };
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // Profile modal state
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [posts, setPosts] = useState<Post[]>([
     {
@@ -460,48 +462,156 @@ const App = () => {
         </div>
 
         <div className="flex items-center space-x-2 md:w-1/4 lg:w-1/5">
-          {currentUser.imageUrl ? (
-            <img
-              className="w-8 h-8 rounded-full object-cover"
-              src={currentUser.imageUrl}
-              alt={currentUser.name}
-              onError={(e) =>
-                (e.currentTarget.src = getFallbackImageUrl(
-                  32,
-                  32,
-                  currentUser.avatarInitial
-                ))
-              }
-            />
-          ) : (
-            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-              {currentUser.avatarInitial}
-            </div>
-          )}
-          <div className="hidden sm:block text-sm">
-            <p className="font-semibold">{currentUser.name}</p>
-            <p
-              className={`text-xs ${getThemeClasses(
-                "text-gray-400",
-                "text-gray-300"
-              )}`}
-            >
-              <span className={getThemeClasses("text-black", "text-white")}>
-                {currentUser.karma}
-              </span>{" "}
-              Karma
-            </p>
-          </div>
-          {/* Botão para alternar o tema */}
-          {/* <button className={`p-2 rounded-full ${getThemeClasses('hover:bg-gray-200', 'hover:bg-gray-700')}`}>
-            {theme === 'light' ? (
-              <Moon className={getThemeClasses('text-gray-600', 'text-gray-300')} />
+          <button
+            className="focus:outline-none"
+            onClick={() => setIsProfileModalOpen(true)}
+            aria-label="Open profile modal"
+            type="button"
+            style={{ display: "flex", alignItems: "center" }}
+          >
+            {currentUser.imageUrl ? (
+              <img
+                className="w-8 h-8 rounded-full object-cover"
+                src={currentUser.imageUrl}
+                alt={currentUser.name}
+                onError={(e) =>
+                  (e.currentTarget.src = getFallbackImageUrl(
+                    32,
+                    32,
+                    currentUser.avatarInitial
+                  ))
+                }
+              />
             ) : (
-              <Sun className={getThemeClasses('text-gray-600', 'text-gray-300')} />
+              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                {currentUser.avatarInitial}
+              </div>
             )}
-          </button> */}
+            <div className="hidden sm:block text-sm text-left ml-2">
+              <p className="font-semibold">{currentUser.name}</p>
+              <p
+                className={`text-xs ${getThemeClasses(
+                  "text-gray-400",
+                  "text-gray-300"
+                )}`}
+              >
+                <span className={getThemeClasses("text-black", "text-white")}>
+                  {currentUser.karma}
+                </span>{" "}
+                Karma
+              </p>
+            </div>
+          </button>
         </div>
       </header>
+
+      {/* Profile Modal */}
+      {isProfileModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          onClick={() => setIsProfileModalOpen(false)}
+        >
+          <div
+            className={`${getThemeClasses(
+              "bg-white",
+              "bg-gray-800"
+            )} w-full max-w-2xl flex items-center space-x-4 rounded-xl shadow p-4 md:p-6 relative`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+              onClick={() => setIsProfileModalOpen(false)}
+              aria-label="Close profile modal"
+              type="button"
+            >
+              <X
+                className={getThemeClasses("text-gray-600", "text-gray-300")}
+              />
+            </button>
+            {currentUser.imageUrl ? (
+              <img
+                className="w-16 h-16 rounded-full object-cover flex-shrink-0 border-2 border-orange-400"
+                src={currentUser.imageUrl}
+                alt={currentUser.name}
+                onError={(e) =>
+                  (e.currentTarget.src = getFallbackImageUrl(
+                    64,
+                    64,
+                    currentUser.avatarInitial
+                  ))
+                }
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-2xl flex-shrink-0 border-2 border-orange-400">
+                {currentUser.avatarInitial}
+              </div>
+            )}
+            <div className="flex flex-col justify-center flex-grow min-w-0">
+              <span className="font-bold text-lg truncate">
+                {currentUser.name}
+              </span>
+              <span
+                className={`text-sm mt-1 ${getThemeClasses(
+                  "text-gray-500",
+                  "text-gray-400"
+                )}`}
+              >
+                <span className="font-medium text-orange-500">
+                  {currentUser.karma}
+                </span>{" "}
+                Karma
+              </span>
+              <span
+                className={`text-xs mt-2 ${getThemeClasses(
+                  "text-gray-400",
+                  "text-gray-300"
+                )}`}
+              >
+                Welcome back to Reddit, {currentUser.name.split(" ")[0]}!
+              </span>
+              {/* Joined Communities Block */}
+              <div className="mt-4">
+                <h4 className="font-semibold text-sm mb-2">
+                  Joined Communities
+                </h4>
+                <div className="flex flex-row gap-3 overflow-x-auto">
+                  {communities.filter((c) => joinedCommunities[c.id]).length ===
+                  0 ? (
+                    <span
+                      className={`text-xs ${getThemeClasses(
+                        "text-gray-400",
+                        "text-gray-500"
+                      )}`}
+                    >
+                      Not a member of any community yet.
+                    </span>
+                  ) : (
+                    communities
+                      .filter((c) => joinedCommunities[c.id])
+                      .map((c) => (
+                        <div
+                          key={c.id}
+                          className="flex flex-col items-center min-w-[60px]"
+                        >
+                          <img
+                            src={c.imageUrl}
+                            alt={c.name}
+                            className="w-8 h-8 rounded-full object-cover border border-orange-400 mb-1"
+                          />
+                          <span className="text-xs truncate max-w-[56px]">
+                            <span className="text-orange-500">r/</span>
+                            {c.name}
+                          </span>
+                        </div>
+                      ))
+                  )}
+                </div>
+              </div>
+              {/* End Joined Communities Block */}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Retractable Sidebar for Mobile */}
       {isSidebarOpen && (
