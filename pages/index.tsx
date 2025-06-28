@@ -848,111 +848,34 @@ const App = () => {
 
         {/* Center Content */}
         <section className="flex-1 w-full md:w-auto space-y-6 overflow-y-auto">
-          <div
-            className={`${getThemeClasses(
-              "bg-white",
-              "bg-gray-800"
-            )} p-2 md:p-4 rounded-xl shadow-sm flex items-center space-x-2 md:space-x-4`}
-          >
-            {currentUser.imageUrl ? (
-              <img
-                className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                src={currentUser.imageUrl}
-                alt={currentUser.name}
-                onError={(e) =>
-                  (e.currentTarget.src = getFallbackImageUrl(
-                    40,
-                    40,
-                    currentUser.avatarInitial
-                  ))
-                }
-              />
-            ) : (
-              <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-                {currentUser.avatarInitial}
-              </div>
-            )}
-
-            <div className="flex-grow relative">
-              <input
-                type="text"
-                placeholder="Create new post"
-                className={`w-full border rounded-full py-2 pl-4 pr-24 focus:outline-none focus:ring-2 focus:ring-orange-500 ${getThemeClasses(
-                  "bg-gray-100 border-gray-300",
-                  "bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
-                )}`}
-                value={newPostTitle}
-                onChange={(e) => setNewPostTitle(e.target.value)}
-              />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 space-x-1">
-                <button
-                  className={`cursor-pointer p-2 rounded-full ${getThemeClasses(
-                    "text-gray-400 hover:text-orange-500 hover:bg-gray-200",
-                    "text-gray-300 hover:text-orange-500 hover:bg-gray-700"
-                  )}`}
-                  onClick={() => {
-                    const url = prompt("Enter image URL:");
-                    if (url) setNewPostImageUrl(url);
-                  }}
-                >
-                  <Image className="w-5 h-5" />
-                </button>
-                <button
-                  className={`cursor-pointer p-2 rounded-full ${getThemeClasses(
-                    "text-gray-400 hover:text-orange-500 hover:bg-gray-200",
-                    "text-gray-300 hover:text-orange-500 hover:bg-gray-700"
-                  )}`}
-                  onClick={() => {
-                    const url = prompt("Enter link URL:");
-                    if (url) setNewPostLinkUrl(url);
-                  }}
-                >
-                  <Link className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-            <button
-              className="bg-orange-500 text-white px-3 py-2 md:px-4 rounded-full font-semibold text-sm md:text-base whitespace-nowrap"
-              onClick={() => {
-                if (!newPostTitle && !newPostImageUrl && !newPostLinkUrl) {
-                  alert("Please enter some content for your post.");
-                  return;
-                }
-
-                const newPost: Post = {
-                  id:
-                    posts.length > 0
-                      ? Math.max(...posts.map((p) => p.id)) + 1
-                      : 1,
-                  username: currentUser.name,
-                  userAvatarInitial: currentUser.avatarInitial,
-                  userAvatarColor: "bg-blue-500",
-                  timestamp: "just now",
-                  title:
-                    newPostTitle ||
-                    (newPostImageUrl
-                      ? "New Image Post"
-                      : newPostLinkUrl
-                      ? "New Link Post"
-                      : "Untitled Post"),
-                  imageUrl: newPostImageUrl,
-                  linkUrl: newPostLinkUrl,
-                  upvotes: 0,
-                  comments: 0,
-                  voteStatus: "none",
-                  liked: false,
-                  commentsList: [],
-                };
-
-                setPosts([newPost, ...posts]);
-                setNewPostTitle("");
-                setNewPostImageUrl("");
-                setNewPostLinkUrl("");
-              }}
-            >
-              Create
-            </button>
-          </div>
+          {/* Create Post Area */}
+          {/*
+            Preview logic:
+            - If a file is selected and it's an image, show a local preview.
+            - If a link is present and looks like an image, show it.
+            - Place preview between inputs and Create button.
+          */}
+          {(() => {
+            // Add state for file input and preview URL.
+            // We'll use React.useState and React.useEffect here.
+            // But since hooks can't be called conditionally, we must lift state up.
+            // So, declare file state before return, and use it here.
+            // We'll move this code block up.
+            return null;
+          })()}
+          <CreatePostArea
+            currentUser={currentUser}
+            getFallbackImageUrl={getFallbackImageUrl}
+            getThemeClasses={getThemeClasses}
+            newPostTitle={newPostTitle}
+            setNewPostTitle={setNewPostTitle}
+            newPostImageUrl={newPostImageUrl}
+            setNewPostImageUrl={setNewPostImageUrl}
+            newPostLinkUrl={newPostLinkUrl}
+            setNewPostLinkUrl={setNewPostLinkUrl}
+            posts={posts}
+            setPosts={setPosts}
+          />
 
           {filteredPosts.length > 0 ? (
             filteredPosts.map((post) => (
@@ -1477,6 +1400,290 @@ const RedditLiveSection = ({
           </li>
         ))}
       </ul>
+    </div>
+  );
+};
+
+// Helper for image file extension check
+function isImageUrl(url: string) {
+  return /\.(jpeg|jpg|gif|png|webp|bmp|svg)$/i.test(url);
+}
+
+// CreatePostArea component with preview support
+const CreatePostArea = ({
+  currentUser,
+  getFallbackImageUrl,
+  getThemeClasses,
+  newPostTitle,
+  setNewPostTitle,
+  newPostImageUrl,
+  setNewPostImageUrl,
+  newPostLinkUrl,
+  setNewPostLinkUrl,
+  posts,
+  setPosts,
+}: {
+  currentUser: User;
+  getFallbackImageUrl: (w: number, h: number, t?: string) => string;
+  getThemeClasses: (light: string, dark: string) => string;
+  newPostTitle: string;
+  setNewPostTitle: React.Dispatch<React.SetStateAction<string>>;
+  newPostImageUrl: string;
+  setNewPostImageUrl: React.Dispatch<React.SetStateAction<string>>;
+  newPostLinkUrl: string;
+  setNewPostLinkUrl: React.Dispatch<React.SetStateAction<string>>;
+  posts: Post[];
+  setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
+}) => {
+  // File input and preview state
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
+  // Key for file input to force remount and clear selection
+  const [inputKey, setInputKey] = useState<number>(Date.now());
+
+  // Clean up object URLs
+  useEffect(() => {
+    if (selectedFile) {
+      const url = URL.createObjectURL(selectedFile);
+      setFilePreviewUrl(url);
+      return () => {
+        URL.revokeObjectURL(url);
+      };
+    } else {
+      setFilePreviewUrl(null);
+    }
+  }, [selectedFile]);
+
+  // Reset file on post submit
+  const handleCreate = () => {
+    // Only allow post creation if a title is entered (regardless of image/link)
+    if (!newPostTitle.trim()) {
+      alert("Please enter a title for your post.");
+      return;
+    }
+    if (!newPostImageUrl && !newPostLinkUrl && !selectedFile) {
+      alert("Please add an image, link, or file for your post.");
+      return;
+    }
+    let imageUrl = newPostImageUrl;
+    // If a file is selected, use its local preview for now.
+    if (selectedFile && filePreviewUrl) {
+      imageUrl = filePreviewUrl;
+    }
+    const newPost: Post = {
+      id: posts.length > 0 ? Math.max(...posts.map((p) => p.id)) + 1 : 1,
+      username: currentUser.name,
+      userAvatarInitial: currentUser.avatarInitial,
+      userAvatarColor: "bg-blue-500",
+      timestamp: "just now",
+      title: newPostTitle,
+      imageUrl: imageUrl,
+      linkUrl: newPostLinkUrl,
+      upvotes: 0,
+      comments: 0,
+      voteStatus: "none",
+      liked: false,
+      commentsList: [],
+    };
+    setPosts([newPost, ...posts]);
+    setNewPostTitle("");
+    setNewPostImageUrl("");
+    setNewPostLinkUrl("");
+    setSelectedFile(null);
+    setFilePreviewUrl(null);
+    setInputKey(Date.now());
+  };
+
+  // File input handler
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setNewPostImageUrl(""); // Clear URL input if file selected
+    } else {
+      setSelectedFile(null);
+    }
+  }
+
+  // If user enters link, clear file
+  function handleLinkPrompt() {
+    const url = prompt("Enter link URL:");
+    if (url) {
+      setNewPostLinkUrl(url);
+      setSelectedFile(null);
+      setInputKey(Date.now());
+    }
+  }
+
+  // Preview logic with close ("X") button
+  // Handler to clear preview and inputs
+  function handleClearPreview() {
+    setSelectedFile(null);
+    setNewPostImageUrl("");
+    setNewPostLinkUrl("");
+    setInputKey(Date.now());
+  }
+  let previewBlock: React.ReactNode = null;
+  if (
+    selectedFile &&
+    filePreviewUrl &&
+    selectedFile.type.startsWith("image/")
+  ) {
+    previewBlock = (
+      <div className="w-full flex justify-start pl-4">
+        <div className="relative w-full max-w-sm md:max-w-md lg:max-w-lg p-2 my-3 rounded-lg border bg-transparent flex flex-col items-center">
+          <button
+            type="button"
+            className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white text-sm z-10"
+            onClick={handleClearPreview}
+            aria-label="Remove preview"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <img
+            src={filePreviewUrl}
+            alt="Preview"
+            className="w-full max-w-full h-auto object-contain rounded-lg mb-2"
+          />
+          <span className="text-xs text-gray-400 break-all">
+            {selectedFile.name}
+          </span>
+        </div>
+      </div>
+    );
+  } else if (newPostImageUrl && isImageUrl(newPostImageUrl.trim())) {
+    previewBlock = (
+      <div className="w-full flex justify-start pl-4">
+        <div className="relative w-full max-w-sm md:max-w-md lg:max-w-lg p-2 my-3 rounded-lg border bg-transparent flex flex-col items-center">
+          <button
+            type="button"
+            className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white text-sm z-10"
+            onClick={handleClearPreview}
+            aria-label="Remove preview"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <img
+            src={newPostImageUrl}
+            alt="Preview"
+            className="w-full max-w-full h-auto object-contain rounded-lg mb-2"
+            onError={(e) =>
+              (e.currentTarget.src = getFallbackImageUrl(320, 180, "Image"))
+            }
+          />
+          <span className="text-xs text-gray-400 break-all">
+            {newPostImageUrl}
+          </span>
+        </div>
+      </div>
+    );
+  } else if (newPostLinkUrl && isImageUrl(newPostLinkUrl.trim())) {
+    previewBlock = (
+      <div className="w-full flex justify-start pl-4">
+        <div className="relative w-full max-w-sm md:max-w-md lg:max-w-lg p-2 my-3 rounded-lg border bg-transparent flex flex-col items-center">
+          <button
+            type="button"
+            className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white text-sm z-10"
+            onClick={handleClearPreview}
+            aria-label="Remove preview"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <img
+            src={newPostLinkUrl}
+            alt="Preview"
+            className="w-full max-w-full h-auto object-contain rounded-lg mb-2"
+            onError={(e) =>
+              (e.currentTarget.src = getFallbackImageUrl(320, 180, "Image"))
+            }
+          />
+          <span className="text-xs text-gray-400 break-all">
+            {newPostLinkUrl}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`${getThemeClasses(
+        "bg-white",
+        "bg-gray-800"
+      )} p-2 md:p-4 rounded-xl shadow-sm flex flex-col`}
+    >
+      {/* Input, avatar, and Create button in a flex container: flex-col on mobile, flex-row on lg */}
+      <div className="flex flex-col lg:flex-row items-center gap-4">
+        {/* Avatar */}
+        {currentUser.imageUrl ? (
+          <img
+            className="w-10 h-10 rounded-full object-cover flex-shrink-0 mt-2 lg:mt-0"
+            src={currentUser.imageUrl}
+            alt={currentUser.name}
+            onError={(e) =>
+              (e.currentTarget.src = getFallbackImageUrl(
+                40,
+                40,
+                currentUser.avatarInitial
+              ))
+            }
+          />
+        ) : (
+          <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 mt-2 lg:mt-0">
+            {currentUser.avatarInitial}
+          </div>
+        )}
+        {/* Input field */}
+        <div className="w-full flex-1 relative">
+          <input
+            type="text"
+            placeholder="Create new post"
+            className={`w-full border rounded-full py-2 pl-4 pr-24 focus:outline-none focus:ring-2 focus:ring-orange-500 ${getThemeClasses(
+              "bg-gray-100 border-gray-300",
+              "bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
+            )}`}
+            value={newPostTitle}
+            onChange={(e) => setNewPostTitle(e.target.value)}
+          />
+          <div className="absolute inset-y-0 right-0 flex items-center pr-2 space-x-1">
+            <label
+              className={`cursor-pointer p-2 rounded-full ${getThemeClasses(
+                "text-gray-400 hover:text-orange-500 hover:bg-gray-200",
+                "text-gray-300 hover:text-orange-500 hover:bg-gray-700"
+              )}`}
+              title="Upload image"
+            >
+              <input
+                key={inputKey}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              <Image className="w-5 h-5" />
+            </label>
+            <button
+              className={`cursor-pointer p-2 rounded-full ${getThemeClasses(
+                "text-gray-400 hover:text-orange-500 hover:bg-gray-200",
+                "text-gray-300 hover:text-orange-500 hover:bg-gray-700"
+              )}`}
+              onClick={handleLinkPrompt}
+              title="Enter link URL"
+            >
+              <Link className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+        {/* Create button: mt-2 on mobile, lg:mt-0 on lg screens */}
+        <button
+          className="bg-orange-500 text-white px-3 py-2 md:px-4 rounded-full font-semibold text-sm md:text-base whitespace-nowrap w-full lg:w-auto mt-2 lg:mt-0"
+          onClick={handleCreate}
+        >
+          Create
+        </button>
+      </div>
+      {/* Preview block (spans full width, inside the white box, after Create button) */}
+      {previewBlock && <div className="w-full flex mt-4">{previewBlock}</div>}
     </div>
   );
 };
