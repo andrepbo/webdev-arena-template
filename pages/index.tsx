@@ -39,6 +39,12 @@ interface Community {
   joined?: boolean;
 }
 
+interface Comment {
+  author: string;
+  text: string;
+  timestamp: string;
+}
+
 interface Post {
   id: number;
   username: string;
@@ -53,6 +59,7 @@ interface Post {
   comments: number;
   voteStatus: "up" | "down" | "none";
   liked: boolean;
+  commentsList: Comment[];
 }
 
 interface LiveEvent {
@@ -181,6 +188,7 @@ const App = () => {
       comments: 42,
       voteStatus: "none",
       liked: false,
+      commentsList: [],
     },
     {
       id: 2,
@@ -197,6 +205,7 @@ const App = () => {
       comments: 128,
       voteStatus: "none",
       liked: true,
+      commentsList: [],
     },
     {
       id: 3,
@@ -213,6 +222,7 @@ const App = () => {
       comments: 256,
       voteStatus: "up",
       liked: false,
+      commentsList: [],
     },
     {
       id: 4,
@@ -229,6 +239,7 @@ const App = () => {
       comments: 99,
       voteStatus: "none",
       liked: false,
+      commentsList: [],
     },
     {
       id: 5,
@@ -245,6 +256,7 @@ const App = () => {
       comments: 55,
       voteStatus: "none",
       liked: false,
+      commentsList: [],
     },
     {
       id: 6,
@@ -261,6 +273,7 @@ const App = () => {
       comments: 301,
       voteStatus: "up",
       liked: true,
+      commentsList: [],
     },
     {
       id: 7,
@@ -277,8 +290,17 @@ const App = () => {
       comments: 76,
       voteStatus: "none",
       liked: false,
+      commentsList: [],
     },
   ]);
+  // State for which post's comments are open
+  const [openComments, setOpenComments] = useState<{
+    [postId: number]: boolean;
+  }>({});
+  // State for new comment text per post
+  const [newCommentText, setNewCommentText] = useState<{
+    [postId: number]: string;
+  }>({});
 
   const [newPostTitle, setNewPostTitle] = useState("");
   const [newPostImageUrl, setNewPostImageUrl] = useState("");
@@ -449,7 +471,7 @@ const App = () => {
           <span className="text-orange-500 text-xl font-bold">reddit</span>
         </div>
 
-        <div className="flex-1 flex items-center md:mx-0 md:max-w-none">
+        <div className="flex-1 flex items-center md:mx-0 md:max-w-none mx-2 gap-2">
           <div className="hidden lg:flex space-x-10 mr-8">
             <button onClick={handleFeatureComingSoon}>
               <Home
@@ -475,16 +497,18 @@ const App = () => {
               />
             </button>
           </div>
-          <input
-            type="search"
-            placeholder="Search Reddit"
-            className={`w-full p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500 ${getThemeClasses(
-              "bg-gray-200",
-              "bg-gray-700 text-gray-100 placeholder-gray-400"
-            )}`}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          <div className="flex-1 min-w-[120px] max-w-xs w-full flex items-center">
+            <input
+              type="search"
+              placeholder="Search Reddit"
+              className={`flex-1 min-w-[120px] max-w-xs w-full p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500 ${getThemeClasses(
+                "bg-gray-200",
+                "bg-gray-700 text-gray-100 placeholder-gray-400"
+              )}`}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
 
         <div className="flex items-center space-x-2 md:w-1/4 lg:w-1/5">
@@ -917,6 +941,7 @@ const App = () => {
                   comments: 0,
                   voteStatus: "none",
                   liked: false,
+                  commentsList: [],
                 };
 
                 setPosts([newPost, ...posts]);
@@ -1059,10 +1084,16 @@ const App = () => {
                         "hover:bg-gray-200 bg-gray-100",
                         "hover:bg-gray-700 bg-gray-600"
                       )}`}
-                      onClick={handleFeatureComingSoon}
+                      // Toggle comment section for this post
+                      onClick={() =>
+                        setOpenComments((prev) => ({
+                          ...prev,
+                          [post.id]: !prev[post.id],
+                        }))
+                      }
                     >
                       <MessageCircle className="w-5 h-5" />
-                      <span>{post.comments}</span>
+                      <span>{post.commentsList.length}</span>
                     </button>
                     <button
                       className={`flex items-center space-x-1 p-2 rounded-full ${getThemeClasses(
@@ -1087,6 +1118,137 @@ const App = () => {
                       />
                     </button>
                   </div>
+                </div>
+                {/* Comments section */}
+                <div className="px-2 md:px-4 pb-3">
+                  <button
+                    className={`mt-1 mb-2 px-3 py-1 rounded-full text-xs font-semibold ${
+                      openComments[post.id]
+                        ? getThemeClasses(
+                            "bg-orange-100 text-orange-600",
+                            "bg-orange-900 text-orange-400"
+                          )
+                        : getThemeClasses(
+                            "bg-gray-100 text-gray-600 hover:bg-orange-50",
+                            "bg-gray-700 text-gray-300 hover:bg-orange-950"
+                          )
+                    }`}
+                    onClick={() =>
+                      setOpenComments((prev) => ({
+                        ...prev,
+                        [post.id]: !prev[post.id],
+                      }))
+                    }
+                  >
+                    {openComments[post.id] ? "Hide Comments" : "Comments"}
+                  </button>
+                  {openComments[post.id] && (
+                    <div className="mt-2">
+                      <ul className="mb-2 space-y-2">
+                        {post.commentsList.length === 0 ? (
+                          <li
+                            className={
+                              getThemeClasses(
+                                "text-gray-400",
+                                "text-gray-500"
+                              ) + " text-xs"
+                            }
+                          >
+                            No comments yet.
+                          </li>
+                        ) : (
+                          post.commentsList.map((comment, i) => (
+                            <li
+                              key={i}
+                              className={
+                                getThemeClasses(
+                                  "bg-gray-100 text-gray-700",
+                                  "bg-gray-700 text-gray-200"
+                                ) + " px-3 py-2 rounded"
+                              }
+                            >
+                              <span className="font-semibold mr-2">
+                                {comment.author}
+                              </span>
+                              <span className="text-xs text-gray-400 mr-2">
+                                {comment.timestamp}
+                              </span>
+                              <span>{comment.text}</span>
+                            </li>
+                          ))
+                        )}
+                      </ul>
+                      <form
+                        className="flex items-center space-x-2"
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          const text = (newCommentText[post.id] || "").trim();
+                          if (!text) return;
+                          // Format timestamp as "just now"
+                          const now = new Date();
+                          const pad = (n: number) =>
+                            n.toString().padStart(2, "0");
+                          const formatted =
+                            now.getFullYear() +
+                            "-" +
+                            pad(now.getMonth() + 1) +
+                            "-" +
+                            pad(now.getDate()) +
+                            " " +
+                            pad(now.getHours()) +
+                            ":" +
+                            pad(now.getMinutes());
+                          const newComment: Comment = {
+                            author: currentUser.name,
+                            text,
+                            timestamp: formatted,
+                          };
+                          setPosts((prevPosts) =>
+                            prevPosts.map((p) =>
+                              p.id === post.id
+                                ? {
+                                    ...p,
+                                    commentsList: [
+                                      ...p.commentsList,
+                                      newComment,
+                                    ],
+                                  }
+                                : p
+                            )
+                          );
+                          setNewCommentText((prev) => ({
+                            ...prev,
+                            [post.id]: "",
+                          }));
+                        }}
+                      >
+                        <input
+                          type="text"
+                          className={`flex-1 px-3 py-1 rounded-full border focus:outline-none ${getThemeClasses(
+                            "bg-white border-gray-300",
+                            "bg-gray-800 border-gray-700 text-gray-100"
+                          )}`}
+                          placeholder="Add a comment..."
+                          value={newCommentText[post.id] || ""}
+                          onChange={(e) =>
+                            setNewCommentText((prev) => ({
+                              ...prev,
+                              [post.id]: e.target.value,
+                            }))
+                          }
+                        />
+                        <button
+                          type="submit"
+                          className={getThemeClasses(
+                            "bg-orange-500 text-white px-3 py-1 rounded-full font-semibold text-xs",
+                            "bg-orange-600 text-white px-3 py-1 rounded-full font-semibold text-xs"
+                          )}
+                        >
+                          Submit
+                        </button>
+                      </form>
+                    </div>
+                  )}
                 </div>
               </div>
             ))
