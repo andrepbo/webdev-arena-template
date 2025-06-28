@@ -276,27 +276,49 @@ const App = () => {
     alert("Feature coming soon!");
   };
 
+  // handleVote: toggles between up/down/none and updates upvotes accordingly
   const handleVote = (postId: number, voteType: "up" | "down") => {
     setPosts(
       posts.map((post) => {
-        if (post.id === postId) {
-          if (post.voteStatus === voteType) {
-            return {
-              ...post,
-              upvotes: post.upvotes + (voteType === "up" ? -1 : 1),
-              voteStatus: "none",
-            };
+        if (post.id !== postId) return post;
+        // Current status
+        const prevStatus = post.voteStatus;
+        let newStatus: "up" | "down" | "none" = prevStatus;
+        let upvoteDelta = 0;
+        if (voteType === "up") {
+          if (prevStatus === "up") {
+            // Remove upvote
+            newStatus = "none";
+            upvoteDelta = -1;
+          } else if (prevStatus === "down") {
+            // Change from downvote to upvote
+            newStatus = "up";
+            upvoteDelta = 2;
+          } else {
+            // Add upvote
+            newStatus = "up";
+            upvoteDelta = 1;
           }
-
-          let newUpvotes = post.upvotes;
-          if (post.voteStatus === "up") newUpvotes--;
-          if (post.voteStatus === "down") newUpvotes++;
-
-          newUpvotes += voteType === "up" ? 1 : -1;
-
-          return { ...post, upvotes: newUpvotes, voteStatus: voteType };
+        } else if (voteType === "down") {
+          if (prevStatus === "down") {
+            // Remove downvote
+            newStatus = "none";
+            upvoteDelta = 1;
+          } else if (prevStatus === "up") {
+            // Change from upvote to downvote
+            newStatus = "down";
+            upvoteDelta = -2;
+          } else {
+            // Add downvote
+            newStatus = "down";
+            upvoteDelta = -1;
+          }
         }
-        return post;
+        return {
+          ...post,
+          upvotes: post.upvotes + upvoteDelta,
+          voteStatus: newStatus,
+        };
       })
     );
   };
@@ -714,7 +736,7 @@ const App = () => {
                       : "Untitled Post"),
                   imageUrl: newPostImageUrl,
                   linkUrl: newPostLinkUrl,
-                  upvotes: 1,
+                  upvotes: 0,
                   comments: 0,
                   voteStatus: "none",
                   liked: false,
@@ -822,20 +844,34 @@ const App = () => {
                   <div className="flex items-center space-x-2 ">
                     <button
                       onClick={() => handleVote(post.id, "up")}
-                      className={`p-1 rounded-full ${getThemeClasses(
-                        "hover:bg-green-200 bg-green-100",
-                        "hover:bg-green-700 bg-green-600"
-                      )} ${post.voteStatus === "up" ? "text-green-700" : ""}`}
+                      className={`p-1 rounded-full ${
+                        post.voteStatus === "up"
+                          ? getThemeClasses(
+                              "bg-green-400 text-white",
+                              "bg-green-500 text-white"
+                            )
+                          : getThemeClasses(
+                              "hover:bg-green-200 bg-green-100 text-green-700",
+                              "hover:bg-green-700 bg-green-600"
+                            )
+                      }`}
                     >
                       <ArrowUp className="w-5 h-5" />
                     </button>
                     <span>{post.upvotes}</span>
                     <button
                       onClick={() => handleVote(post.id, "down")}
-                      className={`p-1 rounded-full ${getThemeClasses(
-                        "hover:bg-red-200 bg-red-100",
-                        "hover:bg-red-600 bg-red-400"
-                      )} ${post.voteStatus === "down" ? "text-red-500" : ""}`}
+                      className={`p-1 rounded-full ${
+                        post.voteStatus === "down"
+                          ? getThemeClasses(
+                              "bg-red-400 text-white",
+                              "bg-red-500 text-white"
+                            )
+                          : getThemeClasses(
+                              "hover:bg-red-200 bg-red-100 text-red-500",
+                              "hover:bg-red-600 bg-red-400"
+                            )
+                      }`}
                     >
                       <ArrowDown className="w-5 h-5" />
                     </button>
