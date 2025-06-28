@@ -9,7 +9,7 @@ import {
   LayoutDashboard,
   MoreHorizontal,
   TrendingUp,
-  Image,
+  Image as ImageIcon,
   Link,
   Menu,
   X,
@@ -1660,7 +1660,7 @@ const CreatePostArea = ({
                 className="hidden"
                 onChange={handleFileChange}
               />
-              <Image className="w-5 h-5" />
+              <ImageIcon className="w-5 h-5" />
             </label>
             <button
               className={`cursor-pointer p-2 rounded-full ${getThemeClasses(
