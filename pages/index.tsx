@@ -209,14 +209,6 @@ export default function Dashboard() {
                   </svg>
                   <span>Add Project</span>
                 </button>
-
-                {/* Import Data button */}
-                <button
-                  onClick={() => toast.info("Coming soon...")}
-                  className="border border-green-700 text-green-700 px-4 py-2 rounded-full hover:bg-green-700 hover:text-white transition"
-                >
-                  Import Data
-                </button>
               </div>
             </div>
 
