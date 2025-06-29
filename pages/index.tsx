@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast, Toaster } from "sonner";
 import { Montserrat, Poppins } from "next/font/google";
 import { Heart, Key } from "lucide-react";
 
@@ -383,7 +384,10 @@ const Header: React.FC = () => {
         </ul>
 
         <div className="hidden items-center gap-4 md:flex">
-          <button className="bg-[#e6a06a] flex items-center gap-2 text-[#18151c] px-6 py-3 rounded-full font-normal text-sm hover:bg-[#e6a06a] transition">
+          <button
+            className="bg-[#e6a06a] flex items-center gap-2 text-[#18151c] px-6 py-3 rounded-full font-normal text-sm hover:bg-[#e6a06a] transition"
+            onClick={() => toast.info("Coming soon...")}
+          >
             Sign In
           </button>
         </div>
@@ -471,7 +475,10 @@ const Header: React.FC = () => {
           </li>
 
           <li>
-            <button className="bg-[#e6a06a] flex items-center gap-2 text-[#18151c] px-6 py-2 rounded-full font-normal text-sm hover:bg-[#e6a06a] transition">
+            <button
+              className="bg-[#e6a06a] flex items-center gap-2 text-[#18151c] px-6 py-2 rounded-full font-normal text-sm hover:bg-[#e6a06a] transition"
+              onClick={() => toast.info("Coming soon...")}
+            >
               Sign In
             </button>
           </li>
@@ -509,7 +516,10 @@ const HeroSection: React.FC = () => (
       <span className="block">OF NFTS</span>
     </h1>
     <div className="flex gap-4 mb-10 justify-center">
-      <button className="bg-[#e6a06a] text-[#18151c] px-6 py-3 rounded-full font-normal text-lg hover:bg-[#e6a06a] transition">
+      <button
+        className="bg-[#e6a06a] text-[#18151c] px-6 py-3 rounded-full font-normal text-lg hover:bg-[#e6a06a] transition"
+        onClick={() => toast.info("Coming soon...")}
+      >
         Get Started
       </button>
     </div>
@@ -545,7 +555,7 @@ const HeroSection: React.FC = () => (
       </svg>
       {/* Stats content */}
       <div
-        className={`relative flex justify-between items-center max-w-5xl mx-auto w-full px-10 py-8 translate-y-[100px] ${montserrat.className}`}
+        className={`relative flex justify-between items-center max-w-5xl mx-auto w-full px-10 py-8 translate-y-[240px] ${montserrat.className}`}
         style={{ zIndex: 30 }}
       >
         <div className="flex flex-col items-center">
@@ -705,7 +715,10 @@ const PopularNFTSection: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                <button className="px-6 mt-4 border-2 border-[#e6a06a] dark:bg-[#e6a06a] bg-[#e6a06a] dark:text-[#18151c] text-black font-normal py-3 rounded-full text-sm mb-6 hover:bg-[#e6a06a] transition">
+                <button
+                  className="px-6 mt-4 border-2 border-[#e6a06a] dark:bg-[#e6a06a] bg-[#e6a06a] dark:text-[#18151c] text-black font-normal py-3 rounded-full text-sm mb-6 hover:bg-[#e6a06a] transition"
+                  onClick={() => toast.info("Coming soon...")}
+                >
                   Place a bid
                 </button>
               </div>
@@ -1323,6 +1336,7 @@ const NFTMarketplacePage: React.FC = () => {
           }
         `}</style>
       </div>
+      <Toaster richColors />
     </>
   );
 };
