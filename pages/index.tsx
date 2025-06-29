@@ -116,52 +116,62 @@ export default function Dashboard() {
         <main className="flex-1 w-full bg-transparent p-4 md:p-8">
           {/* Header */}
           <div className="bg-gray-100 rounded-xl p-4 mb-6">
-            <header className="flex justify-between items-center">
-              <div className="relative flex items-center">
-                <button
-                  className="md:hidden p-2"
-                  onClick={() => setShowMobileMenu(!showMobileMenu)}
-                >
-                  <svg
-                    className="w-6 h-6 text-gray-700"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
+            <header>
+              <div className="w-full">
+                {/* Top row: hamburger, bell, avatar */}
+                <div className="flex items-center justify-between w-full mb-2 md:mb-0">
+                  <div className="flex items-center">
+                    <button
+                      className="md:hidden p-2"
+                      onClick={() => setShowMobileMenu(!showMobileMenu)}
+                    >
+                      <svg
+                        className="w-6 h-6 text-gray-700"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 6h16M4 12h16M4 18h16"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <BellIcon
+                      className="w-6 h-6 text-gray-500 cursor-pointer"
+                      onClick={() => toast.info("Coming soon...")}
                     />
-                  </svg>
-                </button>
-                <div className="relative">
-                  <SearchIcon className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search task"
-                    className="pl-10 pr-4 py-2 border rounded-full w-64"
-                  />
+                    <div className="flex items-center space-x-2 shrink-0">
+                      <img
+                        src="https://i.pravatar.cc/40"
+                        alt="User avatar"
+                        className="rounded-full w-10 h-10"
+                      />
+                      <div className="hidden lg:block">
+                        <p className="text-sm font-medium text-black">
+                          Totok Michael
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          tmichael20@mail.com
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <BellIcon
-                  className="w-6 h-6 text-gray-500 cursor-pointer"
-                  onClick={() => toast.info("Coming soon...")}
-                />
-                <div className="flex items-center space-x-2">
-                  <img
-                    src="https://i.pravatar.cc/40"
-                    alt="User avatar"
-                    className="rounded-full w-10 h-10"
-                  />
-                  <div className="hidden lg:block">
-                    <p className="text-sm font-medium text-black">
-                      Totok Michael
-                    </p>
-                    <p className="text-xs text-gray-500">tmichael20@mail.com</p>
+                {/* Search input row */}
+                <div className="w-full">
+                  <div className="relative w-full">
+                    <SearchIcon className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search task"
+                      className="pl-10 pr-4 py-2 border rounded-full w-full md:w-64"
+                    />
                   </div>
                 </div>
               </div>
@@ -169,7 +179,7 @@ export default function Dashboard() {
           </div>
 
           {showMobileMenu && (
-            <div className="md:hidden mt-4 space-y-4">
+            <div className="md:hidden mt-4 space-y-4 mb-6">
               <SidebarItem
                 icon={<HomeIcon className="h-5 w-5" />}
                 text="Dashboard"
