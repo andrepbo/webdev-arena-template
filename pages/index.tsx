@@ -107,6 +107,7 @@ export default function Dashboard() {
   const [activeMenu, setActiveMenu] = useState("Dashboard");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   interface Project {
     id: string;
     title: string;
@@ -149,8 +150,24 @@ export default function Dashboard() {
     if (typeof window !== "undefined") {
       const storedProjects = localStorage.getItem("projects");
       if (storedProjects) {
-        const parsedProjects = JSON.parse(storedProjects);
-        setProjects(parsedProjects);
+        // Type-safe conversion for project status
+        type ProjectStatus = "pending" | "running" | "ended";
+        interface Project {
+          id: string;
+          title: string;
+          dueDate: string;
+          status: ProjectStatus;
+          icon?: React.ReactNode;
+        }
+        const validStatuses: ProjectStatus[] = ["pending", "running", "ended"];
+        const rawProjects = JSON.parse(storedProjects);
+        const typedProjects = (rawProjects as Project[]).map((p) => ({
+          ...p,
+          status: validStatuses.includes(p.status as ProjectStatus)
+            ? (p.status as ProjectStatus)
+            : "pending",
+        }));
+        setProjects(typedProjects);
       }
       const storedMembers = localStorage.getItem("members");
       if (storedMembers) {
@@ -411,7 +428,7 @@ export default function Dashboard() {
               </div>
               <div className="shrink-0">
                 <button
-                  onClick={() => toast.info("Coming soon...")}
+                  onClick={() => setShowAddProjectModal(true)}
                   className="flex items-center space-x-2 bg-gradient-to-r from-green-700 to-green-600 text-white px-4 py-2 rounded-full shadow hover:from-green-800 hover:to-green-700 transition"
                 >
                   <svg
@@ -785,7 +802,7 @@ export default function Dashboard() {
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-2 sm:space-y-0">
                   <h3 className="text-lg font-semibold text-black">Project</h3>
                   <button
-                    onClick={() => toast.info("Coming soon...")}
+                    onClick={() => setShowAddProjectModal(true)}
                     className="border border-green-700 text-green-700 rounded-full px-3 py-1 text-sm hover:bg-green-700 hover:text-white transition"
                   >
                     + New
@@ -896,6 +913,78 @@ export default function Dashboard() {
               className="mt-4 w-full py-2 px-4 bg-green-700 text-white rounded hover:bg-green-800 transition"
             >
               Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showAddProjectModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-sm shadow-lg">
+            <h2 className="text-xl font-bold text-black mb-4">
+              Add New Project
+            </h2>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const form = e.target as HTMLFormElement;
+                const title = (
+                  form.elements.namedItem("title") as HTMLInputElement
+                ).value;
+                const dueDate = (
+                  form.elements.namedItem("dueDate") as HTMLInputElement
+                ).value;
+                const newProject = {
+                  id: `project-${Date.now()}`,
+                  title,
+                  dueDate,
+                  status: "pending",
+                };
+                const updated = [...projects, newProject];
+                localStorage.setItem("projects", JSON.stringify(updated));
+                // Validate status before setting projects
+                const validStatuses = ["pending", "running", "ended"] as const;
+                const typed = updated.map((p) => ({
+                  ...p,
+                  status: validStatuses.includes(
+                    p.status as (typeof validStatuses)[number]
+                  )
+                    ? (p.status as (typeof validStatuses)[number])
+                    : "pending",
+                }));
+                setProjects(typed);
+                setShowAddProjectModal(false);
+              }}
+            >
+              <div className="mb-4">
+                <label className="block text-black mb-1">Project Title</label>
+                <input
+                  name="title"
+                  className="w-full px-4 py-2 border rounded-md bg-white text-gray-900 placeholder-gray-400 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-black mb-1">Due Date</label>
+                <input
+                  type="date"
+                  name="dueDate"
+                  className="w-full px-4 py-2 border rounded-md bg-white text-gray-900 placeholder-gray-400 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full py-2 px-4 bg-green-700 text-white rounded hover:bg-green-800 transition"
+              >
+                Save
+              </button>
+            </form>
+            <button
+              onClick={() => setShowAddProjectModal(false)}
+              className="mt-4 w-full py-2 px-4 bg-gray-200 text-black rounded hover:bg-gray-300 transition"
+            >
+              Cancel
             </button>
           </div>
         </div>
