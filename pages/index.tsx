@@ -886,15 +886,15 @@ export default function Dashboard() {
                   <div className="flex flex-col sm:flex-row sm:justify-around items-start sm:items-center w-full mt-4 text-sm gap-2 sm:gap-0">
                     <div className="flex items-center space-x-1">
                       <span className="w-3 h-3 rounded-full bg-green-600"></span>
-                      <span>Completed</span>
+                      <span className="text-gray-700">Completed</span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <span className="w-3 h-3 rounded-full bg-yellow-600"></span>
-                      <span>In Progress</span>
+                      <span className="text-gray-700">In Progress</span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <span className="w-3 h-3 rounded-full bg-gray-400"></span>
-                      <span>Pending</span>
+                      <span className="text-gray-700">Pending</span>
                     </div>
                   </div>
                 </div>
