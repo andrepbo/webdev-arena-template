@@ -18,6 +18,7 @@ import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function Dashboard() {
   const [activeMenu, setActiveMenu] = React.useState("Dashboard");
+  const [showMobileMenu, setShowMobileMenu] = React.useState(false);
 
   const dataBar = [
     { day: "S", value: 20 },
@@ -32,93 +33,118 @@ export default function Dashboard() {
   return (
     <>
       <div
-        className={`flex ${inter.className} bg-transparent min-h-screen p-4`}
+        className={`flex flex-col md:flex-row ${inter.className} bg-transparent min-h-screen p-4`}
       >
         {/* Sidebar */}
-        <aside className="bg-gray-100 w-64 h-fit p-6 flex flex-col justify-between rounded-xl sticky top-4">
-          <div>
-            <h1 className="text-2xl font-bold text-green-700 mb-10">Donezo</h1>
+        <div className="hidden md:block">
+          <aside className="bg-gray-100 w-full md:w-64 h-fit p-6 flex flex-col justify-between rounded-xl sticky top-4 mb-4 md:mb-0">
+            <div>
+              <h1 className="text-2xl font-bold text-green-700 mb-10">
+                Donezo
+              </h1>
 
-            {/* Menu Section */}
-            <div className="mb-12">
-              <p className="text-xs uppercase tracking-wide text-gray-500 mb-4">
-                Menu
-              </p>
-              <nav className="space-y-4">
-                <SidebarItem
-                  icon={<HomeIcon className="h-5 w-5" />}
-                  text="Dashboard"
-                  activeMenu={activeMenu}
-                  setActiveMenu={setActiveMenu}
-                />
-                <SidebarItem
-                  icon={<ClipboardListIcon className="h-5 w-5" />}
-                  text="Tasks"
-                  activeMenu={activeMenu}
-                  setActiveMenu={setActiveMenu}
-                />
-                <SidebarItem
-                  icon={<CalendarIcon className="h-5 w-5" />}
-                  text="Calendar"
-                  activeMenu={activeMenu}
-                  setActiveMenu={setActiveMenu}
-                />
-                <SidebarItem
-                  icon={<ChartBarIcon className="h-5 w-5" />}
-                  text="Analytics"
-                  activeMenu={activeMenu}
-                  setActiveMenu={setActiveMenu}
-                />
-                <SidebarItem
-                  icon={<Users2Icon className="h-5 w-5" />}
-                  text="Team"
-                  activeMenu={activeMenu}
-                  setActiveMenu={setActiveMenu}
-                />
-              </nav>
-            </div>
+              {/* Menu Section */}
+              <div className="mb-12">
+                <p className="text-xs uppercase tracking-wide text-gray-500 mb-4">
+                  Menu
+                </p>
+                <nav className="space-y-4">
+                  <SidebarItem
+                    icon={<HomeIcon className="h-5 w-5" />}
+                    text="Dashboard"
+                    activeMenu={activeMenu}
+                    setActiveMenu={setActiveMenu}
+                  />
+                  <SidebarItem
+                    icon={<ClipboardListIcon className="h-5 w-5" />}
+                    text="Tasks"
+                    activeMenu={activeMenu}
+                    setActiveMenu={setActiveMenu}
+                  />
+                  <SidebarItem
+                    icon={<CalendarIcon className="h-5 w-5" />}
+                    text="Calendar"
+                    activeMenu={activeMenu}
+                    setActiveMenu={setActiveMenu}
+                  />
+                  <SidebarItem
+                    icon={<ChartBarIcon className="h-5 w-5" />}
+                    text="Analytics"
+                    activeMenu={activeMenu}
+                    setActiveMenu={setActiveMenu}
+                  />
+                  <SidebarItem
+                    icon={<Users2Icon className="h-5 w-5" />}
+                    text="Team"
+                    activeMenu={activeMenu}
+                    setActiveMenu={setActiveMenu}
+                  />
+                </nav>
+              </div>
 
-            {/* General Section */}
-            <div className="mb-12">
-              <p className="text-xs uppercase tracking-wide text-gray-500 mb-4">
-                General
-              </p>
-              <nav className="space-y-4">
-                <SidebarItem
-                  icon={<CogIcon className="h-5 w-5" />}
-                  text="Settings"
-                  activeMenu={activeMenu}
-                  setActiveMenu={setActiveMenu}
-                />
-                <SidebarItem
-                  icon={<MailIcon className="h-5 w-5" />}
-                  text="Help"
-                  activeMenu={activeMenu}
-                  setActiveMenu={setActiveMenu}
-                />
-                <SidebarItem
-                  icon={<LogOutIcon className="h-5 w-5" />}
-                  text="Logout"
-                  activeMenu={activeMenu}
-                  setActiveMenu={setActiveMenu}
-                />
-              </nav>
+              {/* General Section */}
+              <div className="mb-12">
+                <p className="text-xs uppercase tracking-wide text-gray-500 mb-4">
+                  General
+                </p>
+                <nav className="space-y-4">
+                  <SidebarItem
+                    icon={<CogIcon className="h-5 w-5" />}
+                    text="Settings"
+                    activeMenu={activeMenu}
+                    setActiveMenu={setActiveMenu}
+                  />
+                  <SidebarItem
+                    icon={<MailIcon className="h-5 w-5" />}
+                    text="Help"
+                    activeMenu={activeMenu}
+                    setActiveMenu={setActiveMenu}
+                  />
+                  <SidebarItem
+                    icon={<LogOutIcon className="h-5 w-5" />}
+                    text="Logout"
+                    activeMenu={activeMenu}
+                    setActiveMenu={setActiveMenu}
+                  />
+                </nav>
+              </div>
             </div>
-          </div>
-        </aside>
+          </aside>
+        </div>
 
         {/* Main */}
-        <main className="flex-1 bg-transparent p-8">
+        <main className="flex-1 w-full bg-transparent p-4 md:p-8">
           {/* Header */}
           <div className="bg-gray-100 rounded-xl p-4 mb-6">
             <header className="flex justify-between items-center">
-              <div className="relative">
-                <SearchIcon className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search task"
-                  className="pl-10 pr-4 py-2 border rounded-full w-64"
-                />
+              <div className="relative flex items-center">
+                <button
+                  className="md:hidden p-2"
+                  onClick={() => setShowMobileMenu(!showMobileMenu)}
+                >
+                  <svg
+                    className="w-6 h-6 text-gray-700"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                </button>
+                <div className="relative">
+                  <SearchIcon className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search task"
+                    className="pl-10 pr-4 py-2 border rounded-full w-64"
+                  />
+                </div>
               </div>
               <div className="flex items-center space-x-4">
                 <BellIcon
@@ -141,6 +167,59 @@ export default function Dashboard() {
               </div>
             </header>
           </div>
+
+          {showMobileMenu && (
+            <div className="md:hidden mt-4 space-y-4">
+              <SidebarItem
+                icon={<HomeIcon className="h-5 w-5" />}
+                text="Dashboard"
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+              />
+              <SidebarItem
+                icon={<ClipboardListIcon className="h-5 w-5" />}
+                text="Tasks"
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+              />
+              <SidebarItem
+                icon={<CalendarIcon className="h-5 w-5" />}
+                text="Calendar"
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+              />
+              <SidebarItem
+                icon={<ChartBarIcon className="h-5 w-5" />}
+                text="Analytics"
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+              />
+              <SidebarItem
+                icon={<Users2Icon className="h-5 w-5" />}
+                text="Team"
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+              />
+              <SidebarItem
+                icon={<CogIcon className="h-5 w-5" />}
+                text="Settings"
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+              />
+              <SidebarItem
+                icon={<MailIcon className="h-5 w-5" />}
+                text="Help"
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+              />
+              <SidebarItem
+                icon={<LogOutIcon className="h-5 w-5" />}
+                text="Logout"
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+              />
+            </div>
+          )}
 
           <div className="bg-gray-100 rounded-xl p-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
