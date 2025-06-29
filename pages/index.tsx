@@ -117,30 +117,28 @@ export default function Dashboard() {
           {/* Header */}
           <div className="bg-gray-100 rounded-xl p-4 mb-6">
             <header>
-              <div className="w-full">
-                {/* Top row: hamburger, bell, avatar */}
-                <div className="flex items-center justify-between w-full mb-2 md:mb-0">
-                  <div className="flex items-center">
-                    <button
-                      className="md:hidden p-2"
-                      onClick={() => setShowMobileMenu(!showMobileMenu)}
+              <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                {/* Mobile menu and right content on small screens */}
+                <div className="w-full flex items-center justify-between md:hidden">
+                  <button
+                    className=""
+                    onClick={() => setShowMobileMenu(!showMobileMenu)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-gray-700"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
                     >
-                      <svg
-                        className="w-6 h-6 text-gray-700"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 6h16M4 12h16M4 18h16"
-                        />
-                      </svg>
-                    </button>
-                  </div>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 6h16M4 12h16M4 18h16"
+                      />
+                    </svg>
+                  </button>
                   <div className="flex items-center space-x-4">
                     <BellIcon
                       className="w-6 h-6 text-gray-500 cursor-pointer"
@@ -152,26 +150,40 @@ export default function Dashboard() {
                         alt="User avatar"
                         className="rounded-full w-10 h-10"
                       />
-                      <div className="hidden lg:block">
-                        <p className="text-sm font-medium text-black">
-                          Totok Michael
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          tmichael20@mail.com
-                        </p>
-                      </div>
                     </div>
                   </div>
                 </div>
-                {/* Search input row */}
-                <div className="w-full">
+                {/* Search input */}
+                <div className="flex-1">
                   <div className="relative w-full">
                     <SearchIcon className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
                     <input
                       type="text"
                       placeholder="Search task"
-                      className="pl-10 pr-4 py-2 border rounded-full w-full md:w-64"
+                      className="pl-10 pr-4 py-2 border rounded-full w-full"
                     />
+                  </div>
+                </div>
+                {/* Notification and Profile for md+ screens */}
+                <div className="hidden md:flex items-center space-x-4">
+                  <BellIcon
+                    className="w-6 h-6 text-gray-500 cursor-pointer"
+                    onClick={() => toast.info("Coming soon...")}
+                  />
+                  <div className="flex items-center space-x-2 shrink-0">
+                    <img
+                      src="https://i.pravatar.cc/40"
+                      alt="User avatar"
+                      className="rounded-full w-10 h-10"
+                    />
+                    <div className="hidden lg:block">
+                      <p className="text-sm font-medium text-black">
+                        Totok Michael
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        tmichael20@mail.com
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
