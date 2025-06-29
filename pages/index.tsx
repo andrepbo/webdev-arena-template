@@ -128,6 +128,9 @@ export default function Dashboard() {
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
+  // Search state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<Project[]>([]);
 
   // Time Tracker state
   const [isRunning, setIsRunning] = useState(false);
@@ -383,12 +386,51 @@ export default function Dashboard() {
                 {/* Search input */}
                 <div className="flex-1">
                   <div className="relative w-full">
-                    <SearchIcon className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search task"
-                      className="pl-10 pr-4 py-2 border rounded-full w-full"
-                    />
+                    <div className="relative">
+                      <SearchIcon className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Search task"
+                        className="w-full rounded px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 pl-10"
+                        value={searchTerm}
+                        onChange={(e) => {
+                          const term = e.target.value;
+                          setSearchTerm(term);
+                          if (term.trim() === "") {
+                            setSearchResults([]);
+                          } else {
+                            const results = projects.filter((p) =>
+                              p.title.toLowerCase().includes(term.toLowerCase())
+                            );
+                            setSearchResults(results);
+                          }
+                        }}
+                      />
+                      {searchTerm && (
+                        <button
+                          onClick={() => {
+                            setSearchTerm("");
+                            setSearchResults([]);
+                          }}
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                    {searchResults.length > 0 && (
+                      <ul className="absolute mt-1 bg-white dark:bg-gray-900 shadow-md rounded w-full max-h-60 overflow-y-auto z-50">
+                        {searchResults.map((proj) => (
+                          <li
+                            key={proj.id}
+                            onClick={() => toast.info("Coming soon...")}
+                            className="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white"
+                          >
+                            {proj.title}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </div>
                 {/* Notification and Profile for md+ screens */}
