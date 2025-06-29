@@ -64,6 +64,7 @@ const initialMembers = [
     avatar: "https://i.pravatar.cc/40?img=5",
     project: "Build Dashboard",
     status: "Completed",
+    email: "alexandra.deff@example.com",
   },
   {
     id: "member-2",
@@ -105,6 +106,7 @@ const initialMembers = [
 export default function Dashboard() {
   const [activeMenu, setActiveMenu] = useState("Dashboard");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
   interface Project {
     id: string;
     title: string;
@@ -119,10 +121,14 @@ export default function Dashboard() {
     avatar: string;
     project: string;
     status: "Completed" | "In Progress" | "Pending";
+    email?: string;
   }
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
+
+  // The logged-in user is the first member
+  const loggedInUser = members[0];
 
   // Populate initial data for localStorage if missing or empty
   useEffect(() => {
@@ -294,9 +300,10 @@ export default function Dashboard() {
                     />
                     <div className="flex items-center space-x-2 shrink-0">
                       <img
-                        src="https://i.pravatar.cc/40"
+                        src={loggedInUser?.avatar}
                         alt="User avatar"
                         className="rounded-full w-10 h-10"
+                        onClick={() => setShowProfileModal(true)}
                       />
                     </div>
                   </div>
@@ -320,16 +327,17 @@ export default function Dashboard() {
                   />
                   <div className="flex items-center space-x-2 shrink-0">
                     <img
-                      src="https://i.pravatar.cc/40"
+                      src={loggedInUser?.avatar}
                       alt="User avatar"
                       className="rounded-full w-10 h-10"
+                      onClick={() => setShowProfileModal(true)}
                     />
                     <div className="hidden lg:block">
                       <p className="text-sm font-medium text-black">
-                        Totok Michael
+                        {loggedInUser?.name}
                       </p>
                       <p className="text-xs text-gray-500">
-                        tmichael20@mail.com
+                        {loggedInUser?.email}
                       </p>
                     </div>
                   </div>
@@ -854,6 +862,44 @@ export default function Dashboard() {
         </main>
       </div>
       <Toaster richColors />
+      {showProfileModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-sm shadow-lg">
+            <h2 className="text-xl font-bold text-black mb-4">User Profile</h2>
+            <div className="flex items-center space-x-4 mb-4">
+              <img
+                src={loggedInUser?.avatar}
+                alt="User avatar"
+                className="rounded-full w-16 h-16"
+              />
+              <div>
+                <p className="text-black font-semibold">{loggedInUser?.name}</p>
+                <p className="text-gray-500 text-sm">{loggedInUser?.email}</p>
+              </div>
+            </div>
+            <div className="mt-4 text-sm text-black space-y-1">
+              <p>
+                <span className="font-medium">Working on:</span>{" "}
+                {loggedInUser?.project}
+              </p>
+              <p>
+                <span className="font-medium">Status:</span>{" "}
+                {loggedInUser?.status}
+              </p>
+              <p>
+                <span className="font-medium">Member ID:</span>{" "}
+                {loggedInUser?.id}
+              </p>
+            </div>
+            <button
+              onClick={() => setShowProfileModal(false)}
+              className="mt-4 w-full py-2 px-4 bg-green-700 text-white rounded hover:bg-green-800 transition"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
