@@ -1,3 +1,5 @@
+import { Inter } from "next/font/google";
+const inter = Inter({ subsets: ["latin"] });
 import React from "react";
 import {
   SearchIcon,
@@ -27,7 +29,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="flex font-inter bg-white min-h-screen p-4">
+    <div className={`flex ${inter.className} bg-white min-h-screen p-4`}>
       {/* Sidebar */}
       <aside className="bg-gray-100 w-64 h-fit p-6 flex flex-col justify-between rounded-xl sticky top-4">
         <div>
