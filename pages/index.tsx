@@ -103,44 +103,6 @@ export default function Dashboard() {
               </nav>
             </div>
           </div>
-
-          <div className="bg-gradient-to-br from-green-900 to-black rounded-xl p-4 text-white relative overflow-hidden">
-            {/* Icon top-left */}
-            <div className="bg-white bg-opacity-10 rounded-full p-2 w-8 h-8 flex items-center justify-center mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-            </div>
-
-            {/* Text */}
-            <h4 className="text-lg font-semibold">
-              Download <span className="font-normal">our</span>
-              <br />
-              Mobile App
-            </h4>
-            <p className="text-sm text-gray-300 mt-2 mb-4">
-              Get easy in another way
-            </p>
-
-            {/* Button */}
-            <button className="bg-green-700 hover:bg-green-800 text-white font-medium w-full py-2 rounded-full">
-              Download
-            </button>
-
-            {/* Optional background pattern or shape */}
-            <div className="absolute inset-0 bg-[url('/your-shape.svg')] bg-cover bg-center opacity-10 pointer-events-none rounded-xl"></div>
-          </div>
         </aside>
 
         {/* Main */}
