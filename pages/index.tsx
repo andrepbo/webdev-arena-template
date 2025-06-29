@@ -108,6 +108,7 @@ export default function Dashboard() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   interface Project {
     id: string;
     title: string;
@@ -284,7 +285,7 @@ export default function Dashboard() {
         </div>
 
         {/* Main */}
-        <main className="flex-1 w-full bg-transparent p-4 md:p-8">
+        <main className="flex-1 w-full bg-transparent p-4 md:px-6 md:py-0">
           {/* Header */}
           <div className="bg-gray-100 rounded-xl p-4 mb-6">
             <header>
@@ -679,7 +680,10 @@ export default function Dashboard() {
                   <h3 className="text-lg font-semibold text-black">
                     Team Collaboration
                   </h3>
-                  <button className="border border-green-700 text-green-700 rounded-full px-3 py-1 text-sm hover:bg-green-700 hover:text-white transition">
+                  <button
+                    className="border border-green-700 text-green-700 rounded-full px-3 py-1 text-sm hover:bg-green-700 hover:text-white transition"
+                    onClick={() => setShowAddMemberModal(true)}
+                  >
                     + Add Member
                   </button>
                 </div>
@@ -983,6 +987,103 @@ export default function Dashboard() {
             <button
               onClick={() => setShowAddProjectModal(false)}
               className="mt-4 w-full py-2 px-4 bg-gray-200 text-black rounded hover:bg-gray-300 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Add Member Modal */}
+      {showAddMemberModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-full max-w-sm shadow-lg">
+            <h2 className="text-xl font-bold text-black dark:text-white mb-4">
+              Add New Member
+            </h2>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const form = e.target as HTMLFormElement;
+                const name = (
+                  form.elements.namedItem("name") as HTMLInputElement
+                ).value;
+                const email = (
+                  form.elements.namedItem("email") as HTMLInputElement
+                ).value;
+                const project = (
+                  form.elements.namedItem("project") as HTMLInputElement
+                ).value;
+                const newMember = {
+                  id: `member-${Date.now()}`,
+                  name,
+                  email,
+                  project,
+                  avatar:
+                    "https://i.pravatar.cc/40?img=" +
+                    Math.floor(Math.random() * 70),
+                  status: "Active",
+                };
+                const updated = [...members, newMember];
+                localStorage.setItem("members", JSON.stringify(updated));
+                // Validate member status before setting members
+                const validMemberStatuses = [
+                  "Completed",
+                  "In Progress",
+                  "Pending",
+                ] as const;
+                const typedMembers = updated.map((m) => ({
+                  ...m,
+                  status: validMemberStatuses.includes(
+                    m.status as (typeof validMemberStatuses)[number]
+                  )
+                    ? (m.status as (typeof validMemberStatuses)[number])
+                    : "Pending",
+                }));
+                setMembers(typedMembers);
+                setShowAddMemberModal(false);
+              }}
+            >
+              <div className="mb-4">
+                <label className="block text-black dark:text-white mb-1">
+                  Full Name
+                </label>
+                <input
+                  name="name"
+                  className="w-full border border-gray-300 dark:border-gray-700 rounded px-3 py-2 dark:bg-gray-800 dark:text-white"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-black dark:text-white mb-1">
+                  Email
+                </label>
+                <input
+                  name="email"
+                  type="email"
+                  className="w-full border border-gray-300 dark:border-gray-700 rounded px-3 py-2 dark:bg-gray-800 dark:text-white"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-black dark:text-white mb-1">
+                  Project
+                </label>
+                <input
+                  name="project"
+                  className="w-full border border-gray-300 dark:border-gray-700 rounded px-3 py-2 dark:bg-gray-800 dark:text-white"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full py-2 px-4 bg-green-700 text-white rounded hover:bg-green-800 transition"
+              >
+                Save
+              </button>
+            </form>
+            <button
+              onClick={() => setShowAddMemberModal(false)}
+              className="mt-4 w-full py-2 px-4 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition"
             >
               Cancel
             </button>
