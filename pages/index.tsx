@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import { toast, Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"] });
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   SearchIcon,
   BellIcon,
@@ -128,6 +128,60 @@ export default function Dashboard() {
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
+
+  // Time Tracker state
+  const [isRunning, setIsRunning] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("elapsedTime");
+      return stored ? Number(stored) : 0;
+    }
+    return 0;
+  });
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem("elapsedTime", elapsedTime.toString());
+  }, [elapsedTime]);
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
+  const startTimer = () => {
+    if (!intervalRef.current) {
+      setIsRunning(true);
+      intervalRef.current = setInterval(() => {
+        setElapsedTime((prev) => prev + 1);
+      }, 1000);
+    }
+  };
+
+  const pauseTimer = () => {
+    setIsRunning(false);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
+  const resetTimer = () => {
+    pauseTimer();
+    setElapsedTime(0);
+  };
+
+  const formatTime = (seconds: number) => {
+    const h = Math.floor(seconds / 3600)
+      .toString()
+      .padStart(2, "0");
+    const m = Math.floor((seconds % 3600) / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = (seconds % 60).toString().padStart(2, "0");
+    return `${h}:${m}:${s}`;
+  };
 
   // The logged-in user is the first member
   const loggedInUser = members[0];
@@ -688,53 +742,55 @@ export default function Dashboard() {
                   </button>
                 </div>
 
-                <div className="space-y-4">
-                  {members.length > 0 ? (
-                    members.map((member, i) => (
-                      <div
-                        key={i}
-                        className="flex flex-col xs:flex-row xs:items-center justify-between gap-2"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <img
-                            src={member.avatar}
-                            alt=""
-                            className="w-10 h-10 rounded-full"
-                          />
-                          <div>
-                            <p className="text-black font-medium">
-                              {member.name}
-                            </p>
-                            <p className="text-gray-500 text-sm break-words max-w-xs xs:max-w-[180px]">
-                              Working on{" "}
-                              <span className="text-black">
-                                {member.project}
+                <div className="max-h-[340px] overflow-y-auto">
+                  <div className="space-y-4">
+                    {members.length > 0 ? (
+                      members.map((member, i) => (
+                        <div
+                          key={i}
+                          className="flex flex-col xs:flex-row xs:items-center justify-between gap-2"
+                        >
+                          <div className="flex items-center space-x-3">
+                            <img
+                              src={member.avatar}
+                              alt=""
+                              className="w-10 h-10 rounded-full"
+                            />
+                            <div>
+                              <p className="text-black font-medium">
+                                {member.name}
+                              </p>
+                              <p className="text-gray-500 text-sm break-words max-w-xs xs:max-w-[180px]">
+                                Working on{" "}
+                                <span className="text-black">
+                                  {member.project}
+                                </span>
+                              </p>
+                            </div>
+                          </div>
+                          <div className="xs:mt-0 mt-1">
+                            {member.status === "Completed" && (
+                              <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
+                                Completed
                               </span>
-                            </p>
+                            )}
+                            {member.status === "In Progress" && (
+                              <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
+                                In Progress
+                              </span>
+                            )}
+                            {member.status === "Pending" && (
+                              <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
+                                Pending
+                              </span>
+                            )}
                           </div>
                         </div>
-                        <div className="xs:mt-0 mt-1">
-                          {member.status === "Completed" && (
-                            <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
-                              Completed
-                            </span>
-                          )}
-                          {member.status === "In Progress" && (
-                            <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
-                              In Progress
-                            </span>
-                          )}
-                          {member.status === "Pending" && (
-                            <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
-                              Pending
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 text-sm">No members yet.</p>
-                  )}
+                      ))
+                    ) : (
+                      <p className="text-gray-500 text-sm">No members yet.</p>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -813,68 +869,58 @@ export default function Dashboard() {
                   </button>
                 </div>
 
-                <div className="space-y-4">
-                  {projects.length > 0 ? (
-                    projects.map((project, i) => (
-                      <div key={i} className="flex items-start space-x-3">
-                        <div className="text-xl">{project.icon}</div>
-                        <div>
-                          <p className="text-black font-medium">
-                            {project.title}
-                          </p>
-                          <p className="text-gray-500 text-sm">
-                            Due date: {project.dueDate}
-                          </p>
+                <div className="max-h-[340px] overflow-y-auto">
+                  <div className="space-y-4">
+                    {projects.length > 0 ? (
+                      projects.map((project, i) => (
+                        <div key={i} className="flex items-start space-x-3">
+                          <div className="text-xl">{project.icon}</div>
+                          <div>
+                            <p className="text-black font-medium">
+                              {project.title}
+                            </p>
+                            <p className="text-gray-500 text-sm">
+                              Due date: {project.dueDate}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 text-sm">
-                      No projects yet. Create one to get started.
-                    </p>
-                  )}
+                      ))
+                    ) : (
+                      <p className="text-gray-500 text-sm">
+                        No projects yet. Create one to get started.
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Time Tracker */}
               <div className="bg-green-900 rounded-xl p-6 text-center text-white relative overflow-hidden flex flex-col justify-center">
-                {/* Background pattern or gradient effect if desired */}
                 <h3 className="text-lg font-semibold mb-4">Time Tracker</h3>
-                <p className="text-3xl font-bold mb-4">01:24:08</p>
-                <div className="flex justify-center space-x-4">
-                  <button className="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-3">
-                    {/* Pause Icon */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 mx-auto"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+                <div className="text-lg font-semibold text-center dark:text-white mb-4">
+                  {formatTime(elapsedTime)}
+                </div>
+                <div className="flex justify-center space-x-2 mt-2">
+                  {!isRunning ? (
+                    <button
+                      onClick={startTimer}
+                      className="px-3 py-1 bg-green-600 text-white rounded"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10 9v6m4-6v6"
-                      />
-                    </svg>
-                  </button>
-                  <button className="bg-red-600 hover:bg-red-700 rounded-full p-3">
-                    {/* Stop Icon */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 mx-auto"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+                      Start
+                    </button>
+                  ) : (
+                    <button
+                      onClick={pauseTimer}
+                      className="px-3 py-1 bg-yellow-500 text-white rounded"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
+                      Pause
+                    </button>
+                  )}
+                  <button
+                    onClick={resetTimer}
+                    className="px-3 py-1 bg-red-600 text-white rounded"
+                  >
+                    Reset
                   </button>
                 </div>
               </div>
