@@ -244,16 +244,16 @@ export default function Dashboard() {
           )}
 
           <div className="bg-gray-100 rounded-xl p-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-black">Dashboard</h2>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6 mb-6">
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold text-black mb-1">
+                  Dashboard
+                </h2>
                 <p className="text-gray-500">
                   Plan, prioritize, and accomplish your tasks with ease.
                 </p>
               </div>
-
-              <div className="flex space-x-4 mt-4 md:mt-0">
-                {/* Add Project button */}
+              <div className="shrink-0">
                 <button
                   onClick={() => toast.info("Coming soon...")}
                   className="flex items-center space-x-2 bg-gradient-to-r from-green-700 to-green-600 text-white px-4 py-2 rounded-full shadow hover:from-green-800 hover:to-green-700 transition"
@@ -277,7 +277,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               {/* Total Projects */}
               <div className="bg-gradient-to-br from-green-700 to-green-600 rounded-xl p-4 text-white relative overflow-hidden">
                 <div className="flex justify-between items-start">
@@ -430,7 +430,7 @@ export default function Dashboard() {
             </div>
 
             {/* Project Analytics and Progress */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-6 sm:gap-8 mb-8">
               <div className="bg-white rounded-xl p-4 shadow">
                 <h3 className="text-lg font-semibold mb-4 text-black">
                   Project Analytics
@@ -479,7 +479,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-6 sm:gap-8 mb-8">
               {/* Team Collaboration */}
               <div className="bg-white rounded-xl p-4 shadow">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-2 sm:space-y-0">
@@ -520,7 +520,7 @@ export default function Dashboard() {
                   ].map((member, i) => (
                     <div
                       key={i}
-                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+                      className="flex flex-col xs:flex-row xs:items-center justify-between gap-2"
                     >
                       <div className="flex items-center space-x-3">
                         <img
@@ -532,25 +532,25 @@ export default function Dashboard() {
                           <p className="text-black font-medium">
                             {member.name}
                           </p>
-                          <p className="text-gray-500 text-sm">
+                          <p className="text-gray-500 text-sm break-words max-w-xs xs:max-w-[180px]">
                             Working on{" "}
                             <span className="text-black">{member.task}</span>
                           </p>
                         </div>
                       </div>
-                      <div>
+                      <div className="xs:mt-0 mt-1">
                         {member.status === "Completed" && (
-                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">
+                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
                             Completed
                           </span>
                         )}
                         {member.status === "In Progress" && (
-                          <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs">
+                          <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
                             In Progress
                           </span>
                         )}
                         {member.status === "Pending" && (
-                          <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs">
+                          <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
                             Pending
                           </span>
                         )}
@@ -609,7 +609,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8">
               {/* Project Section */}
               <div className="bg-white rounded-xl p-4 shadow">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-2 sm:space-y-0">
