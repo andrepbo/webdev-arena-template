@@ -110,7 +110,7 @@ export default function Dashboard() {
         {/* Main */}
         <main className="flex-1 bg-transparent p-8">
           {/* Header */}
-          <div className="bg-transparent rounded-xl p-4 mb-6">
+          <div className="bg-gray-100 rounded-xl p-4 mb-6">
             <header className="flex justify-between items-center">
               <div className="relative">
                 <SearchIcon className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
