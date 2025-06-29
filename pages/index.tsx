@@ -157,7 +157,7 @@ export default function Dashboard() {
                     alt="User avatar"
                     className="rounded-full w-10 h-10"
                   />
-                  <div>
+                  <div className="hidden lg:block">
                     <p className="text-sm font-medium text-black">
                       Totok Michael
                     </p>
