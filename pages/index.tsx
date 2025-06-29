@@ -142,7 +142,7 @@ export default function Dashboard() {
             </header>
           </div>
 
-          <div className="bg-transparent rounded-xl p-6">
+          <div className="bg-gray-100 rounded-xl p-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
               <div>
                 <h2 className="text-2xl font-bold text-black">Dashboard</h2>
