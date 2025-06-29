@@ -418,7 +418,7 @@ export default function Dashboard() {
             </div>
 
             {/* Project Analytics and Progress */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               <div className="bg-white rounded-xl p-4 shadow">
                 <h3 className="text-lg font-semibold mb-4 text-black">
                   Project Analytics
@@ -467,7 +467,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               {/* Team Collaboration */}
               <div className="bg-white rounded-xl p-4 shadow">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-2 sm:space-y-0">
@@ -597,10 +597,10 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               {/* Project Section */}
               <div className="bg-white rounded-xl p-4 shadow">
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-2 sm:space-y-0">
                   <h3 className="text-lg font-semibold text-black">Project</h3>
                   <button
                     onClick={() => toast.info("Coming soon...")}
