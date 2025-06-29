@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import { toast, Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"] });
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   SearchIcon,
   BellIcon,
@@ -16,18 +16,166 @@ import {
 } from "lucide-react";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 
+// Default projects to initialize if localStorage is empty
+const initialProjects = [
+  {
+    id: "project-1",
+    title: "Build Dashboard",
+    dueDate: "2024-11-30",
+    status: "pending",
+  },
+  {
+    id: "project-2",
+    title: "Optimize Page Load",
+    dueDate: "2024-12-05",
+    status: "running",
+  },
+  {
+    id: "project-3",
+    title: "UI Redesign",
+    dueDate: "2024-12-07",
+    status: "ended",
+  },
+  {
+    id: "project-4",
+    title: "Database Migration",
+    dueDate: "2024-12-08",
+    status: "running",
+  },
+  {
+    id: "project-5",
+    title: "Accessibility Audit",
+    dueDate: "2024-12-10",
+    status: "pending",
+  },
+  {
+    id: "project-6",
+    title: "SEO Optimization",
+    dueDate: "2024-12-11",
+    status: "ended",
+  },
+];
+
+// Default members to initialize if localStorage is empty
+const initialMembers = [
+  {
+    id: "member-1",
+    name: "Alexandra Deff",
+    avatar: "https://i.pravatar.cc/40?img=5",
+    project: "Build Dashboard",
+    status: "Completed",
+  },
+  {
+    id: "member-2",
+    name: "Edwin Adenike",
+    avatar: "https://i.pravatar.cc/40?img=6",
+    project: "Optimize Page Load",
+    status: "In Progress",
+  },
+  {
+    id: "member-3",
+    name: "Maria Gonzalez",
+    avatar: "https://i.pravatar.cc/40?img=8",
+    project: "UI Redesign",
+    status: "Completed",
+  },
+  {
+    id: "member-4",
+    name: "Liam Chen",
+    avatar: "https://i.pravatar.cc/40?img=9",
+    project: "Database Migration",
+    status: "In Progress",
+  },
+  {
+    id: "member-5",
+    name: "Ava Becker",
+    avatar: "https://i.pravatar.cc/40?img=10",
+    project: "Accessibility Audit",
+    status: "Pending",
+  },
+  {
+    id: "member-6",
+    name: "Ravi Patel",
+    avatar: "https://i.pravatar.cc/40?img=11",
+    project: "SEO Optimization",
+    status: "Completed",
+  },
+];
+
 export default function Dashboard() {
-  const [activeMenu, setActiveMenu] = React.useState("Dashboard");
-  const [showMobileMenu, setShowMobileMenu] = React.useState(false);
+  const [activeMenu, setActiveMenu] = useState("Dashboard");
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  interface Project {
+    id: string;
+    title: string;
+    dueDate: string;
+    status: "pending" | "running" | "ended";
+    icon?: React.ReactNode;
+  }
+
+  interface Member {
+    id: string;
+    name: string;
+    avatar: string;
+    project: string;
+    status: "Completed" | "In Progress" | "Pending";
+  }
+
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
+
+  // Populate initial data for localStorage if missing or empty
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hasProjects = localStorage.getItem("projects");
+      if (!hasProjects || hasProjects === "[]") {
+        localStorage.setItem("projects", JSON.stringify(initialProjects));
+      }
+      const hasMembers = localStorage.getItem("members");
+      if (!hasMembers || hasMembers === "[]") {
+        localStorage.setItem("members", JSON.stringify(initialMembers));
+      }
+    }
+  }, []);
+
+  // Sync state from localStorage after ensuring initial population
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedProjects = localStorage.getItem("projects");
+      if (storedProjects) {
+        const parsedProjects = JSON.parse(storedProjects);
+        setProjects(parsedProjects);
+      }
+      const storedMembers = localStorage.getItem("members");
+      if (storedMembers) {
+        setMembers(JSON.parse(storedMembers));
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("projects", JSON.stringify(projects));
+    }
+  }, [projects]);
+
+  // Compute dynamic project status counts
+  const endedProjects = projects.filter((p: Project) => p.status === "ended");
+  const runningProjects = projects.filter(
+    (p: Project) => p.status === "running"
+  );
+  const pendingProjects = projects.filter(
+    (p: Project) => p.status === "pending"
+  );
 
   const dataBar = [
-    { day: "S", value: 20 },
-    { day: "M", value: 74 },
-    { day: "T", value: 65 },
-    { day: "W", value: 90 },
-    { day: "T", value: 30 },
-    { day: "F", value: 45 },
-    { day: "S", value: 50 },
+    { day: "Sun", value: 1 },
+    { day: "Mon", value: 4 },
+    { day: "Tue", value: 2 },
+    { day: "Wed", value: 5 },
+    { day: "Thu", value: 3 },
+    { day: "Fri", value: 6 },
+    { day: "Sat", value: 2 },
   ];
 
   return (
@@ -283,7 +431,7 @@ export default function Dashboard() {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm">Total Projects</p>
-                    <p className="text-2xl font-bold mt-2">24</p>
+                    <p className="text-2xl font-bold mt-2">{projects.length}</p>
                     <div className="flex items-center text-xs mt-2">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -324,7 +472,9 @@ export default function Dashboard() {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm">Ended Projects</p>
-                    <p className="text-2xl font-bold mt-2">10</p>
+                    <p className="text-2xl font-bold mt-2">
+                      {endedProjects.length}
+                    </p>
                     <div className="flex items-center text-xs mt-2 text-green-600">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -365,7 +515,9 @@ export default function Dashboard() {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm">Running Projects</p>
-                    <p className="text-2xl font-bold mt-2">12</p>
+                    <p className="text-2xl font-bold mt-2">
+                      {runningProjects.length}
+                    </p>
                     <div className="flex items-center text-xs mt-2 text-green-600">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -406,7 +558,9 @@ export default function Dashboard() {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm">Pending Project</p>
-                    <p className="text-2xl font-bold mt-2">2</p>
+                    <p className="text-2xl font-bold mt-2">
+                      {pendingProjects.length}
+                    </p>
                     <div className="flex items-center text-xs mt-2 text-green-600">
                       <span>On Discuss</span>
                     </div>
@@ -438,7 +592,21 @@ export default function Dashboard() {
                 <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={dataBar}>
                     <XAxis dataKey="day" />
-                    <Tooltip />
+                    <Tooltip
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length > 0) {
+                          return (
+                            <div className="bg-white p-2 rounded shadow text-sm text-black">
+                              <p className="font-medium">
+                                Day: {payload[0].payload.day}
+                              </p>
+                              <p>Projects: {payload[0].value}</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
                     <Bar dataKey="value" fill="#16a34a" radius={[5, 5, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -492,71 +660,52 @@ export default function Dashboard() {
                 </div>
 
                 <div className="space-y-4">
-                  {[
-                    {
-                      name: "Alexandra Deff",
-                      task: "Github Project Repository",
-                      status: "Completed",
-                      avatar: "https://i.pravatar.cc/40?img=1",
-                    },
-                    {
-                      name: "Edwin Adenike",
-                      task: "Integrate User Authentication System",
-                      status: "In Progress",
-                      avatar: "https://i.pravatar.cc/40?img=2",
-                    },
-                    {
-                      name: "Isaac Oluwatemilorun",
-                      task: "Develop Search and Filter Functionality",
-                      status: "Pending",
-                      avatar: "https://i.pravatar.cc/40?img=3",
-                    },
-                    {
-                      name: "David Oshodi",
-                      task: "Responsive Layout for Homepage",
-                      status: "In Progress",
-                      avatar: "https://i.pravatar.cc/40?img=4",
-                    },
-                  ].map((member, i) => (
-                    <div
-                      key={i}
-                      className="flex flex-col xs:flex-row xs:items-center justify-between gap-2"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <img
-                          src={member.avatar}
-                          alt=""
-                          className="w-10 h-10 rounded-full"
-                        />
-                        <div>
-                          <p className="text-black font-medium">
-                            {member.name}
-                          </p>
-                          <p className="text-gray-500 text-sm break-words max-w-xs xs:max-w-[180px]">
-                            Working on{" "}
-                            <span className="text-black">{member.task}</span>
-                          </p>
+                  {members.length > 0 ? (
+                    members.map((member, i) => (
+                      <div
+                        key={i}
+                        className="flex flex-col xs:flex-row xs:items-center justify-between gap-2"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <img
+                            src={member.avatar}
+                            alt=""
+                            className="w-10 h-10 rounded-full"
+                          />
+                          <div>
+                            <p className="text-black font-medium">
+                              {member.name}
+                            </p>
+                            <p className="text-gray-500 text-sm break-words max-w-xs xs:max-w-[180px]">
+                              Working on{" "}
+                              <span className="text-black">
+                                {member.project}
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                        <div className="xs:mt-0 mt-1">
+                          {member.status === "Completed" && (
+                            <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
+                              Completed
+                            </span>
+                          )}
+                          {member.status === "In Progress" && (
+                            <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
+                              In Progress
+                            </span>
+                          )}
+                          {member.status === "Pending" && (
+                            <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
+                              Pending
+                            </span>
+                          )}
                         </div>
                       </div>
-                      <div className="xs:mt-0 mt-1">
-                        {member.status === "Completed" && (
-                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
-                            Completed
-                          </span>
-                        )}
-                        {member.status === "In Progress" && (
-                          <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
-                            In Progress
-                          </span>
-                        )}
-                        {member.status === "Pending" && (
-                          <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs whitespace-nowrap">
-                            Pending
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-sm">No members yet.</p>
+                  )}
                 </div>
               </div>
 
@@ -581,7 +730,13 @@ export default function Dashboard() {
                         className="text-green-600"
                         stroke="currentColor"
                         strokeWidth="4"
-                        strokeDasharray="41, 100"
+                        strokeDasharray={`${
+                          projects.length > 0
+                            ? Math.round(
+                                (endedProjects.length / projects.length) * 100
+                              )
+                            : 0
+                        }, 100`}
                         fill="none"
                         d="M18 2.0845
                a 15.9155 15.9155 0 0 1 0 31.831
@@ -589,7 +744,14 @@ export default function Dashboard() {
                       />
                     </svg>
                   </div>
-                  <p className="text-3xl font-bold text-black mt-2">41%</p>
+                  <p className="text-3xl font-bold text-black mt-2">
+                    {projects.length > 0
+                      ? Math.round(
+                          (endedProjects.length / projects.length) * 100
+                        )
+                      : 0}
+                    %
+                  </p>
                   <p className="text-sm text-gray-500">Project Ended</p>
                   <div className="flex flex-col sm:flex-row sm:justify-around items-start sm:items-center w-full mt-4 text-sm gap-2 sm:gap-0">
                     <div className="flex items-center space-x-1">
@@ -623,43 +785,25 @@ export default function Dashboard() {
                 </div>
 
                 <div className="space-y-4">
-                  {[
-                    {
-                      name: "Develop API Endpoints",
-                      date: "Nov 26, 2024",
-                      icon: "🖋️",
-                    },
-                    {
-                      name: "Onboarding Flow",
-                      date: "Nov 28, 2024",
-                      icon: "🧭",
-                    },
-                    {
-                      name: "Build Dashboard",
-                      date: "Nov 30, 2024",
-                      icon: "🗂️",
-                    },
-                    {
-                      name: "Optimize Page Load",
-                      date: "Dec 5, 2024",
-                      icon: "⚡",
-                    },
-                    {
-                      name: "Cross-Browser Testing",
-                      date: "Dec 6, 2024",
-                      icon: "🧪",
-                    },
-                  ].map((project, i) => (
-                    <div key={i} className="flex items-start space-x-3">
-                      <div className="text-xl">{project.icon}</div>
-                      <div>
-                        <p className="text-black font-medium">{project.name}</p>
-                        <p className="text-gray-500 text-sm">
-                          Due date: {project.date}
-                        </p>
+                  {projects.length > 0 ? (
+                    projects.map((project, i) => (
+                      <div key={i} className="flex items-start space-x-3">
+                        <div className="text-xl">{project.icon}</div>
+                        <div>
+                          <p className="text-black font-medium">
+                            {project.title}
+                          </p>
+                          <p className="text-gray-500 text-sm">
+                            Due date: {project.dueDate}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-sm">
+                      No projects yet. Create one to get started.
+                    </p>
+                  )}
                 </div>
               </div>
 
