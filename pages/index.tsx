@@ -705,7 +705,10 @@ export default function Dashboard() {
                     Time : 02.00 pm - 04.00 pm
                   </p>
 
-                  <button className="flex items-center justify-center bg-gradient-to-r from-green-700 to-green-600 text-white w-full py-2 rounded-full space-x-2 hover:from-green-800 hover:to-green-700 transition">
+                  <button
+                    className="flex items-center justify-center bg-gradient-to-r from-green-700 to-green-600 text-white w-full py-2 rounded-full space-x-2 hover:from-green-800 hover:to-green-700 transition"
+                    onClick={() => toast.info("Coming soon...")}
+                  >
                     {/* Video icon */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -1153,10 +1156,18 @@ function SidebarItem({
 }) {
   const isActive = activeMenu === text;
 
+  // For menu items except "Dashboard", override click to show toast.
+  const handleClick =
+    text === "Dashboard"
+      ? () => setActiveMenu(text)
+      : () => {
+          toast.info("Coming soon...");
+        };
+
   return (
     <a
       href="#"
-      onClick={() => setActiveMenu(text)}
+      onClick={handleClick}
       className={`flex items-center space-x-3 text-gray-700 hover:text-green-700 relative pl-2 ${
         isActive ? "font-semibold text-green-700" : ""
       }`}
