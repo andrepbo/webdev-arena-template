@@ -502,7 +502,7 @@ const HeroSection: React.FC = () => (
       <div className="absolute top-1/2 right-10 w-10 h-2 bg-gradient-to-l from-black to-transparent rounded-full blur-sm -rotate-6" />
     </div>
     <h1
-      className={`text-4xl md:text-5xl lg:text-7xl font-extrabold text-black text-center mb-6 drop-shadow-xl ${montserrat.className}`}
+      className={`text-4xl md:text-5xl lg:text-7xl font-extrabold text-black text-center mb-6 drop-shadow-xl mt-40 ${montserrat.className}`}
     >
       <span className="block">UNLOCK</span>
       <span className="block">THE POWER</span>
