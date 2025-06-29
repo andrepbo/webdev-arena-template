@@ -579,7 +579,7 @@ export default function Dashboard() {
                   </div>
                   <p className="text-3xl font-bold text-black mt-2">41%</p>
                   <p className="text-sm text-gray-500">Project Ended</p>
-                  <div className="flex justify-around w-full mt-4 text-sm">
+                  <div className="flex flex-col sm:flex-row sm:justify-around items-start sm:items-center w-full mt-4 text-sm gap-2 sm:gap-0">
                     <div className="flex items-center space-x-1">
                       <span className="w-3 h-3 rounded-full bg-green-600"></span>
                       <span>Completed</span>
