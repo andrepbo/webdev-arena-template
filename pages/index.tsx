@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast, Toaster } from "sonner";
 import {
   ArrowUp,
   ArrowDown,
@@ -321,7 +322,7 @@ const App = () => {
   };
 
   const handleFeatureComingSoon = () => {
-    alert("Feature coming soon!");
+    toast.info("Feature coming soon!");
   };
 
   // handleVote: toggles between up/down/none and updates upvotes accordingly
@@ -820,10 +821,12 @@ const App = () => {
                     src={item.imageUrl}
                     alt={item.name}
                   />
-                  <span className="font-medium">
-                    <span className="text-orange-500">r/</span>
-                    {item.name}
-                  </span>
+                  <div className="flex flex-col w-0 flex-grow">
+                    <span className="font-medium text-xs sm:text-sm break-words leading-snug break-all max-w-full sm:max-w-[140px] md:max-w-[160px] lg:max-w-full">
+                      <span className="text-orange-500">r/</span>
+                      {item.name}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1323,6 +1326,7 @@ const App = () => {
           />
         </aside>
       </main>
+      <Toaster richColors position="top-right" />
     </div>
   );
 };
@@ -1502,7 +1506,7 @@ const CreatePostArea = ({
   const handleCreate = () => {
     // Allow post creation if a title is entered and at least one content field (text, image, or link) is present.
     if (!newPostTitle.trim()) {
-      alert("Please enter a title for your post.");
+      toast.info("Please enter a title for your post.");
       return;
     }
     // At least one meaningful content: title is always required, but allow post with only text (title).
@@ -1514,7 +1518,7 @@ const CreatePostArea = ({
       !newPostLinkUrl &&
       !selectedFile
     ) {
-      alert("Please enter some content for your post.");
+      toast.info("Please enter some content for your post.");
       return;
     }
     let imageUrl = newPostImageUrl;
@@ -1527,6 +1531,7 @@ const CreatePostArea = ({
       username: currentUser.name,
       userAvatarInitial: currentUser.avatarInitial,
       userAvatarColor: "bg-blue-500",
+      userAvatarUrl: currentUser.imageUrl,
       timestamp: "just now",
       title: newPostTitle,
       imageUrl: imageUrl,
