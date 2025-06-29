@@ -31,7 +31,9 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className={`flex ${inter.className} bg-white min-h-screen p-4`}>
+      <div
+        className={`flex ${inter.className} bg-transparent min-h-screen p-4`}
+      >
         {/* Sidebar */}
         <aside className="bg-gray-100 w-64 h-fit p-6 flex flex-col justify-between rounded-xl sticky top-4">
           <div>
@@ -106,9 +108,9 @@ export default function Dashboard() {
         </aside>
 
         {/* Main */}
-        <main className="flex-1 bg-gray-50 p-8">
+        <main className="flex-1 bg-transparent p-8">
           {/* Header */}
-          <div className="bg-gray-100 rounded-xl p-4 mb-6">
+          <div className="bg-transparent rounded-xl p-4 mb-6">
             <header className="flex justify-between items-center">
               <div className="relative">
                 <SearchIcon className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
@@ -140,7 +142,7 @@ export default function Dashboard() {
             </header>
           </div>
 
-          <div className="bg-gray-100 rounded-xl p-6">
+          <div className="bg-transparent rounded-xl p-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
               <div>
                 <h2 className="text-2xl font-bold text-black">Dashboard</h2>
