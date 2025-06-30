@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Toaster, toast } from "sonner";
 import {
   Search,
   Bell,
@@ -256,7 +257,10 @@ const OpenAlertsClassif: React.FC = () => {
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-200">
           Open alerts by classification
         </h2>
-        <select className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm px-2 py-1 rounded">
+        <select
+          onChange={() => toast.info("Coming soon..")}
+          className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm px-2 py-1 rounded"
+        >
           <option>Today</option>
           <option>Yesterday</option>
         </select>
@@ -450,7 +454,10 @@ const ThreatsTacticsCard: React.FC = () => {
             (Last 2 weeks)
           </span>
         </h2>
-        <select className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm px-2 py-1 rounded">
+        <select
+          onChange={() => toast.info("Coming soon..")}
+          className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm px-2 py-1 rounded"
+        >
           <option>All</option>
         </select>
       </div>
@@ -583,7 +590,10 @@ const ThreatsStatusCard: React.FC = () => {
     <div className="w-full h-[22rem] bg-gray-200 dark:bg-gradient-to-r dark:from-[#141315] dark:via-[#111012] dark:to-black rounded-lg p-4 flex flex-col text-gray-900 dark:text-gray-200 shadow-md">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Threats status</h2>
-        <button className="hover:bg-gray-300 dark:hover:bg-gray-800 p-1 rounded-full">
+        <button
+          onClick={() => toast.info("Coming soon..")}
+          className="hover:bg-gray-300 dark:hover:bg-gray-800 p-1 rounded-full"
+        >
           <MoreHorizontal className="text-gray-600 dark:text-gray-400" />
         </button>
       </div>
@@ -1162,56 +1172,21 @@ const Navbar: React.FC = () => {
   const userAvatar = "https://i.pravatar.cc/150?img=1";
 
   return (
-    <header className="relative bg-white dark:bg-black px-6 py-4 flex items-center justify-between">
-      <div className="flex items-center space-x-2">
-        <Shield className="w-6 h-6 text-gray-900 dark:text-white" />
-        <span className="text-xl font-bold text-gray-900 dark:text-white">
-          Fortexa
-        </span>
-      </div>
+    <>
+      <header className="relative bg-white dark:bg-black px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Shield className="w-6 h-6 text-gray-900 dark:text-white" />
+          <span className="text-xl font-bold text-gray-900 dark:text-white">
+            Fortexa
+          </span>
+        </div>
 
-      <div className="hidden md:flex items-center bg-gray-200 dark:bg-[#141315] rounded-md shadow-md px-4 py-1 space-x-6">
-        {links.map((label) => (
-          <a
-            key={label}
-            href="#"
-            className={`text-sm font-medium rounded-md px-3 py-1 ${
-              label === "Threats"
-                ? "bg-indigo-600 text-white dark:bg-gradient-to-r dark:from-purple-500 dark:to-indigo-500 dark:text-white"
-                : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-            }`}
-          >
-            {label}
-          </a>
-        ))}
-      </div>
-
-      <div className="flex items-center space-x-4">
-        <Search className="hidden md:block w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
-        <Bell className="hidden md:block w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
-        <Settings className="hidden md:block w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
-
-        <button
-          className="md:hidden text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-          onClick={() => setNavOpen((o) => !o)}
-        >
-          <Menu className="w-6 h-6" />
-        </button>
-
-        <img
-          src={userAvatar}
-          alt="avatar"
-          className="hidden md:block w-8 h-8 rounded-full"
-        />
-      </div>
-
-      {navOpen && (
-        <div className="absolute top-full right-6 mt-2 w-40 bg-gray-200 dark:bg-[#141315] rounded-md shadow-lg py-2 flex flex-col space-y-1 z-20">
+        <div className="hidden md:flex items-center bg-gray-200 dark:bg-[#141315] rounded-md shadow-md px-4 py-1 space-x-6">
           {links.map((label) => (
             <a
               key={label}
               href="#"
-              className={`block text-base font-medium px-4 py-2 rounded-md ${
+              className={`text-sm font-medium rounded-md px-3 py-1 ${
                 label === "Threats"
                   ? "bg-indigo-600 text-white dark:bg-gradient-to-r dark:from-purple-500 dark:to-indigo-500 dark:text-white"
                   : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
@@ -1220,15 +1195,72 @@ const Navbar: React.FC = () => {
               {label}
             </a>
           ))}
-          <div className="mt-1 border-t border-gray-300 dark:border-gray-700" />
-          <div className="flex justify-around pt-2">
-            <Search className="w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
-            <Bell className="w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
-            <Settings className="w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
-          </div>
         </div>
-      )}
-    </header>
+
+        <div className="flex items-center space-x-4">
+          <Search
+            onClick={() => toast.info("Coming soon..")}
+            className="hidden md:block w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer"
+          />
+          <Bell
+            onClick={() => toast.info("Coming soon..")}
+            className="hidden md:block w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer"
+          />
+          <Settings
+            onClick={() => toast.info("Coming soon..")}
+            className="hidden md:block w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer"
+          />
+
+          <button
+            className="md:hidden text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+            onClick={() => setNavOpen((o) => !o)}
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+
+          <img
+            onClick={() => toast.info("Coming soon..")}
+            src={userAvatar}
+            alt="avatar"
+            className="hidden md:block w-8 h-8 rounded-full cursor-pointer"
+          />
+        </div>
+
+        {navOpen && (
+          <div className="absolute top-full right-6 mt-2 w-40 bg-gray-200 dark:bg-[#141315] rounded-md shadow-lg py-2 flex flex-col space-y-1 z-20">
+            {links.map((label) => (
+              <a
+                key={label}
+                href="#"
+                className={`block text-base font-medium px-4 py-2 rounded-md ${
+                  label === "Threats"
+                    ? "bg-indigo-600 text-white dark:bg-gradient-to-r dark:from-purple-500 dark:to-indigo-500 dark:text-white"
+                    : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                }`}
+              >
+                {label}
+              </a>
+            ))}
+            <div className="mt-1 border-t border-gray-300 dark:border-gray-700" />
+            <div className="flex justify-around pt-2">
+              <Search
+                onClick={() => toast.info("Coming soon..")}
+                className="w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer"
+              />
+              <Bell
+                onClick={() => toast.info("Coming soon..")}
+                className="w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer"
+              />
+              <Settings
+                onClick={() => toast.info("Coming soon..")}
+                className="w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer"
+              />
+            </div>
+          </div>
+        )}
+      </header>
+      <Toaster richColors />
+    </>
   );
 };
 
