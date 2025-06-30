@@ -589,6 +589,17 @@ const PopularNFTSection: React.FC = () => {
   const [cardsToShow, setCardsToShow] = React.useState(1);
   const [page, setPage] = React.useState(0);
 
+  // Like button state for each NFT card by ID
+  const [likes, setLikes] = React.useState<Record<string, boolean>>({});
+
+  // Toggle like handler
+  const toggleLike = (id: string) => {
+    setLikes((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   React.useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) setCardsToShow(3);
@@ -682,47 +693,61 @@ const PopularNFTSection: React.FC = () => {
             onTouchEnd={onDragEnd}
             style={{ userSelect: "none" }}
           >
-            {visibleNFTs.map((nft) => (
-              <div
-                key={nft.id}
-                className="dark:bg-[#1f2326] shadow-xl bg-[#f8fafc] rounded-full flex flex-col items-center w-[340px] py-8 px-6 relative"
-              >
-                <div className="w-64 h-64 rounded-full overflow-hidden border-8 dark:border-[#18151c] border-[#f8fafc] flex items-center justify-center mb-6">
-                  <img
-                    src={nft.image}
-                    alt={nft.name}
-                    className="object-cover w-full h-full shadow-xls"
-                  />
-                </div>
-                <div className="flex items-center gap-3 mb-4 w-full justify-center">
-                  <img
-                    src={nft.image}
-                    alt={nft.name}
-                    className="w-10 h-10 rounded-full border-2 border-[#e6a06a]"
-                  />
-                  <div className="flex flex-col">
-                    <span className="font-bold text-sm dark:text-white text-black leading-tight truncate text-ellipsis max-w-[150px]">
-                      {nft.name}
-                    </span>
-                    <span className="text-xs dark:text-gray-400 text-black">
-                      {nft.creator}
-                    </span>
-                  </div>
-                  <div className="ml-auto flex items-center gap-1">
-                    <Heart className="dark:text-gray-400 text-black" />
-                    <span className="dark:text-gray-300 text-black text-sm">
-                      {nft.likes}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  className="px-6 mt-4 border-2 border-[#e6a06a] dark:bg-[#e6a06a] bg-[#e6a06a] dark:text-[#18151c] text-black font-normal py-3 rounded-full text-sm mb-6 hover:bg-[#e6a06a] transition"
-                  onClick={() => toast.info("Coming soon...")}
+            {visibleNFTs.map((nft) => {
+              return (
+                <div
+                  key={nft.id}
+                  className="dark:bg-[#1f2326] shadow-xl bg-[#f8fafc] rounded-full flex flex-col items-center w-[340px] py-8 px-6 relative"
                 >
-                  Place a bid
-                </button>
-              </div>
-            ))}
+                  <div className="w-64 h-64 rounded-full overflow-hidden border-8 dark:border-[#18151c] border-[#f8fafc] flex items-center justify-center mb-6">
+                    <img
+                      src={nft.image}
+                      alt={nft.name}
+                      className="object-cover w-full h-full shadow-xls"
+                    />
+                  </div>
+                  <div className="flex items-center gap-3 mb-4 w-full justify-center">
+                    <img
+                      src={nft.image}
+                      alt={nft.name}
+                      className="w-10 h-10 rounded-full border-2 border-[#e6a06a]"
+                    />
+                    <div className="flex flex-col">
+                      <span className="font-bold text-sm dark:text-white text-black leading-tight truncate text-ellipsis max-w-[150px]">
+                        {nft.name}
+                      </span>
+                      <span className="text-xs dark:text-gray-400 text-black">
+                        {nft.creator}
+                      </span>
+                    </div>
+                    <div className="ml-auto flex items-center gap-1">
+                      {/* Like button */}
+                      <button
+                        onClick={() => toggleLike(nft.id)}
+                        aria-label={likes[nft.id] ? "Unlike" : "Like"}
+                      >
+                        <Heart
+                          className={`w-5 h-5 transition-colors ${
+                            likes[nft.id]
+                              ? "fill-red-500 text-red-500"
+                              : "text-gray-400"
+                          }`}
+                        />
+                      </button>
+                      <span className="dark:text-gray-300 text-black text-sm">
+                        {nft.likes}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    className="px-6 mt-4 border-2 border-[#e6a06a] dark:bg-[#e6a06a] bg-[#e6a06a] dark:text-[#18151c] text-black font-normal py-3 rounded-full text-sm mb-6 hover:bg-[#e6a06a] transition"
+                    onClick={() => toast.info("Coming soon...")}
+                  >
+                    Place a bid
+                  </button>
+                </div>
+              );
+            })}
           </div>
           {/* Right Arrow */}
           <button
