@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Search,
   Bell,
@@ -202,7 +202,7 @@ const OpenAlertsClassif: React.FC = () => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(600);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       if (chartContainerRef.current) {
         setContainerWidth(chartContainerRef.current.offsetWidth);
