@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { toast, Toaster } from "sonner";
 import {
   Search,
   Bell,
@@ -125,10 +126,16 @@ const HomeSection = () => (
             goals.
           </p>
           <div className="flex flex-wrap gap-4">
-            <button className="px-8 py-4 bg-gradient-to-r from-[#b4e251] to-lime-400 text-white rounded-full font-bold hover:scale-105 transition-transform">
+            <button
+              className="px-8 py-4 bg-gradient-to-r from-[#b4e251] to-lime-400 text-white rounded-full font-bold hover:scale-105 transition-transform"
+              onClick={() => toast.info("Coming soon...")}
+            >
               Start Free Trial
             </button>
-            <button className="px-8 py-4 border-2 border-gray-900 rounded-full font-bold hover:bg-gray-900 hover:text-white transition-all">
+            <button
+              className="px-8 py-4 border-2 border-gray-900 rounded-full font-bold hover:bg-gray-900 hover:text-white transition-all"
+              onClick={() => toast.info("Coming soon...")}
+            >
               View Classes
             </button>
           </div>
@@ -229,7 +236,10 @@ const ServiceSection = () => {
                 {service.title}
               </h3>
               <p className="text-gray-600">{service.description}</p>
-              <button className="mt-6 flex items-center text-blue-600 font-medium hover:gap-2 transition-all gap-1">
+              <button
+                className="mt-6 flex items-center text-blue-600 font-medium hover:gap-2 transition-all gap-1"
+                onClick={() => toast.info("Coming soon...")}
+              >
                 Learn More <ChevronRight size={20} />
               </button>
             </div>
@@ -243,7 +253,10 @@ const ServiceSection = () => {
           <p className="text-xl mb-8 opacity-90">
             Join us today and get 50% off your first month!
           </p>
-          <button className="px-8 py-4 bg-white text-black rounded-full font-bold hover:scale-105 transition-transform">
+          <button
+            className="px-8 py-4 bg-white text-black rounded-full font-bold hover:scale-105 transition-transform"
+            onClick={() => toast.info("Coming soon...")}
+          >
             Claim Your Offer
           </button>
         </div>
@@ -327,7 +340,10 @@ const ClassesSection = () => {
                       <User size={16} /> {cls.trainer}
                     </p>
                   </div>
-                  <button className="bg-white text-black px-4 py-2 rounded-full font-medium hover:scale-105 transition-transform">
+                  <button
+                    className="bg-white text-black px-4 py-2 rounded-full font-medium hover:scale-105 transition-transform"
+                    onClick={() => toast.info("Coming soon...")}
+                  >
                     Book Now
                   </button>
                 </div>
@@ -337,7 +353,10 @@ const ClassesSection = () => {
         </div>
 
         <div className="text-center mt-12">
-          <button className="px-8 py-4 bg-black text-white rounded-full font-bold hover:scale-105 transition-transform">
+          <button
+            className="px-8 py-4 bg-black text-white rounded-full font-bold hover:scale-105 transition-transform"
+            onClick={() => toast.info("Coming soon...")}
+          >
             View Full Schedule
           </button>
         </div>
@@ -437,7 +456,10 @@ const ContactSection = () => (
                 placeholder="Your message..."
               />
             </div>
-            <button className="w-full py-4 bg-gradient-to-r from-lime-500 to-lime-300 text-white rounded-lg font-bold hover:scale-105 transition-transform">
+            <button
+              className="w-full py-4 bg-gradient-to-r from-lime-500 to-lime-300 text-white rounded-lg font-bold hover:scale-105 transition-transform"
+              onClick={() => toast.info("Coming soon...")}
+            >
               Send Message
             </button>
           </form>
@@ -693,7 +715,10 @@ const BlogSection = () => {
         {/* Blog Header */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-6xl font-black text-black">BLOG</h1>
-          <button className="flex items-center text-black hover:text-gray-900 text-md bg-gray-200 p-2 md:p-5 rounded-full">
+          <button
+            className="flex items-center text-black hover:text-gray-900 text-md bg-gray-200 p-2 md:p-5 rounded-full"
+            onClick={() => toast.info("Coming soon...")}
+          >
             Read Our Blog
             <ArrowRight size={16} className="ml-2" />
           </button>
@@ -1063,7 +1088,10 @@ const Footer = () => {
                 placeholder="Your email"
                 className="w-full px-4 py-2 bg-gray-900 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-lime-600"
               />
-              <button className="w-full px-4 py-2 bg-gradient-to-r from-lime-600 to-lime-500 rounded-lg font-medium hover:scale-105 transition-transform">
+              <button
+                className="w-full px-4 py-2 bg-gradient-to-r from-lime-600 to-lime-500 rounded-lg font-medium hover:scale-105 transition-transform"
+                onClick={() => toast.info("Coming soon...")}
+              >
                 Subscribe
               </button>
             </div>
@@ -1279,16 +1307,25 @@ export default function FitnessBlog() {
 
               {/* Actions */}
               <div className="flex items-center space-x-4">
-                <button className="text-gray-600 hover:text-gray-900">
+                <button
+                  className="text-gray-600 hover:text-gray-900"
+                  onClick={() => toast.info("Coming soon...")}
+                >
                   <Search size={20} />
                 </button>
-                <button className="text-gray-600 hover:text-gray-900 hidden md:block">
+                <button
+                  className="text-gray-600 hover:text-gray-900 hidden md:block"
+                  onClick={() => toast.info("Coming soon...")}
+                >
                   <Video size={20} />
                 </button>
 
                 <NotificationComponent />
 
-                <button className="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
+                <button
+                  className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+                  onClick={() => toast.info("Coming soon...")}
+                >
                   <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300">
                     <img
                       src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop"
@@ -1346,6 +1383,7 @@ export default function FitnessBlog() {
 
         <Footer />
       </div>
+      <Toaster richColors />
     </>
   );
 }
