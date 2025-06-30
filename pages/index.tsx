@@ -14,7 +14,6 @@ import {
   Cell,
 } from "recharts";
 import {
-  Search,
   Settings,
   HelpCircle,
   MessageCircle,
@@ -1109,16 +1108,6 @@ const App = () => {
           }}
         >
           <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8 mt-12">
-            {/* Search bar */}
-            <div className="flex items-center gap-2 bg-[rgba(0,255,255,0.08)] rounded-xl px-4 py-2.5 w-full lg:w-[320px] border border-[rgba(0,255,255,0.1)] hover:border-[rgba(0,255,255,0.2)] transition-colors">
-              <Search size={18} className="text-gray-400" />
-              <input
-                className="bg-transparent outline-none text-white placeholder-gray-400 w-full"
-                placeholder="Search"
-                onChange={() => handleFeatureClick("Search")}
-              />
-            </div>
-
             {/* Right side items */}
             <div className="flex items-center gap-4 lg:gap-6 w-full lg:w-auto justify-between lg:justify-start">
               <button
