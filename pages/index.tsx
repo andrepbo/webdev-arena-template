@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import useEmblaCarousel from "embla-carousel-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { toast, Toaster } from "sonner";
 import {
   ArrowRight,
   ChevronLeft,
@@ -665,7 +666,10 @@ export default function GameLaunchDashboard() {
                   Home
                   <span className="absolute left-0 -bottom-[2px] w-full h-[2px] rounded-full"></span>
                 </span>
-                <span className="flex items-center gap-2 text-gray-400 hover:text-white transition cursor-pointer">
+                <span
+                  className="flex items-center gap-2 text-gray-400 hover:text-white transition cursor-pointer"
+                  onClick={() => toast.info("Coming soon...")}
+                >
                   <Gift className="w-4 h-4" />
                   Bonuses
                 </span>
@@ -740,7 +744,10 @@ export default function GameLaunchDashboard() {
                 Home
               </span>
 
-              <span className="flex items-center gap-2 text-gray-400 hover:text-white transition cursor-pointer">
+              <span
+                className="flex items-center gap-2 text-gray-400 hover:text-white transition cursor-pointer"
+                onClick={() => toast.info("Coming soon...")}
+              >
                 <Gift className="w-4 h-4" />
                 Bonuses
               </span>
@@ -812,6 +819,7 @@ export default function GameLaunchDashboard() {
                   className={`w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-800 ${
                     isDarkMode ? "text-white" : "text-gray-900"
                   }`}
+                  onClick={() => toast.info("Coming soon...")}
                 >
                   <Gift className="w-4 h-4" /> Bonuses
                 </button>
@@ -1706,6 +1714,7 @@ export default function GameLaunchDashboard() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="mt-6 w-full cursor-pointer py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-medium transition-all duration-300"
+                  onClick={() => toast.info("Coming soon...")}
                 >
                   Claim $250 Welcome Bonus
                 </motion.button>
@@ -1903,6 +1912,7 @@ export default function GameLaunchDashboard() {
           </motion.div>
         )}
       </AnimatePresence>
+      <Toaster richColors />
     </div>
   );
 }
