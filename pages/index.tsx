@@ -709,7 +709,7 @@ const MoodTracker: React.FC = () => {
             key={m}
             type="button"
             onClick={() => setMood(m as Mood)}
-            className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] cursor-pointer min-w-[56px] md:min-h-[100px] py-[12px] justify-center w-full border-2 border-transparent
+            className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-500 ease-in-out cursor-pointer min-w-[56px] md:min-h-[100px] py-[12px] justify-center w-full border-2 border-transparent
               ${mood === m ? "scale-120" : ""}
               ${
                 mood === m && m === "neutral"
@@ -755,7 +755,7 @@ const MoodTracker: React.FC = () => {
       <button
         type="submit"
         onClick={addMoodEntry}
-        className="bg-[#111F4B] text-white dark:bg-[#8AE1FF] dark:text-[#000E38] font-black text-base px-5 py-[14px] leading-none rounded-[8px] transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] flex items-center justify-center gap-2 w-full min-h-[48px]  focus:outline-none focus-visible:ring-2 uppercase focus-visible:ring-cyan-400 hover:shadow-xl hover:scale-[1.04] hover:from-blue-500 hover:to-cyan-500"
+        className="bg-[#111F4B] text-white dark:bg-[#8AE1FF] dark:text-[#000E38] font-black text-base px-5 py-[14px] leading-none rounded-[8px] transition-all duration-500 ease-in-out flex items-center justify-center gap-2 w-full min-h-[48px]  focus:outline-none focus-visible:ring-2 uppercase focus-visible:ring-cyan-400 hover:shadow-xl hover:scale-[1.04] hover:from-blue-500 hover:to-cyan-500"
       >
         Log my Mood
       </button>
@@ -839,7 +839,7 @@ const MoodTracker: React.FC = () => {
             </div>
             <nav className="hidden lg:flex items-center gap-6 flex-shrink-0">
               <button
-                className={`text-[18px] text-[#111F4B] dark:text-white rounded-[10px] font-redular px-4 py-2  transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] 
+                className={`text-[18px] text-[#111F4B] dark:text-white rounded-[10px] font-redular px-4 py-2  transition-all duration-500 ease-in-out 
               ${
                 !showWeeklyChart
                   ? "bg-[#D1E4FF] dark:bg-[#1B3380]"
@@ -857,7 +857,7 @@ const MoodTracker: React.FC = () => {
                 Summary
               </button>
               <button
-                className={`text-[18px] text-[#111F4B] dark:text-white rounded-[10px] font-redular px-4 py-2  transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] 
+                className={`text-[18px] text-[#111F4B] dark:text-white rounded-[10px] font-redular px-4 py-2  transition-all duration-500 ease-in-out 
               ${
                 showWeeklyChart
                   ? "bg-[#D1E4FF] dark:bg-[#1B3380]"
@@ -898,7 +898,7 @@ const MoodTracker: React.FC = () => {
           <div className="relative flex flex-row flex-1 w-full gap-8">
             {/* Sidebar (desktop, always present, animated) */}
             <aside
-              className={`hidden lg:flex flex-col gap-8 sticky top-24 min-w-0 lg:max-w-[300px] xl:max-w-[408px]  flex-shrink-0 bg-transparent transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] lg:h-full xl:h-auto
+              className={`hidden lg:flex flex-col gap-8 sticky top-24 min-w-0 lg:max-w-[300px] xl:max-w-[408px]  flex-shrink-0 bg-transparent transition-all duration-500 ease-in-out lg:h-full xl:h-auto
             `}
             >
               <section className="bg-white min-w-[320px] dark:bg-[#102464] rounded-2xl border  border-neutral-200 dark:border-[#23232a] p-6 flex flex-col gap-6 transition-colors duration-300 w-full max-w-full">
@@ -991,7 +991,7 @@ const MoodTracker: React.FC = () => {
                       key={m}
                       type="button"
                       onClick={() => setMood(m as Mood)}
-                      className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all  ease-[cubic-bezier(.4,1.2,.6,1)] aspect-square cursor-pointer min-w-[56px] py-[12px] justify-center w-full border-2 border-transparent
+                      className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all  ease-in-out aspect-square cursor-pointer min-w-[56px] py-[12px] justify-center w-full border-2 border-transparent
                         ${mood === m ? "scale-120" : ""}
                         ${
                           mood === m && m === "neutral"
@@ -1041,7 +1041,7 @@ const MoodTracker: React.FC = () => {
                 <button
                   type="submit"
                   onClick={addMoodEntry}
-                  className="bg-[#111F4B] text-white dark:bg-[#8AE1FF] dark:text-[#000E38] font-black text-base px-5 py-[14px] leading-none rounded-[8px] transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] flex items-center justify-center gap-2 w-full min-h-[48px]  focus:outline-none focus-visible:ring-2 uppercase focus-visible:ring-cyan-400 hover:shadow-xl hover:scale-[1.04] hover:from-blue-500 hover:to-cyan-500"
+                  className="bg-[#111F4B] text-white dark:bg-[#8AE1FF] dark:text-[#000E38] font-black text-base px-5 py-[14px] leading-none rounded-[8px] transition-all duration-500 ease-in-out flex items-center justify-center gap-2 w-full min-h-[48px]  focus:outline-none focus-visible:ring-2 uppercase focus-visible:ring-cyan-400 hover:shadow-xl hover:scale-[1.04] hover:from-blue-500 hover:to-cyan-500"
                 >
                   Log my Mood
                 </button>
@@ -1067,7 +1067,7 @@ const MoodTracker: React.FC = () => {
                     <button
                       onClick={exportMoodData}
                       aria-label="Export mood data"
-                      className="p-2 rounded-full border border-transparent transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="p-2 rounded-full border border-transparent transition-all duration-500 ease-in-out hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400"
                       title="Export mood data"
                     >
                       <Upload className="w-5 h-5 text-[#111F4B] dark:text-white" />
@@ -1075,7 +1075,7 @@ const MoodTracker: React.FC = () => {
                     <button
                       onClick={shareMoodData}
                       aria-label="Share mood data"
-                      className="p-2 rounded-full border border-transparent transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="p-2 rounded-full border border-transparent transition-all duration-500 ease-in-out hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400"
                       title="Share mood data"
                     >
                       <Share2 className="w-5 h-5 text-[#111F4B] dark:text-white " />
@@ -1754,7 +1754,7 @@ const MoodTracker: React.FC = () => {
                       </button> */}
                       <button
                         onClick={resetTodayEntry}
-                        className="w-full px-[10px] py-[8px] rounded-[5px] text-[14px] uppercase font-semibold flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] cursor-pointer bg-[#111F4B] hover:scale-105 text-white dark:bg-[#8AE1FF] dark:text-[#000E38]"
+                        className="w-full px-[10px] py-[8px] rounded-[5px] text-[14px] uppercase font-semibold flex items-center justify-center transition-all duration-500 ease-in-out cursor-pointer bg-[#111F4B] hover:scale-105 text-white dark:bg-[#8AE1FF] dark:text-[#000E38]"
                       >
                         Reset
                       </button>
@@ -1774,7 +1774,7 @@ const MoodTracker: React.FC = () => {
                 .getElementById("main-content")
                 ?.scrollIntoView({ behavior: "smooth" });
             }}
-            className={`flex flex-col items-center gap-0.5 text-xs font-medium transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] hover:scale-110 ${
+            className={`flex flex-col items-center gap-0.5 text-xs font-medium transition-all duration-500 ease-in-out hover:scale-110 ${
               !showWeeklyChart
                 ? "text-cyan-600 dark:text-[#8AE1FF]"
                 : "text-[#111F4B] dark:text-white"
@@ -1790,7 +1790,7 @@ const MoodTracker: React.FC = () => {
                 .getElementById("main-content")
                 ?.scrollIntoView({ behavior: "smooth" });
             }}
-            className={`flex flex-col items-center gap-0.5 text-xs font-medium transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] hover:scale-110 ${
+            className={`flex flex-col items-center gap-0.5 text-xs font-medium transition-all duration-500 ease-in-out hover:scale-110 ${
               showWeeklyChart
                 ? "text-cyan-600 dark:text-[#8AE1FF]"
                 : "text-[#111F4B] dark:text-white"
@@ -1811,7 +1811,7 @@ const MoodTracker: React.FC = () => {
                 }, 200);
               }, 50);
             }}
-            className="flex flex-col items-center gap-0.5 text-xs font-medium text-[#111F4B] dark:text-white  transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] hover:scale-110"
+            className="flex flex-col items-center gap-0.5 text-xs font-medium text-[#111F4B] dark:text-white  transition-all duration-500 ease-in-out hover:scale-110"
           >
             <PlusCircle className="w-6 h-6 mb-0.5" />
             Add
@@ -1885,7 +1885,7 @@ const MoodTracker: React.FC = () => {
               </p>
               <button
                 onClick={() => setShowStreakModal(false)}
-                className={`w-full py-2 px-4 rounded-lg font-medium flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] cursor-pointer ${
+                className={`w-full py-2 px-4 rounded-lg font-medium flex items-center justify-center transition-all duration-500 ease-in-out cursor-pointer ${
                   darkMode
                     ? "bg-[#BBD2F2] hover:[#E0EDFF] hover:scale-105 text-[#111F4B]"
                     : "bg-[#111F4B] hover:[#496790] hover:scale-105 text-white"
@@ -1930,7 +1930,7 @@ const MoodTracker: React.FC = () => {
               </p>
               <button
                 onClick={() => setShowSuccessModal(false)}
-                className={`w-full py-2 px-4 rounded-lg font-medium flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] cursor-pointer uppercase ${
+                className={`w-full py-2 px-4 rounded-lg font-medium flex items-center justify-center transition-all duration-500 ease-in-out cursor-pointer uppercase ${
                   darkMode
                     ? "bg-[#BBD2F2] hover:[#E0EDFF] hover:scale-105 text-[#111F4B]"
                     : "bg-[#111F4B] hover:[#496790] hover:scale-105 text-white"
@@ -1972,7 +1972,7 @@ const MoodTracker: React.FC = () => {
               </p>
               <button
                 onClick={() => setShowErrorModal(false)}
-                className={`w-full py-2 px-4 rounded-lg font-medium flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(.4,1.2,.6,1)] cursor-pointer ${
+                className={`w-full py-2 px-4 rounded-lg font-medium flex items-center justify-center transition-all duration-500 ease-in-out cursor-pointer ${
                   darkMode
                     ? "bg-red-600 hover:bg-red-700 hover:scale-105 text-white"
                     : "bg-red-500 hover:bg-red-600 hover:scale-105 text-white"
