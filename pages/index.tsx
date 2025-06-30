@@ -122,6 +122,7 @@ type ChatInterfaceProps = {
 };
 
 const ChatInterface = ({ setIsChatVisible }: ChatInterfaceProps) => {
+  const { toast } = useToast();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
     {
@@ -223,7 +224,16 @@ const ChatInterface = ({ setIsChatVisible }: ChatInterfaceProps) => {
               <p className="text-sm font-bold">Privacy and Support</p>
               <p className="text-xs">Get Immediate Support</p>
             </div>
-            <button className="rounded-full w-9 h-9 justify-center bg-white text-xs flex items-center gap-1">
+            <button
+              className="rounded-full w-9 h-9 justify-center bg-white text-xs flex items-center gap-1"
+              onClick={() =>
+                toast({
+                  title: "Coming Soon!",
+                  description: "This feature is currently under development.",
+                  variant: "destructive",
+                })
+              }
+            >
               <ChevronRight size={24} />
             </button>
           </div>
@@ -305,6 +315,7 @@ type LeftSidebarProps = {
 };
 
 const LeftSidebar = ({ onUserClick, onSubscribeClick }: LeftSidebarProps) => {
+  const { toast } = useToast();
   return (
     <div className="h-full flex flex-col items-center py-6 bg-[#e9dfd5] md:w-20 w-12">
       {/* User Profile */}
@@ -323,19 +334,55 @@ const LeftSidebar = ({ onUserClick, onSubscribeClick }: LeftSidebarProps) => {
           <div className="w-3 h-3 bg-blue-500 rounded-sm"></div>
         </div>
 
-        <div className="w-8 h-8 md:w-12 md:h-12 bg-[#faf2e9] rounded-full flex items-center justify-center cursor-pointer">
+        <div
+          className="w-8 h-8 md:w-12 md:h-12 bg-[#faf2e9] rounded-full flex items-center justify-center cursor-pointer"
+          onClick={() =>
+            toast({
+              title: "Coming Soon!",
+              description: "This feature is currently under development.",
+              variant: "destructive",
+            })
+          }
+        >
           <Star className="w-5 h-5 text-[#cabbac] fill-[#e9dfd3]" />
         </div>
 
-        <div className="w-8 h-8 md:w-12 md:h-12 bg-[#faf2e9] rounded-full flex items-center justify-center cursor-pointer">
+        <div
+          className="w-8 h-8 md:w-12 md:h-12 bg-[#faf2e9] rounded-full flex items-center justify-center cursor-pointer"
+          onClick={() =>
+            toast({
+              title: "Coming Soon!",
+              description: "This feature is currently under development.",
+              variant: "destructive",
+            })
+          }
+        >
           <Heart className="w-5 h-5 text-[#cabbac] fill-[#e9dfd3]" />
         </div>
 
-        <div className="w-8 h-8 md:w-12 md:h-12 bg-[#faf2e9] rounded-full flex items-center justify-center cursor-pointer">
+        <div
+          className="w-8 h-8 md:w-12 md:h-12 bg-[#faf2e9] rounded-full flex items-center justify-center cursor-pointer"
+          onClick={() =>
+            toast({
+              title: "Coming Soon!",
+              description: "This feature is currently under development.",
+              variant: "destructive",
+            })
+          }
+        >
           <Play className="w-5 h-5 text-[#cabbac] fill-[#e9dfd3]" />
         </div>
 
-        <div className="w-8 h-8 md:w-12 md:h-12 bg-[#faf2e9] rounded-full flex items-center justify-center cursor-pointer">
+        <div
+          className="w-8 h-8 md:w-12 md:h-12 bg-[#faf2e9] rounded-full flex items-center justify-center cursor-pointer"
+          onClick={() =>
+            toast({
+              title: "Coming Soon!",
+              description: "This feature is currently under development.",
+              variant: "destructive",
+            })
+          }
+        >
           <Ticket className="w-5 h-5 text-[#cabbac] fill-[#e9dfd3]" />
         </div>
       </div>
@@ -1277,27 +1324,70 @@ const App = () => {
                     customers and critics review
                   </p>
                   <div>
-                    <button className="bg-gradient-to-b from-[#F47071] to-[#ED5F64] text-white px-6 py-2 rounded-full text-sm font-bold flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        toast({
+                          title: "Coming Soon!",
+                          description:
+                            "This feature is currently under development.",
+                          variant: "destructive",
+                        })
+                      }
+                      className="bg-gradient-to-b from-[#F47071] to-[#ED5F64] text-white px-6 py-2 rounded-full text-sm font-bold flex items-center gap-2"
+                    >
                       <Eye /> view all
                     </button>
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <TopListItem
-                    icon={<BookOpen className="w-5 h-5 text-blue-500" />}
-                    title="Top 50 books for kids"
-                    subtitle="Picture books, joke series, and chapter books."
-                  />
-                  <TopListItem
-                    icon={<Star className="w-5 h-5 text-yellow-500" />}
-                    title="Top 50 Classic books"
-                    subtitle="Discover the most influential books in classic literature."
-                  />
-                  <TopListItem
-                    icon={<Sparkles className="w-5 h-5 text-purple-500" />}
-                    title="Top 50 Sci-Fi books"
-                    subtitle="Discover the best sci-fi books about time and space travel."
-                  />
+                  <div
+                    onClick={() =>
+                      toast({
+                        title: "Coming Soon!",
+                        description:
+                          "This feature is currently under development.",
+                        variant: "destructive",
+                      })
+                    }
+                  >
+                    <TopListItem
+                      icon={<BookOpen className="w-5 h-5 text-blue-500" />}
+                      title="Top 50 books for kids"
+                      subtitle="Picture books, joke series, and chapter books."
+                    />
+                  </div>
+                  <div
+                    onClick={() =>
+                      toast({
+                        title: "Coming Soon!",
+                        description:
+                          "This feature is currently under development.",
+                        variant: "destructive",
+                      })
+                    }
+                  >
+                    <TopListItem
+                      icon={<Star className="w-5 h-5 text-yellow-500" />}
+                      title="Top 50 Classic books"
+                      subtitle="Discover the most influential books in classic literature."
+                    />
+                  </div>
+                  <div
+                    onClick={() =>
+                      toast({
+                        title: "Coming Soon!",
+                        description:
+                          "This feature is currently under development.",
+                        variant: "destructive",
+                      })
+                    }
+                  >
+                    <TopListItem
+                      icon={<Sparkles className="w-5 h-5 text-purple-500" />}
+                      title="Top 50 Sci-Fi books"
+                      subtitle="Discover the best sci-fi books about time and space travel."
+                    />
+                  </div>
                 </div>
               </div>
             </div>
