@@ -26,6 +26,7 @@ import {
   Image as ImageIcon,
   Bell,
 } from "lucide-react";
+import { toast, Toaster } from "sonner";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -511,7 +512,10 @@ const Overview = () => {
               <div className="text-lg font-medium text-white">
                 Recent exchanges
               </div>
-              <button className="text-white text-sm font-medium hover:text-[rgba(255,255,255,0.8)] transition-colors rounded-lg">
+              <button
+                className="text-white text-sm font-medium hover:text-[rgba(255,255,255,0.8)] transition-colors rounded-lg"
+                onClick={() => toast.info("Feature coming soon")}
+              >
                 See All
               </button>
             </div>
@@ -633,7 +637,10 @@ const Overview = () => {
                   Mon, 19 Nov 2024
                 </div>
               </div>
-              <button className="text-white text-sm font-medium hover:text-[rgba(255,255,255,0.8)] transition-colors rounded-lg">
+              <button
+                className="text-white text-sm font-medium hover:text-[rgba(255,255,255,0.8)] transition-colors rounded-lg"
+                onClick={() => toast.info("Feature coming soon")}
+              >
                 See All
               </button>
             </div>
@@ -886,7 +893,7 @@ const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleFeatureClick = (featureName: string) => {
-    console.log(`${featureName} - Feature coming soon!`);
+    toast.info(`${featureName} - Feature coming soon!`);
   };
 
   const navigationItems = [
@@ -1147,10 +1154,9 @@ const App = () => {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="flex flex-col hidden lg:block text-left">
-                  <span className="text-white">James Carter</span>
-                  <br />
-                  <span className="text-sm text-gray-400">
+                <div className="flex flex-col justify-center items-start">
+                  <span className="text-white leading-tight">James Carter</span>
+                  <span className="text-sm text-gray-400 leading-tight">
                     james.carter@example.com
                   </span>
                 </div>
@@ -1192,6 +1198,7 @@ const App = () => {
           />
         )}
       </div>
+      <Toaster richColors />
     </>
   );
 };
