@@ -880,16 +880,26 @@ const MoodTracker: React.FC = () => {
                 aria-label="Settings"
                 className="hidden md:inline-flex p-2 rounded-full border border-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 title="Settings"
+                onClick={() =>
+                  setToast({ message: "Coming soon...", type: "info" })
+                }
               >
                 <Settings className="w-5 h-5 text-neutral-500 dark:text-neutral-300" />
               </button>
-              <img
-                src="https://randomuser.me/api/portraits/men/32.jpg"
-                alt="Profile"
-                width={36}
-                height={36}
-                className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-neutral-200 dark:border-neutral-700 object-cover"
-              />
+              <button
+                onClick={() =>
+                  setToast({ message: "Coming soon...", type: "info" })
+                }
+                className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-neutral-200 dark:border-neutral-700 overflow-hidden"
+              >
+                <img
+                  src="https://randomuser.me/api/portraits/men/32.jpg"
+                  alt="Profile"
+                  width={36}
+                  height={36}
+                  className="w-full h-full object-cover"
+                />
+              </button>
             </div>
           </div>
         </header>
