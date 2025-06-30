@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import Head from "next/head";
+import React, { useState, useRef, useLayoutEffect } from "react";
 import {
   Search,
   Bell,
@@ -19,6 +18,13 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
 
 const OpenAlertsClassif: React.FC = () => {
   type ChartPoint = {
@@ -30,18 +36,188 @@ const OpenAlertsClassif: React.FC = () => {
     Empty: number;
   };
 
-  const chartData: ChartPoint[] = Array.from({ length: 20 }, (_, i) => {
-    const hour = 2 + Math.floor(i / 2);
-    const minute = i % 2 === 0 ? "00" : "30";
-    const time = `${hour}:${minute}`;
-    const Hacktool = Math.round((Math.random() * 20 + 5) * 10) / 10;
-    const Virus = Math.round((Math.random() * 20 + 5) * 10) / 10;
-    const Spyware = Math.round((Math.random() * 15 + 5) * 10) / 10;
-    const Malware = Math.round((Math.random() * 30 + 10) * 10) / 10;
-    const total = Hacktool + Virus + Spyware + Malware;
-    const Empty = total < 100 ? Math.round((100 - total) * 10) / 10 : 0;
-    return { time, Hacktool, Virus, Spyware, Malware, Empty };
-  });
+  const chartData: ChartPoint[] = [
+    {
+      time: "2:00",
+      Hacktool: 12.7,
+      Virus: 7.2,
+      Spyware: 16.2,
+      Malware: 38.2,
+      Empty: 25.7,
+    },
+    {
+      time: "2:30",
+      Hacktool: 21.2,
+      Virus: 21.6,
+      Spyware: 14.7,
+      Malware: 31.5,
+      Empty: 11.0,
+    },
+    {
+      time: "3:00",
+      Hacktool: 7.7,
+      Virus: 22.8,
+      Spyware: 12.7,
+      Malware: 26.7,
+      Empty: 30.1,
+    },
+    {
+      time: "3:30",
+      Hacktool: 20.3,
+      Virus: 14.1,
+      Spyware: 10.6,
+      Malware: 12.5,
+      Empty: 42.5,
+    },
+    {
+      time: "4:00",
+      Hacktool: 21.3,
+      Virus: 16.5,
+      Spyware: 18.2,
+      Malware: 22.1,
+      Empty: 21.9,
+    },
+    {
+      time: "4:30",
+      Hacktool: 21.8,
+      Virus: 17.4,
+      Spyware: 19.1,
+      Malware: 16.2,
+      Empty: 25.5,
+    },
+    {
+      time: "5:00",
+      Hacktool: 10.9,
+      Virus: 6.9,
+      Spyware: 11.3,
+      Malware: 15.3,
+      Empty: 55.6,
+    },
+    {
+      time: "5:30",
+      Hacktool: 15.3,
+      Virus: 20.8,
+      Spyware: 13.1,
+      Malware: 19.3,
+      Empty: 31.5,
+    },
+    {
+      time: "6:00",
+      Hacktool: 13.6,
+      Virus: 10.2,
+      Spyware: 10.4,
+      Malware: 33.8,
+      Empty: 32.0,
+    },
+    {
+      time: "6:30",
+      Hacktool: 17.2,
+      Virus: 23.0,
+      Spyware: 12.0,
+      Malware: 26.4,
+      Empty: 21.4,
+    },
+    {
+      time: "7:00",
+      Hacktool: 18.4,
+      Virus: 19.8,
+      Spyware: 19.4,
+      Malware: 15.3,
+      Empty: 27.1,
+    },
+    {
+      time: "7:30",
+      Hacktool: 17.8,
+      Virus: 11.4,
+      Spyware: 16.4,
+      Malware: 21.6,
+      Empty: 32.8,
+    },
+    {
+      time: "8:00",
+      Hacktool: 11.6,
+      Virus: 21.7,
+      Spyware: 13.2,
+      Malware: 28.0,
+      Empty: 25.5,
+    },
+    {
+      time: "8:30",
+      Hacktool: 16.1,
+      Virus: 10.5,
+      Spyware: 14.5,
+      Malware: 22.5,
+      Empty: 36.4,
+    },
+    {
+      time: "9:00",
+      Hacktool: 16.9,
+      Virus: 13.1,
+      Spyware: 18.1,
+      Malware: 16.4,
+      Empty: 35.5,
+    },
+    {
+      time: "9:30",
+      Hacktool: 9.3,
+      Virus: 20.7,
+      Spyware: 10.8,
+      Malware: 34.8,
+      Empty: 24.4,
+    },
+    {
+      time: "10:00",
+      Hacktool: 8.0,
+      Virus: 11.8,
+      Spyware: 13.4,
+      Malware: 34.8,
+      Empty: 32.0,
+    },
+    {
+      time: "10:30",
+      Hacktool: 19.4,
+      Virus: 10.0,
+      Spyware: 19.7,
+      Malware: 34.6,
+      Empty: 16.3,
+    },
+    {
+      time: "11:00",
+      Hacktool: 15.3,
+      Virus: 10.6,
+      Spyware: 5.7,
+      Malware: 12.0,
+      Empty: 56.4,
+    },
+    {
+      time: "11:30",
+      Hacktool: 11.6,
+      Virus: 14.8,
+      Spyware: 16.2,
+      Malware: 20.1,
+      Empty: 37.3,
+    },
+  ];
+
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(600);
+
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      if (chartContainerRef.current) {
+        setContainerWidth(chartContainerRef.current.offsetWidth);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  let tickPattern = 2;
+  if (containerWidth < 600) tickPattern = 3;
+
+  const allTicks = chartData.map((d) => d.time);
+  const ticks = allTicks.filter((_, i) => i % tickPattern === 0);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -72,7 +248,10 @@ const OpenAlertsClassif: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-gray-200 dark:bg-gradient-to-r dark:from-[#141315] dark:via-[#111012] dark:to-black rounded-lg p-4 space-y-2 text-gray-900 dark:text-gray-200 overflow-hidden shadow-md">
+    <div
+      ref={chartContainerRef}
+      className="w-full bg-gray-200 dark:bg-gradient-to-r dark:from-[#141315] dark:via-[#111012] dark:to-black rounded-lg p-4 space-y-2 text-gray-900 dark:text-gray-200 overflow-hidden shadow-md"
+    >
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-200">
           Open alerts by classification
@@ -106,7 +285,7 @@ const OpenAlertsClassif: React.FC = () => {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
+            margin={{ top: 0, right: 10, left: 10, bottom: 20 }}
             barSize={20}
             barCategoryGap="10%"
           >
@@ -115,7 +294,7 @@ const OpenAlertsClassif: React.FC = () => {
               tick={{ fill: "#9ca3af", fontSize: 12 }}
               axisLine={false}
               tickLine={false}
-              tickFormatter={(val: string) => (val.endsWith(":00") ? val : "")}
+              ticks={ticks}
             />
             <Tooltip content={<CustomTooltip />} />
             <CartesianGrid horizontal={false} vertical={false} />
@@ -409,7 +588,7 @@ const ThreatsStatusCard: React.FC = () => {
         </button>
       </div>
 
-      <div className="flex-1 mt-4 overflow-x-auto">
+      <div className="flex-1 mt-4 flex justify-center items-end overflow-x-auto">
         <div className="flex items-end space-x-1">
           {statuses.map(({ label, count, colorClass }) => {
             const scaledCount = Math.round((count / maxCount) * maxBars);
@@ -650,10 +829,10 @@ const SecurityThreatsCard: React.FC = () => {
 
   return (
     <div className="w-full overflow-x-auto bg-gray-200 dark:bg-gradient-to-r dark:from-[#141315] dark:via-[#111012] dark:to-black rounded-lg p-6 flex flex-col text-gray-900 dark:text-gray-100">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-2">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-2">
         <h2 className="text-xl font-semibold">Security threats</h2>
-        <div className="mt-2 md:mt-0 flex items-center space-x-3 w-full md:w-auto">
-          <div className="relative flex-1 md:flex-none">
+        <div className="mt-2 lg:mt-0 flex items-center space-x-3 w-full lg:w-auto">
+          <div className="relative flex-1 lg:flex-none">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
             <input
               type="text"
@@ -776,7 +955,7 @@ const SecurityThreatsCard: React.FC = () => {
                 <td className="pl-0 pr-3 py-3">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 accent-indigo-500 bg-transparent"
+                    className="ml-4 h-4 w-4 accent-indigo-500 bg-transparent"
                   />
                 </td>
                 <td className="px-3 py-3 align-top">
@@ -851,7 +1030,7 @@ const SecurityThreatsCard: React.FC = () => {
                     {item.status === "InProgress" ? "In Progress" : item.status}
                   </span>
                 </td>
-                <td className="px-3 py-3 flex space-x-2">
+                <td className="pl-3 pr-0 py-3 flex space-x-2">
                   <button
                     onClick={() => setEditing(item)}
                     className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -860,7 +1039,7 @@ const SecurityThreatsCard: React.FC = () => {
                   </button>
                   <button
                     onClick={() => setDeleting(item)}
-                    className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+                    className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 mr-4"
                   >
                     <Trash2 className="w-4 h-4 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" />
                   </button>
@@ -1055,43 +1234,23 @@ const Navbar: React.FC = () => {
 
 const Dashboard = () => {
   return (
-    <>
-      <Head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin=""
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </Head>
-
-      <style jsx global>{`
-        html,
-        body {
-          font-family: "Inter", sans-serif !important;
-        }
-      `}</style>
-
+    <main className={`${inter.className}`}>
       <div className="bg-white dark:bg-black rounded-lg p-6 space-y-6">
         <Navbar />
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="w-full md:w-1/3 aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg">
+        <div className="flex flex-col lg:flex-row gap-4 h-full">
+          <div className="w-full lg:w-1/3 bg-gray-200 dark:bg-gradient-to-r dark:from-[#141315] dark:via-[#111012] dark:to-black rounded-lg h-full">
             <OpenAlertsClassif />
           </div>
-          <div className="w-full md:w-1/3 aspect-video bg-gray-200 dark:bg-gradient-to-r dark:from-[#141315] dark:via-[#111012] dark:to-black rounded-lg">
+          <div className="w-full lg:w-1/3 bg-gray-200 dark:bg-gradient-to-r dark:from-[#141315] dark:via-[#111012] dark:to-black rounded-lg h-full">
             <ThreatsTacticsCard />
           </div>
-          <div className="w-full md:w-1/3 aspect-video bg-gray-200 dark:bg-gradient-to-r dark:from-[#141315] dark:via-[#111012] dark:to-black rounded-lg">
+          <div className="w-full lg:w-1/3 bg-gray-200 dark:bg-gradient-to-r dark:from-[#141315] dark:via-[#111012] dark:to-black rounded-lg h-full">
             <ThreatsStatusCard />
           </div>
         </div>
         <SecurityThreatsCard />
       </div>
-    </>
+    </main>
   );
 };
 
