@@ -23,7 +23,7 @@ import {
   LayoutGrid,
   LineChart,
   Wallet,
-  Image,
+  Image as ImageIcon,
   Bell,
 } from "lucide-react";
 
@@ -898,7 +898,11 @@ const App = () => {
       subItems: ["Margin", "Flat", "P2P"],
     },
     { id: "trade", label: "Trade", icon: <Wallet size={18} /> },
-    { id: "nft", label: "NFT", icon: <Image size={18} aria-hidden="true" /> },
+    {
+      id: "nft",
+      label: "NFT",
+      icon: <ImageIcon size={18} aria-hidden="true" />,
+    },
   ];
 
   const renderContent = () => {
