@@ -384,7 +384,25 @@ const getInitials = (name: string): string => {
 };
 
 export default function GameLaunchDashboard() {
+  // Ref for Bonus Center section
+  const bonusRef = useRef<HTMLDivElement>(null);
+  // Prevent browser scroll restoration and scroll to top on mount
+  useEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 50);
+    });
+  }, []);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  // Bonus Center state for claimable bonus in analytics section
+  const [bonusClaimed, setBonusClaimed] = useState(false);
+  // New: Track balance for user
+  const [balance, setBalance] = useState(0);
   const [showBonusModal, setShowBonusModal] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
@@ -397,7 +415,6 @@ export default function GameLaunchDashboard() {
 
   const [filterField, setFilterField] = useState<string | null>(null);
   const [showFilter, setShowFilter] = useState(false);
-
   // Chat state
   const [chatMessages, setChatMessages] = useState([
     {
@@ -422,7 +439,13 @@ export default function GameLaunchDashboard() {
   const [chatInput, setChatInput] = useState("");
   // Chat scroll ref
   const chatEndRef = useRef<HTMLDivElement>(null);
+  // Prevent scroll on initial render
+  const isFirstRender = useRef(true);
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
 
@@ -696,13 +719,17 @@ export default function GameLaunchDashboard() {
                     Home
                     <span className="absolute left-0 -bottom-[2px] w-full h-[2px] rounded-full"></span>
                   </span>
-                  <span
-                    className="flex items-center gap-2 text-gray-400 hover:text-white transition cursor-pointer"
-                    onClick={() => toast.info("Coming soon...")}
+                  {/* Scroll to Bonus Center button */}
+                  <button
+                    className="flex items-center gap-2 text-gray-400 hover:text-white transition cursor-pointer relative"
+                    style={{ background: "none", border: "none", padding: 0 }}
+                    onClick={() =>
+                      bonusRef.current?.scrollIntoView({ behavior: "smooth" })
+                    }
                   >
                     <Gift className="w-4 h-4" />
                     Bonuses
-                  </span>
+                  </button>
                 </div>
               </div>
               <div className="mt-auto p-3">
@@ -726,16 +753,11 @@ export default function GameLaunchDashboard() {
                         isDarkMode ? "text-white" : "text-gray-900"
                       }`}
                     >
-                      Total Balance
+                      <span className="text-sm font-semibold">
+                        Total Balance: ${balance.toLocaleString()}
+                      </span>
                     </h4>
                   </div>
-                  <p
-                    className={`text-2xl font-bold ${
-                      isDarkMode ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    $1,842.56
-                  </p>
                   <p
                     className={`text-sm ${
                       isDarkMode ? "text-emerald-400" : "text-emerald-600"
@@ -1439,6 +1461,53 @@ export default function GameLaunchDashboard() {
                 </ResponsiveContainer>
               </div>
             </motion.div>
+
+            {/* Bonus Center section */}
+            <section ref={bonusRef} className="mt-6">
+              <div
+                className={`rounded-xl p-5 group transition-all duration-300 ${
+                  isDarkMode
+                    ? "bg-gradient-to-br from-indigo-600/10 to-violet-800/10 border border-violet-800/30"
+                    : "bg-gradient-to-br from-indigo-100 to-violet-200 border border-violet-400/30"
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Star className="w-5 h-5 text-yellow-400" />
+                  <h2 className="text-lg font-bold">Bonus Center</h2>
+                </div>
+                <p
+                  className={`text-sm mb-4 ${
+                    isDarkMode ? "text-gray-400" : "text-gray-700"
+                  }`}
+                >
+                  Claim your $250 welcome bonus now and start playing today!
+                </p>
+                {/* Display user's current balance above the bonus section */}
+                <div className="mb-2 text-sm font-semibold text-right text-gray-700 dark:text-gray-300">
+                  Current Balance: ${balance.toLocaleString()}
+                </div>
+                {!bonusClaimed ? (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-4 py-2 rounded-full bg-yellow-400 text-black font-bold text-sm shadow-md group-hover:bg-yellow-300 transition"
+                    onClick={() => {
+                      setBonusClaimed(true);
+                      setBalance((prev) => prev + 250);
+                      toast.success(
+                        "Bonus claimed! $250 added to your account."
+                      );
+                    }}
+                  >
+                    Claim Bonus
+                  </motion.button>
+                ) : (
+                  <div className="text-green-500 font-semibold text-sm">
+                    Bonus claimed successfully!
+                  </div>
+                )}
+              </div>
+            </section>
           </section>
 
           <aside
@@ -1510,50 +1579,7 @@ export default function GameLaunchDashboard() {
                   : "from-gray-200 to-gray-300"
               }`}
             >
-              <div className="p-3">
-                <div
-                  className={`p-5 rounded-xl ${
-                    isDarkMode
-                      ? "bg-gradient-to-br from-indigo-600/20 to-violet-800/20 border border-indigo-600/30"
-                      : "bg-gradient-to-br from-indigo-50 to-violet-50 border border-indigo-100/50"
-                  } relative overflow-hidden`}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-violet-500/5 opacity-50"></div>
-                  <div className="relative">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Star className="w-5 h-5 text-amber-500" />
-                      <h3
-                        className={`font-bold ${
-                          isDarkMode ? "text-white" : "text-gray-900"
-                        }`}
-                      >
-                        New Player Bonus
-                      </h3>
-                    </div>
-                    <p
-                      className={`${
-                        isDarkMode ? "text-gray-300" : "text-gray-600"
-                      } mb-4 text-sm`}
-                    >
-                      Claim your welcome bonus and get started with extra
-                      credits!
-                    </p>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleBonusClaim}
-                      className="relative overflow-hidden group cursor-pointer px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white transition-all duration-300"
-                    >
-                      <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-left"></span>
-                      <span className="relative flex items-center gap-2 justify-center">
-                        <Gift className="w-4 h-4" />
-                        Claim Bonus
-                        <ArrowRight className="w-4 h-4" />
-                      </span>
-                    </motion.button>
-                  </div>
-                </div>
-              </div>
+              {/* New Player Bonus removed from right sidebar */}
               {/* Chat box */}
               <div
                 className={`rounded-xl p-4 ${
