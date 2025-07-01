@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { Toaster, toast } from "sonner";
 import {
   Search,
-  Bell,
-  Settings,
   Menu,
   MoreHorizontal,
   SlidersHorizontal,
@@ -370,6 +368,7 @@ const OpenAlertsClassif: React.FC = () => {
 };
 
 const ThreatsTacticsCard: React.FC = () => {
+  const [selectedTactic, setSelectedTactic] = useState("All");
   type RingConfig = {
     value: number;
     from: string;
@@ -464,6 +463,11 @@ const ThreatsTacticsCard: React.FC = () => {
     },
   ];
 
+  const filteredRings =
+    selectedTactic === "All"
+      ? rings
+      : rings.filter((r) => r.label === selectedTactic);
+
   return (
     <div className="w-full h-[22rem] bg-gray-200 dark:bg-gradient-to-r dark:from-[#141315] dark:via-[#111012] dark:to-black rounded-lg p-4 text-gray-900 dark:text-gray-200 overflow-hidden flex flex-col">
       <div className="flex items-center justify-between mb-2">
@@ -474,10 +478,16 @@ const ThreatsTacticsCard: React.FC = () => {
           </span>
         </h2>
         <select
-          onChange={() => toast.info("Coming soon..")}
+          value={selectedTactic}
+          onChange={(e) => setSelectedTactic(e.target.value)}
           className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm px-2 py-1 rounded"
         >
-          <option>All</option>
+          <option value="All">All</option>
+          {rings.map((r) => (
+            <option key={r.label} value={r.label}>
+              {r.label}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -498,7 +508,7 @@ const ThreatsTacticsCard: React.FC = () => {
             />
           ))}
         </svg>
-        {rings.map((ring, i) => {
+        {filteredRings.map((ring, i) => {
           const radius = ring.size / 2;
           const outerStroke = ring.size * 0.08;
           const innerStroke = ring.size * 0.04;
@@ -806,8 +816,8 @@ const SecurityThreatsCard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [filterEntity, setFilterEntity] = useState("");
-  const [filterMinRisk, setFilterMinRisk] = useState(0);
-  const [filterMaxRisk, setFilterMaxRisk] = useState(100);
+  const [filterMinRisk, setFilterMinRisk] = useState<number | "">("");
+  const [filterMaxRisk, setFilterMaxRisk] = useState<number | "">("");
   const [filterLastActivity, setFilterLastActivity] = useState("");
   const [filterStatus, setFilterStatus] = useState<Status | "All">("All");
 
@@ -830,8 +840,8 @@ const SecurityThreatsCard: React.FC = () => {
 
   const clearAll = () => {
     setFilterEntity("");
-    setFilterMinRisk(0);
-    setFilterMaxRisk(100);
+    setFilterMinRisk("");
+    setFilterMaxRisk("");
     setFilterLastActivity("");
     setFilterStatus("All");
   };
@@ -841,7 +851,10 @@ const SecurityThreatsCard: React.FC = () => {
       return false;
     if (!item.entity.toLowerCase().includes(filterEntity.toLowerCase()))
       return false;
-    if (item.riskPercent < filterMinRisk || item.riskPercent > filterMaxRisk)
+    if (
+      (filterMinRisk !== "" && item.riskPercent < Number(filterMinRisk)) ||
+      (filterMaxRisk !== "" && item.riskPercent > Number(filterMaxRisk))
+    )
       return false;
     if (filterLastActivity && !item.lastActivity.includes(filterLastActivity))
       return false;
@@ -922,13 +935,21 @@ const SecurityThreatsCard: React.FC = () => {
                 <input
                   type="number"
                   value={filterMinRisk}
-                  onChange={(e) => setFilterMinRisk(+e.target.value)}
+                  onChange={(e) =>
+                    setFilterMinRisk(
+                      e.target.value === "" ? "" : +e.target.value
+                    )
+                  }
                   className="w-1/2 px-2 py-1 border rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                 />
                 <input
                   type="number"
                   value={filterMaxRisk}
-                  onChange={(e) => setFilterMaxRisk(+e.target.value)}
+                  onChange={(e) =>
+                    setFilterMaxRisk(
+                      e.target.value === "" ? "" : +e.target.value
+                    )
+                  }
                   className="w-1/2 px-2 py-1 border rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                 />
               </div>
@@ -1260,19 +1281,6 @@ const Navbar: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <Search
-            onClick={() => toast.info("Coming soon..")}
-            className="hidden md:block w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer"
-          />
-          <Bell
-            onClick={() => toast.info("Coming soon..")}
-            className="hidden md:block w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer"
-          />
-          <Settings
-            onClick={() => toast.info("Coming soon..")}
-            className="hidden md:block w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer"
-          />
-
           <button
             className="md:hidden text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
             onClick={() => setNavOpen((o) => !o)}
@@ -1304,20 +1312,6 @@ const Navbar: React.FC = () => {
               </a>
             ))}
             <div className="mt-1 border-t border-gray-300 dark:border-gray-700" />
-            <div className="flex justify-around pt-2">
-              <Search
-                onClick={() => toast.info("Coming soon..")}
-                className="w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer"
-              />
-              <Bell
-                onClick={() => toast.info("Coming soon..")}
-                className="w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer"
-              />
-              <Settings
-                onClick={() => toast.info("Coming soon..")}
-                className="w-5 h-5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer"
-              />
-            </div>
           </div>
         )}
       </header>
