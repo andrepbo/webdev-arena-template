@@ -1,4 +1,19 @@
+import { Lora, Inter } from "next/font/google";
 import { useEffect, useState } from "react";
+
+const lora = Lora({
+  subsets: ["latin"],
+  variable: "--font-lora",
+  display: "swap",
+  weight: ["400", "700"],
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  weight: ["400", "700"],
+});
 
 const blogPosts = [
   {
@@ -211,17 +226,21 @@ const BlogAndArticleWrapper = () => {
     if (post) setSelectedArticle(post);
   };
 
-  return selectedArticle ? (
-    <ArticlePage
-      post={selectedArticle}
-      onBack={() => setSelectedArticle(null)}
-    />
-  ) : (
-    <BlogPage
-      handleReadMore={handleReadMore}
-      latestPosts={latestPosts}
-      featuredPost={featuredPost}
-    />
+  return (
+    <div className={`${lora.variable} ${inter.variable} font-sans`}>
+      {selectedArticle ? (
+        <ArticlePage
+          post={selectedArticle}
+          onBack={() => setSelectedArticle(null)}
+        />
+      ) : (
+        <BlogPage
+          handleReadMore={handleReadMore}
+          latestPosts={latestPosts}
+          featuredPost={featuredPost}
+        />
+      )}
+    </div>
   );
 };
 
