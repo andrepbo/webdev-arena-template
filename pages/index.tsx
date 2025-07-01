@@ -37,7 +37,11 @@ const OpenAlertsClassif: React.FC = () => {
     Empty: number;
   };
 
-  const chartData: ChartPoint[] = [
+  // Date range state
+  const [selectedDateRange, setSelectedDateRange] = useState("Today");
+
+  // Today's data
+  const todayData: ChartPoint[] = [
     {
       time: "2:00",
       Hacktool: 12.7,
@@ -200,6 +204,20 @@ const OpenAlertsClassif: React.FC = () => {
     },
   ];
 
+  // Yesterday's data: slightly varied from todayData
+  const yesterdayData: ChartPoint[] = todayData.map((item) => ({
+    ...item,
+    Hacktool: Number((item.Hacktool * 0.9).toFixed(2)),
+    Virus: Number((item.Virus * 0.95).toFixed(2)),
+    Spyware: Number((item.Spyware * 1.1).toFixed(2)),
+    Malware: Number((item.Malware * 1.05).toFixed(2)),
+    Empty: item.Empty,
+  }));
+
+  // Data to use in chart depending on date range
+  const dataForDateRange =
+    selectedDateRange === "Today" ? todayData : yesterdayData;
+
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(600);
 
@@ -217,7 +235,7 @@ const OpenAlertsClassif: React.FC = () => {
   let tickPattern = 2;
   if (containerWidth < 600) tickPattern = 3;
 
-  const allTicks = chartData.map((d) => d.time);
+  const allTicks = dataForDateRange.map((d) => d.time);
   const ticks = allTicks.filter((_, i) => i % tickPattern === 0);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -258,11 +276,12 @@ const OpenAlertsClassif: React.FC = () => {
           Open alerts by classification
         </h2>
         <select
-          onChange={() => toast.info("Coming soon..")}
+          value={selectedDateRange}
+          onChange={(e) => setSelectedDateRange(e.target.value)}
           className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm px-2 py-1 rounded"
         >
-          <option>Today</option>
-          <option>Yesterday</option>
+          <option value="Today">Today</option>
+          <option value="Yesterday">Yesterday</option>
         </select>
       </div>
 
@@ -288,7 +307,7 @@ const OpenAlertsClassif: React.FC = () => {
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={chartData}
+            data={dataForDateRange}
             margin={{ top: 0, right: 10, left: 10, bottom: 20 }}
             barSize={20}
             barCategoryGap="10%"
