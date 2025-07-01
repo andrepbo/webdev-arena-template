@@ -14,13 +14,11 @@ import {
   LayoutDashboard,
   Map,
   Menu,
-  Moon,
   Package,
   Puzzle,
   Search,
   Shield,
   Star,
-  Sun,
   Wallet,
   X,
 } from "lucide-react";
@@ -384,7 +382,7 @@ export default function GameLaunchDashboard() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
+  const [isDarkMode] = useState<boolean>(true);
   const [showRecentActivity, setShowRecentActivity] = useState<boolean>(false);
   const [showLeaderboard, setShowLeaderboard] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"bets" | "players">("bets");
@@ -464,10 +462,6 @@ export default function GameLaunchDashboard() {
     setShowBonusModal(false);
   };
 
-  const toggleDarkMode = (): void => {
-    setIsDarkMode(!isDarkMode);
-  };
-
   const toggleMobileMenu = (): void => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
@@ -493,10 +487,10 @@ export default function GameLaunchDashboard() {
       <div className="flex w-full min-h-screen">
         <div className="basis-[15%] hidden lg:block">
           <aside
-            className={`hidden md:block sticky top-0 left-0 bottom-0 2xl:w-80 xl:w-64 w-full z-40 transition-colors duration-500 overflow-y-auto md:overflow-y-visible p-3`}
+            className={`hidden md:block sticky top-0 left-0 h-screen 2xl:w-80 xl:w-64 w-full z-40 transition-colors duration-500 overflow-y-auto md:overflow-y-visible p-3`}
           >
             <div
-              className={`md:sticky md:top-3 flex flex-col rounded-xl bg-gradient-to-b ${
+              className={`md:sticky md:top-3 flex flex-col h-full rounded-xl bg-gradient-to-b ${
                 isDarkMode
                   ? "from-gray-800 to-gray-900"
                   : "from-gray-200 to-gray-300"
@@ -607,76 +601,118 @@ export default function GameLaunchDashboard() {
           </aside>
         </div>
         <div className="basis-[100%] lg:basis-[70%] w-full max-w-full overflow-auto">
-          <header className="hidden lg:flex fixed w-full flex items-center justify-between py-3 text-sm relative">
-            <div
-              className={clsx("hidden md:flex items-center gap-2 px-1 py-1")}
-            >
+          <header className="hidden lg:flex fixed w-full flex items-center py-3 text-sm relative">
+            <div className="flex items-center justify-between w-full px-6">
               <div
-                className={clsx(
-                  "md:flex items-center gap-2 px-1 py-1 rounded-full",
-                  isDarkMode ? "bg-gray-900" : "bg-gray-300"
-                )}
+                className={clsx("hidden md:flex items-center gap-2 px-1 py-1")}
               >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <button
-                    onClick={toggleRecentActivity}
-                    className={clsx(
-                      "px-4 py-2 text-sm font-medium rounded-full transition-all duration-200",
-                      showRecentActivity
-                        ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
-                        : isDarkMode
-                        ? "text-gray-300 hover:text-white"
-                        : "text-gray-600 hover:text-gray-900"
-                    )}
-                  >
-                    Recent Activity
-                  </button>
-                </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <button
-                    onClick={toggleLeaderboard}
-                    className={clsx(
-                      "px-4 py-2 text-sm font-medium rounded-full transition-all duration-200",
-                      showLeaderboard
-                        ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
-                        : isDarkMode
-                        ? "text-gray-300 hover:text-white"
-                        : "text-gray-600 hover:text-gray-900"
-                    )}
-                  >
-                    Leaderboard
-                  </button>
-                </motion.div>
-              </div>
-
-              <div className="flex items-center gap-6">
-                <span
+                <div
                   className={clsx(
-                    "relative flex items-center gap-2 px-4 py-2 rounded-xl cursor-pointer transition-colors",
-                    "bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
+                    "md:flex items-center gap-2 px-1 py-1 rounded-full",
+                    isDarkMode ? "bg-gray-900" : "bg-gray-300"
                   )}
                 >
-                  <Home className="w-4 h-4" />
-                  Home
-                  <span className="absolute left-0 -bottom-[2px] w-full h-[2px] rounded-full"></span>
-                </span>
-                <span
-                  className="flex items-center gap-2 text-gray-400 hover:text-white transition cursor-pointer"
-                  onClick={() => toast.info("Coming soon...")}
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <button
+                      onClick={toggleRecentActivity}
+                      className={clsx(
+                        "px-4 py-2 text-sm font-medium rounded-full transition-all duration-200",
+                        showRecentActivity
+                          ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
+                          : isDarkMode
+                          ? "text-gray-300 hover:text-white"
+                          : "text-gray-600 hover:text-gray-900"
+                      )}
+                    >
+                      Recent Activity
+                    </button>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <button
+                      onClick={toggleLeaderboard}
+                      className={clsx(
+                        "px-4 py-2 text-sm font-medium rounded-full transition-all duration-200",
+                        showLeaderboard
+                          ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
+                          : isDarkMode
+                          ? "text-gray-300 hover:text-white"
+                          : "text-gray-600 hover:text-gray-900"
+                      )}
+                    >
+                      Leaderboard
+                    </button>
+                  </motion.div>
+                </div>
+
+                <div className="flex items-center gap-6">
+                  <span
+                    className={clsx(
+                      "relative flex items-center gap-2 px-4 py-2 rounded-xl cursor-pointer transition-colors",
+                      "bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
+                    )}
+                  >
+                    <Home className="w-4 h-4" />
+                    Home
+                    <span className="absolute left-0 -bottom-[2px] w-full h-[2px] rounded-full"></span>
+                  </span>
+                  <span
+                    className="flex items-center gap-2 text-gray-400 hover:text-white transition cursor-pointer"
+                    onClick={() => toast.info("Coming soon...")}
+                  >
+                    <Gift className="w-4 h-4" />
+                    Bonuses
+                  </span>
+                </div>
+              </div>
+              <div className="mt-auto p-3">
+                <div
+                  className={`p-4 rounded-xl ${
+                    isDarkMode
+                      ? "bg-gray-900/50 border border-gray-800/30"
+                      : "bg-gray-50/80 border border-gray-200/50"
+                  }`}
                 >
-                  <Gift className="w-4 h-4" />
-                  Bonuses
-                </span>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div
+                      className={`p-2 rounded-full ${
+                        isDarkMode ? "bg-indigo-600/20" : "bg-indigo-100"
+                      }`}
+                    >
+                      <Wallet className="w-5 h-5 text-indigo-500" />
+                    </div>
+                    <h4
+                      className={`font-medium ${
+                        isDarkMode ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      Total Balance
+                    </h4>
+                  </div>
+                  <p
+                    className={`text-2xl font-bold ${
+                      isDarkMode ? "text-white" : "text-gray-900"
+                    }`}
+                  >
+                    $1,842.56
+                  </p>
+                  <p
+                    className={`text-sm ${
+                      isDarkMode ? "text-emerald-400" : "text-emerald-600"
+                    }`}
+                  >
+                    <span className="font-medium">+12.4%</span> from last month
+                  </p>
+                </div>
               </div>
             </div>
           </header>
-          <header className="sticky lg:hidden w-full flex items-center justify-between px-4 py-3 z-50 bg-white dark:bg-gray-950 shadow-sm">
+          <header className="sticky lg:hidden w-full flex items-center justify-between px-4 py-3 z-50 shadow-sm bg-gradient-to-br from-gray-950 via-gray-900 to-slate-950">
             <div className="flex items-center gap-3">
               <motion.div
                 animate={{ rotate: 360 }}
@@ -751,26 +787,9 @@ export default function GameLaunchDashboard() {
                 <Gift className="w-4 h-4" />
                 Bonuses
               </span>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={toggleDarkMode}
-                className={clsx(
-                  "p-3 rounded-full border transition-all duration-300",
-                  isDarkMode
-                    ? "bg-gray-900/90 text-yellow-500 border-gray-800/50"
-                    : "bg-gray-50/90 text-gray-600 border-gray-200/50"
-                )}
-              >
-                {isDarkMode ? (
-                  <Sun className="w-5 h-5" />
-                ) : (
-                  <Moon className="w-5 h-5" />
-                )}
-              </motion.button>
+              {/* Dark mode toggle removed */}
             </div>
-            <div className="md:hidden">
+            <div className="block md:hidden">
               <button onClick={toggleMobileMenu}>
                 {mobileMenuOpen ? (
                   <X className={`w-6 h-6 text-white`} />
@@ -823,19 +842,7 @@ export default function GameLaunchDashboard() {
                 >
                   <Gift className="w-4 h-4" /> Bonuses
                 </button>
-                <button
-                  onClick={toggleDarkMode}
-                  className={`w-full text-left px-4 py-2 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-800 ${
-                    isDarkMode ? "text-white" : "text-gray-900"
-                  }`}
-                >
-                  {isDarkMode ? (
-                    <Sun className="w-4 h-4" />
-                  ) : (
-                    <Moon className="w-4 h-4" />
-                  )}
-                  {isDarkMode ? "Light Mode" : "Dark Mode"}
-                </button>
+                {/* Dark mode toggle removed from mobile menu */}
               </motion.div>
             )}
           </AnimatePresence>
@@ -983,14 +990,6 @@ export default function GameLaunchDashboard() {
               >
                 Popular Games
               </h2>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedCategory("All")}
-                className="flex items-center gap-1 cursor-pointer text-sm text-indigo-500 hover:text-indigo-600 transition-colors"
-              >
-                View All <ArrowRight className="w-4 h-4" />
-              </motion.button>
             </div>
 
             <div className="relative">
@@ -1461,69 +1460,11 @@ export default function GameLaunchDashboard() {
                   </div>
                 </div>
               </div>
-              <div className="mt-auto p-5">
-                <div
-                  className={`p-4 rounded-xl ${
-                    isDarkMode
-                      ? "bg-gray-900/50 border border-gray-800/30"
-                      : "bg-gray-50/80 border border-gray-200/50"
-                  }`}
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <div
-                      className={`p-2 rounded-full ${
-                        isDarkMode ? "bg-indigo-600/20" : "bg-indigo-100"
-                      }`}
-                    >
-                      <Wallet className="w-5 h-5 text-indigo-500" />
-                    </div>
-                    <h4
-                      className={`font-medium ${
-                        isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      Total Balance
-                    </h4>
-                  </div>
-                  <p
-                    className={`text-2xl font-bold ${
-                      isDarkMode ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    $1,842.56
-                  </p>
-                  <p
-                    className={`text-sm ${
-                      isDarkMode ? "text-emerald-400" : "text-emerald-600"
-                    }`}
-                  >
-                    <span className="font-medium">+12.4%</span> from last month
-                  </p>
-                </div>
-              </div>
             </div>
           </aside>
         </div>
         <div className="basis-[15%] hidden lg:block">
-          <div className="flex items-center justify-end px-6 py-3">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={toggleDarkMode}
-              className={clsx(
-                "p-3 rounded-full border transition-all duration-300",
-                isDarkMode
-                  ? "bg-gray-900/90 text-yellow-500 border-gray-800/50"
-                  : "bg-gray-50/90 text-gray-600 border-gray-200/50"
-              )}
-            >
-              {isDarkMode ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </motion.button>
-          </div>
+          {/* Dark mode toggle removed from right sidebar */}
           <aside
             className={`hidden md:block sticky top-0 left-0 bottom-0 2xl:w-80 xl:w-64 w-full z-40 transition-colors duration-500 overflow-y-auto md:overflow-y-visible p-3`}
           >
@@ -1576,46 +1517,6 @@ export default function GameLaunchDashboard() {
                       </span>
                     </motion.button>
                   </div>
-                </div>
-              </div>
-              <div className="mt-auto p-3">
-                <div
-                  className={`p-4 rounded-xl ${
-                    isDarkMode
-                      ? "bg-gray-900/50 border border-gray-800/30"
-                      : "bg-gray-50/80 border border-gray-200/50"
-                  }`}
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <div
-                      className={`p-2 rounded-full ${
-                        isDarkMode ? "bg-indigo-600/20" : "bg-indigo-100"
-                      }`}
-                    >
-                      <Wallet className="w-5 h-5 text-indigo-500" />
-                    </div>
-                    <h4
-                      className={`font-medium ${
-                        isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      Total Balance
-                    </h4>
-                  </div>
-                  <p
-                    className={`text-2xl font-bold ${
-                      isDarkMode ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    $1,842.56
-                  </p>
-                  <p
-                    className={`text-sm ${
-                      isDarkMode ? "text-emerald-400" : "text-emerald-600"
-                    }`}
-                  >
-                    <span className="font-medium">+12.4%</span> from last month
-                  </p>
                 </div>
               </div>
             </div>
