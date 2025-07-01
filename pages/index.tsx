@@ -795,6 +795,13 @@ const SecurityThreatsCard: React.FC = () => {
   const [editing, setEditing] = useState<Incident | null>(null);
   const [deleting, setDeleting] = useState<Incident | null>(null);
 
+  const [formErrors, setFormErrors] = useState({
+    entity: false,
+    title: false,
+    riskPercent: false,
+    lastActivity: false,
+  });
+
   const statusDotColor: Record<Status, string> = {
     Open: "bg-green-500",
     InProgress: "bg-yellow-500",
@@ -825,10 +832,24 @@ const SecurityThreatsCard: React.FC = () => {
 
   const saveEdit = () => {
     if (!editing) return;
+    const errors = {
+      entity: !editing.entity.trim(),
+      title: !editing.title.trim(),
+      riskPercent: editing.riskPercent < 0 || editing.riskPercent > 100,
+      lastActivity: !editing.lastActivity.trim(),
+    };
+    setFormErrors(errors);
+    if (Object.values(errors).some(Boolean)) return;
     setIncidents((list) =>
       list.map((i) => (i.id === editing.id ? editing : i))
     );
     setEditing(null);
+    setFormErrors({
+      entity: false,
+      title: false,
+      riskPercent: false,
+      lastActivity: false,
+    });
   };
 
   const confirmDelete = () => {
@@ -1070,39 +1091,61 @@ const SecurityThreatsCard: React.FC = () => {
               <label className="block text-sm">Entity</label>
               <input
                 type="text"
+                required
                 value={editing.entity}
                 onChange={(e) =>
                   setEditing({ ...editing, entity: e.target.value })
                 }
                 className="w-full px-2 py-1 border rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
+              {formErrors.entity && (
+                <p className="text-red-500 text-xs">Entity is required.</p>
+              )}
               <label className="block text-sm">Title</label>
               <input
                 type="text"
+                required
                 value={editing.title}
                 onChange={(e) =>
                   setEditing({ ...editing, title: e.target.value })
                 }
                 className="w-full px-2 py-1 border rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
+              {formErrors.title && (
+                <p className="text-red-500 text-xs">Title is required.</p>
+              )}
               <label className="block text-sm">Risk %</label>
               <input
                 type="number"
+                required
+                min={0}
+                max={100}
                 value={editing.riskPercent}
                 onChange={(e) =>
                   setEditing({ ...editing, riskPercent: +e.target.value })
                 }
                 className="w-full px-2 py-1 border rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
+              {formErrors.riskPercent && (
+                <p className="text-red-500 text-xs">
+                  Risk % must be between 0 and 100.
+                </p>
+              )}
               <label className="block text-sm">Last activity</label>
               <input
                 type="text"
+                required
                 value={editing.lastActivity}
                 onChange={(e) =>
                   setEditing({ ...editing, lastActivity: e.target.value })
                 }
                 className="w-full px-2 py-1 border rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
+              {formErrors.lastActivity && (
+                <p className="text-red-500 text-xs">
+                  Last activity is required.
+                </p>
+              )}
               <label className="block text-sm">Status</label>
               <select
                 value={editing.status}
