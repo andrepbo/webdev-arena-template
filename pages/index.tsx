@@ -12,6 +12,8 @@ import {
   BarChart,
   Bar,
   Cell,
+  Line,
+  LineChart,
 } from "recharts";
 import {
   Settings,
@@ -20,10 +22,10 @@ import {
   ChevronDown,
   TrendingUp,
   LayoutGrid,
-  LineChart,
   Wallet,
   Image as ImageIcon,
   Bell,
+  LineChart as LineChartIcon,
 } from "lucide-react";
 import { toast, Toaster } from "sonner";
 
@@ -249,34 +251,39 @@ const CandleChart = () => {
 };
 
 const volumeData = [
-  { date: "09/01", vol: 65, color: "#66d1ff" },
-  { date: "09/02", vol: 85, color: "#ff9966" },
-  { date: "09/03", vol: 55, color: "#66d1ff" },
-  { date: "09/04", vol: 95, color: "#ff9966" },
-  { date: "09/05", vol: 75, color: "#66d1ff" },
-  { date: "10/01", vol: 110, color: "#ff9966" },
-  { date: "10/02", vol: 80, color: "#66d1ff" },
-  { date: "10/03", vol: 90, color: "#ff9966" },
-  { date: "10/04", vol: 70, color: "#66d1ff" },
-  { date: "10/05", vol: 120, color: "#ff9966" },
-  { date: "11/01", vol: 85, color: "#66d1ff" },
-  { date: "11/02", vol: 95, color: "#ff9966" },
-  { date: "11/03", vol: 110, color: "#66d1ff" },
-  { date: "11/04", vol: 75, color: "#ff9966" },
-  { date: "11/05", vol: 90, color: "#66d1ff" },
-  { date: "12/01", vol: 100, color: "#ff9966" },
-  { date: "12/02", vol: 70, color: "#66d1ff" },
-  { date: "12/03", vol: 85, color: "#ff9966" },
-  { date: "12/04", vol: 95, color: "#66d1ff" },
-  { date: "12/05", vol: 65, color: "#ff9966" },
-  { date: "13/01", vol: 80, color: "#66d1ff" },
-  { date: "13/02", vol: 90, color: "#ff9966" },
-  { date: "13/03", vol: 75, color: "#66d1ff" },
-  { date: "13/04", vol: 85, color: "#ff9966" },
-  { date: "13/05", vol: 70, color: "#66d1ff" },
+  // Daily
+  { date: "2025-06-24", vol: 320, color: "#00ffaa" },
+  { date: "2025-06-25", vol: 300, color: "#00ffaa" },
+  { date: "2025-06-26", vol: 310, color: "#00ffaa" },
+  { date: "2025-06-27", vol: 305, color: "#00ffaa" },
+  { date: "2025-06-28", vol: 315, color: "#00ffaa" },
+  { date: "2025-06-29", vol: 290, color: "#00ffaa" },
+  { date: "2025-06-30", vol: 295, color: "#00ffaa" },
+  // Weekly
+  { date: "2025-W22", vol: 2150, color: "#ff4976" },
+  { date: "2025-W23", vol: 2250, color: "#ff4976" },
+  { date: "2025-W24", vol: 2350, color: "#ff4976" },
+  { date: "2025-W25", vol: 2450, color: "#ff4976" },
+  // Monthly
+  { date: "2025-04", vol: 8500, color: "#4481eb" },
+  { date: "2025-05", vol: 9100, color: "#4481eb" },
+  { date: "2025-06", vol: 9600, color: "#4481eb" },
 ];
 
-const VolumeChart = () => {
+const VolumeChart = ({ performanceFilter }: { performanceFilter: string }) => {
+  let filteredData = volumeData;
+  if (performanceFilter === "Daily") {
+    filteredData = volumeData.filter((d) => d.date.startsWith("2025-06-"));
+  } else if (performanceFilter === "Weekly") {
+    filteredData = volumeData.filter((d) => d.date.startsWith("2025-W"));
+  } else if (performanceFilter === "Monthly") {
+    filteredData = volumeData.filter(
+      (d) =>
+        /^\d{4}-\d{2}$/.test(d.date) &&
+        !d.date.startsWith("2025-06-") && // exclude daily
+        !d.date.startsWith("2025-W") // exclude weekly
+    );
+  }
   return (
     <div className="relative">
       {/* Volume Header */}
@@ -303,7 +310,7 @@ const VolumeChart = () => {
 
       <div className="h-[300px] pt-16">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={volumeData} barGap={0}>
+          <BarChart data={filteredData} barGap={0}>
             <XAxis
               dataKey="date"
               axisLine={false}
@@ -337,7 +344,7 @@ const VolumeChart = () => {
               formatter={(value: number) => [`${value}K`, "Volume"]}
             />
             <Bar dataKey="vol" radius={[2, 2, 0, 0]}>
-              {volumeData.map((entry, index) => (
+              {filteredData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Bar>
@@ -348,7 +355,22 @@ const VolumeChart = () => {
   );
 };
 
-const Overview = () => {
+const Overview = ({ performanceFilter }: { performanceFilter: string }) => {
+  const [isSwapped, setIsSwapped] = useState(false);
+  // Checklist: expanded with more realistic tasks, now with completed status
+  const [userTasks] = React.useState([
+    { id: 1, title: "Verify KYC Information", time: "08:00", completed: false },
+    {
+      id: 2,
+      title: "Exchange 100 USDT to ETH",
+      time: "10:30",
+      completed: false,
+    },
+    { id: 3, title: "Enable 2FA Security", time: "11:15", completed: false },
+    { id: 4, title: "Review Wallet Backup", time: "12:00", completed: false },
+    { id: 5, title: "Complete First Trade", time: "13:45", completed: false },
+  ]);
+  const [showAllTasks, setShowAllTasks] = React.useState(false);
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
       <div className="xl:col-span-2 space-y-6">
@@ -367,7 +389,7 @@ const Overview = () => {
 
         <Card className="bg-[#0a0a0a] border-[rgba(0,255,255,0.1)] rounded-xl">
           <CardContent className="p-6">
-            <VolumeChart />
+            <VolumeChart performanceFilter={performanceFilter} />
           </CardContent>
         </Card>
       </div>
@@ -384,110 +406,119 @@ const Overview = () => {
             ></div>
             <div className="flex items-center justify-between mb-6">
               <div className="text-xl font-medium text-white">Exchange</div>
-              <button className="text-gray-400 hover:text-white p-1 rounded-full">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M4 8h8M8 4v8"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </button>
             </div>
-
-            <div className="relative">
-              <div className="relative z-10 mb-8">
-                <div className="bg-[#1a1a1a] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm text-gray-400">Sell</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-400">Available:</span>
-                      <span className="text-sm text-white">3,200 USDT</span>
+            {/* Exchange section refactored for improved spacing and alignment */}
+            {(() => {
+              // Card blocks as renderable functions for clarity.
+              const SellCard = (
+                <div className="relative z-10">
+                  <div className="bg-[#1a1a1a] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-sm text-gray-400">Sell</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-400">
+                          Available:
+                        </span>
+                        <span className="text-sm text-white">3,200 USDT</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <input
+                        type="text"
+                        defaultValue="1,500"
+                        className="bg-transparent text-2xl font-medium text-white w-full outline-none"
+                      />
+                      <button className="flex items-center gap-2">
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="text-white"
+                        >
+                          <path
+                            d="M4 10h12M10 4v12"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        <span className="text-white">SOL</span>
+                        <ChevronDown size={16} className="text-gray-400" />
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <input
-                      type="text"
-                      defaultValue="1,500"
-                      className="bg-transparent text-2xl font-medium text-white w-full outline-none"
-                    />
-                    <button className="flex items-center gap-2">
+                </div>
+              );
+              const BuyCard = (
+                <div className="relative z-10">
+                  <div className="bg-[#1a1a1a] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-sm text-gray-400">Buy</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-400">
+                          Estimated Fee:
+                        </span>
+                        <span className="text-sm text-white">2.5 USDT</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <input
+                        type="text"
+                        defaultValue="0.01587"
+                        className="bg-transparent text-2xl font-medium text-white w-full outline-none"
+                      />
+                      <button className="flex items-center gap-2">
+                        <span className="text-white">DOGE</span>
+                        <ChevronDown size={16} className="text-gray-400" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+
+              // Container ensures consistent spacing, and swap button is always centered.
+              return (
+                <div className="relative flex flex-col items-stretch">
+                  {/* Top Card with conditional bottom margin */}
+                  <div className={isSwapped ? "mb-4" : "mb-4"}>
+                    {isSwapped ? BuyCard : SellCard}
+                  </div>
+
+                  {/* Swap Button, always centered between cards */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+                    <button
+                      className="w-16 h-16 rounded-full bg-[#1a1a1a] border-4 border-[#111111] flex items-center justify-center hover:bg-[#222222] transition-colors"
+                      aria-label="Swap Sell/Buy"
+                      onClick={() => setIsSwapped((v) => !v)}
+                      type="button"
+                      tabIndex={0}
+                    >
                       <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
-                        className="text-white"
+                        className="text-[#00ffff]"
                       >
                         <path
-                          d="M4 10h12M10 4v12"
+                          d="M17 4V20M17 20L13 16M17 20L21 16M7 20V4M7 4L3 8M7 4L11 8"
                           stroke="currentColor"
                           strokeWidth="2"
                           strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                       </svg>
-                      <span className="text-white">SOL</span>
-                      <ChevronDown size={16} className="text-gray-400" />
                     </button>
                   </div>
-                </div>
-              </div>
 
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-                <div className="w-16 h-16 rounded-full bg-[#1a1a1a] border-4 border-[#111111] flex items-center justify-center">
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="text-[#00ffff]"
-                  >
-                    <path
-                      d="M17 4V20M17 20L13 16M17 20L21 16M7 20V4M7 4L3 8M7 4L11 8"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  {/* Bottom Card */}
+                  <div>{isSwapped ? SellCard : BuyCard}</div>
                 </div>
-              </div>
-
-              {/* Bottom Card - Buy */}
-              <div className="relative z-10">
-                <div className="bg-[#1a1a1a] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm text-gray-400">Buy</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-400">
-                        Estimated Fee:
-                      </span>
-                      <span className="text-sm text-white">2.5 USDT</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <input
-                      type="text"
-                      defaultValue="0.01587"
-                      className="bg-transparent text-2xl font-medium text-white w-full outline-none"
-                    />
-                    <button className="flex items-center gap-2">
-                      <span className="text-white">DOGE</span>
-                      <ChevronDown size={16} className="text-gray-400" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+              );
+            })()}
           </CardContent>
         </Card>
 
@@ -620,91 +651,63 @@ const Overview = () => {
         </Card>
 
         {/* Checklist */}
-        <Card className="bg-[#111111] border-none shadow-lg overflow-hidden rounded-xl">
-          <CardContent className="p-6 relative">
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  "radial-gradient(circle at 80% 20%, rgba(0,255,255,0.05) 0%, rgba(0,255,255,0.02) 25%, transparent 50%)",
-              }}
-            ></div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <div className="text-lg font-medium text-white">Checklist</div>
-                <div className="text-sm text-gray-400 mt-1">
-                  Mon, 19 Nov 2024
-                </div>
-              </div>
-              <button
-                className="text-white text-sm font-medium hover:text-[rgba(255,255,255,0.8)] transition-colors rounded-lg"
-                onClick={() => toast.info("Feature coming soon")}
-              >
-                See All
-              </button>
-            </div>
-            <div className="space-y-2">
-              <div className="bg-[#1a1a1a] rounded-xl p-4 flex items-center justify-between group hover:bg-[#222222] transition-colors border border-[rgba(255,255,255,0.1)]">
-                <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full border-2 border-[#00ffff] flex items-center justify-center">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#00ffff]"></div>
-                  </div>
-                  <div>
-                    <div className="text-white">Start To Send To Network</div>
-                    <div className="text-sm text-gray-400">Due time: 08:00</div>
-                  </div>
-                </div>
-                <button className="opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="text-gray-400"
-                  >
-                    <path
-                      d="M6 12L10 8L6 4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+        {(() => {
+          return (
+            <div className="bg-[#0f0f0f] rounded-2xl p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-white text-xl font-semibold">Checklist</h2>
+                <span className="text-sm text-gray-400">
+                  Mon,{" "}
+                  {new Date().toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
+                <button
+                  onClick={() => setShowAllTasks(!showAllTasks)}
+                  className="text-white text-sm hover:underline"
+                >
+                  {showAllTasks ? "Show Less" : "See All"}
                 </button>
               </div>
-              <div className="bg-[#1a1a1a] rounded-xl p-4 flex items-center justify-between group hover:bg-[#222222] transition-colors border border-[rgba(255,255,255,0.1)]">
-                <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full border-2 border-[#00ffff] flex items-center justify-center">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#00ffff]"></div>
-                  </div>
-                  <div>
-                    <div className="text-white">Crypto Payment Done</div>
-                    <div className="text-sm text-gray-400">Due time: 10:30</div>
-                  </div>
-                </div>
-                <button className="opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="text-gray-400"
-                  >
-                    <path
-                      d="M6 12L10 8L6 4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
+              <div className="flex flex-col gap-4">
+                {(showAllTasks ? userTasks : userTasks.slice(0, 3)).map(
+                  (task) => (
+                    <div
+                      key={task.id}
+                      className="bg-gradient-to-r from-[#141414] to-[#0f0f0f] p-4 rounded-xl"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-5 h-5 border-2 ${
+                              task.completed
+                                ? "bg-cyan-400 border-cyan-400"
+                                : "border-cyan-400"
+                            } rounded-full flex items-center justify-center`}
+                          >
+                            {task.completed && (
+                              <div className="w-2 h-2 bg-[#111] rounded-full" />
+                            )}
+                          </div>
+                          <div>
+                            <div className="text-white font-medium">
+                              {task.title}
+                            </div>
+                            <div className="text-sm text-gray-400">
+                              Due time: {task.time}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
               </div>
             </div>
-          </CardContent>
-        </Card>
+          );
+        })()}
       </div>
     </div>
   );
@@ -733,40 +736,78 @@ const Markets = ({ subSection }: { subSection: string }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-          <Card
-            key={i}
-            className="bg-[#111111] border-none shadow-lg overflow-hidden rounded-xl"
-          >
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[rgba(0,255,255,0.1)] flex items-center justify-center">
-                    <TrendingUp className="text-[#00ffff]" />
+        {[1, 2, 3, 4, 5, 6].map((i) => {
+          // Simulated chart data for each market card
+          const chartData = [
+            { date: "Jun 1", price: 42000 + Math.random() * 200 },
+            { date: "Jun 2", price: 42300 + Math.random() * 200 },
+            { date: "Jun 3", price: 42100 + Math.random() * 200 },
+            { date: "Jun 4", price: 42500 + Math.random() * 200 },
+            { date: "Jun 5", price: 42800 + Math.random() * 200 },
+            { date: "Jun 6", price: 42650 + Math.random() * 200 },
+            { date: "Jun 7", price: 42750 + Math.random() * 200 },
+          ];
+          return (
+            <Card
+              key={i}
+              className="bg-[#111111] border-none shadow-lg overflow-hidden rounded-xl"
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-[rgba(0,255,255,0.1)] flex items-center justify-center">
+                      <TrendingUp className="text-[#00ffff]" />
+                    </div>
+                    <div>
+                      <div className="text-white font-medium">BTC/USDT</div>
+                      <div className="text-sm text-gray-400">Bitcoin</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-white font-medium">BTC/USDT</div>
-                    <div className="text-sm text-gray-400">Bitcoin</div>
-                  </div>
+                  <div className="text-[#00ff99]">+2.34%</div>
                 </div>
-                <div className="text-[#00ff99]">+2.34%</div>
-              </div>
-              <div className="h-32 bg-[rgba(0,255,255,0.05)] rounded-lg mb-4 flex items-center justify-center">
-                <img
-                  src={`https://placehold.co/300x128/1a1a1a/00ffff?text=Chart+${i}`}
-                  alt={`Bitcoin price chart preview ${i}`}
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-2xl font-bold text-white">$42,567.89</div>
-                <button className="px-4 py-2 bg-[rgba(0,255,255,0.15)] text-[#00ffff] rounded-lg">
-                  Trade
-                </button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                <div className="h-32 bg-[rgba(0,255,255,0.05)] rounded-lg mb-4 flex items-center justify-center">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={chartData}>
+                      <XAxis dataKey="date" hide />
+                      <YAxis domain={["auto", "auto"]} hide />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "#1a1a1a",
+                          border: "1px solid rgba(0,255,255,0.1)",
+                          borderRadius: "8px",
+                          padding: "8px",
+                          fontFamily: "Inter, sans-serif",
+                        }}
+                        itemStyle={{ color: "#ffffff" }}
+                        labelStyle={{ color: "#00ffff" }}
+                        formatter={(value: number) => [
+                          `$${value.toFixed(2)}`,
+                          "Price",
+                        ]}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="price"
+                        stroke="#00ffff"
+                        strokeWidth={2}
+                        dot={false}
+                        activeDot={{ r: 5 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-2xl font-bold text-white">
+                    $42,567.89
+                  </div>
+                  <button className="px-4 py-2 bg-[rgba(0,255,255,0.15)] text-[#00ffff] rounded-lg">
+                    Trade
+                  </button>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );
@@ -840,6 +881,11 @@ const Trade = () => {
 };
 
 const NFT = () => {
+  const nftImages = [
+    "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&crop=entropy&w=400&q=80",
+    "https://images.unsplash.com/photo-1565130838609-c3a86655db61?auto=format&crop=entropy&w=400&q=80",
+    "https://images.unsplash.com/photo-1519985176271-adb1088fa94c?auto=format&crop=entropy&w=400&q=80",
+  ];
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-6">
@@ -858,26 +904,26 @@ const NFT = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+        {nftImages.map((img, index) => (
           <Card
-            key={i}
+            key={index}
             className="bg-[#111111] border-none shadow-lg overflow-hidden rounded-xl"
           >
             <div className="aspect-square bg-[rgba(0,255,255,0.05)] rounded-t-xl">
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                <img
-                  src={`https://placehold.co/200x200/1a1a1a/00ffff?text=NFT+${i}`}
-                  alt={`NFT artwork ${i}`}
-                  className="w-full h-full object-cover rounded-t-xl"
-                />
-              </div>
+              <img
+                src={img}
+                alt={`NFT artwork ${index + 1}`}
+                className="w-full h-full object-cover rounded-t-xl"
+              />
             </div>
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
-                <div className="text-white font-medium">Crypto Art #{i}</div>
+                <div className="text-white font-medium">
+                  Crypto Art #{index + 1}
+                </div>
                 <div className="text-[#00ffff]">2.5 ETH</div>
               </div>
-              <div className="text-sm text-gray-400">By Artist {i}</div>
+              <div className="text-sm text-gray-400">By Artist {index + 1}</div>
             </CardContent>
           </Card>
         ))}
@@ -887,9 +933,31 @@ const NFT = () => {
 };
 
 const App = () => {
+  useEffect(() => {
+    const enforceDarkMode = () => {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    };
+
+    enforceDarkMode();
+
+    const observer = new MutationObserver(() => {
+      enforceDarkMode();
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const [selectedNav, setSelectedNav] = useState("overview");
   const [selectedSubNav, setSelectedSubNav] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [performanceFilter, setPerformanceFilter] =
+    useState("Total performance");
 
   const handleFeatureClick = (featureName: string) => {
     toast.info(`${featureName} - Feature coming soon!`);
@@ -900,7 +968,7 @@ const App = () => {
     {
       id: "markets",
       label: "Markets",
-      icon: <LineChart size={18} />,
+      icon: <LineChartIcon size={18} />,
       subItems: ["Margin", "Flat", "P2P"],
     },
     { id: "trade", label: "Trade", icon: <Wallet size={18} /> },
@@ -914,7 +982,7 @@ const App = () => {
   const renderContent = () => {
     switch (selectedNav) {
       case "overview":
-        return <Overview />;
+        return <Overview performanceFilter={performanceFilter} />;
       case "markets":
         return <Markets subSection={selectedSubNav} />;
       case "trade":
@@ -922,7 +990,7 @@ const App = () => {
       case "nft":
         return <NFT />;
       default:
-        return <Overview />;
+        return <Overview performanceFilter={performanceFilter} />;
     }
   };
 
@@ -1123,7 +1191,10 @@ const App = () => {
 
               <select
                 className="bg-[#1a1a1a] text-white border border-[rgba(0,255,255,0.1)] outline-none rounded-xl px-4 py-2 cursor-pointer hover:border-[rgba(0,255,255,0.2)] transition-colors min-w-[180px] hidden lg:block"
-                onChange={() => handleFeatureClick("Performance Filter")}
+                value={performanceFilter}
+                onChange={(e) => {
+                  setPerformanceFilter(e.target.value);
+                }}
               >
                 <option>Total performance</option>
                 <option>Daily</option>
@@ -1155,7 +1226,12 @@ const App = () => {
 
           {/* Bottom row */}
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
-            <div className="text-2xl font-bold text-white">Portfolio</div>
+            <div>
+              <div className="text-2xl font-bold text-white">Portfolio</div>
+              <p className="text-sm text-gray-400">
+                Current filter: {performanceFilter}
+              </p>
+            </div>
 
             <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 lg:gap-6 w-full lg:w-auto">
               <div className="flex items-center gap-2">
