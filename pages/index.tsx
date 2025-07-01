@@ -1,115 +1,294 @@
-import Image from "next/image";
-import localFont from "next/font/local";
+import { useEffect, useState } from "react";
+import { Moon, Sun } from "lucide-react";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+const blogPosts = [
+  {
+    id: 1,
+    title: "Tips and DIY Inspiration for Creative Minds",
+    date: "12 jun, 2022",
+    summary:
+      "Discover a universe of boundless imagination in the World of Creative Art, where canvases weave stories, sculptures breathe life, and digital realms redefine artistic expression. Unleash your inner artist with tips and inspiration for a journey into the kaleidoscope of creativity.",
+    image: "https://upload.wikimedia.org/wikipedia/commons/b/ba/Morganlfay.jpg",
+    featured: true,
+  },
+  {
+    id: 2,
+    title: "Wild Photography Technology",
+    date: "24 jun, 2023",
+    summary: "",
+    image: "http://res.publicdomainfiles.com/pdf_view/86/13941201011979.jpg",
+    featured: false,
+  },
+  {
+    id: 3,
+    title: "Unveiling the Power of Three-Dimensional Art",
+    date: "24 jun, 2023",
+    summary: "",
+    image:
+      "https://revistaeducacao.com.br/wp-content/uploads/2021/10/amor-incondicional-1.jpg",
+    featured: false,
+  },
+  {
+    id: 4,
+    title: "Tips and Trends for Elevating Your Art Display",
+    date: "24 jun, 2023",
+    summary: "",
+    image: "https://images.pexels.com/photos/370799/pexels-photo-370799.jpeg",
+    featured: false,
+  },
+  {
+    id: 5,
+    title: "Discovering Hidden Gems Around the World",
+    date: "24 jun, 2023",
+    summary: "",
+    image: "https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg",
+    featured: false,
+  },
+];
 
-export default function Home() {
+const ClockIcon = () => (
+  <svg
+    className="inline mr-2 mb-0.5"
+    width="16"
+    height="16"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 6v6l4 2" />
+  </svg>
+);
+
+type BlogPost = {
+  id: number;
+  title: string;
+  date: string;
+  summary: string;
+  image: string;
+  featured: boolean;
+};
+
+type ArticlePageProps = {
+  post: BlogPost;
+  onBack: () => void;
+  darkMode: boolean;
+  toggleDarkMode: () => void;
+};
+
+const ArticlePage = ({
+  post,
+  onBack,
+  darkMode,
+  toggleDarkMode,
+}: ArticlePageProps) => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [post]);
+
   return (
-    <div
-      className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              pages/index.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen flex items-center justify-center bg-[#e9e9ef] dark:bg-[#101012]">
+      <div className="relative max-w-6xl w-full min-h-[80vw] rounded-3xl shadow-xl border-8 border-[#181818] dark:border-[#262626] bg-white dark:bg-[#17181c] text-gray-800 dark:text-white p-10 md:p-16 my-10 md:my-16 flex flex-col">
+        <button
+          onClick={toggleDarkMode}
+          className="absolute top-6 right-6 bg-white dark:bg-black border border-gray-300 dark:border-[#23232b] rounded-full w-8 h-8 flex items-center justify-center transition hover:scale-105 shadow-sm z-20"
+          title="Toggle dark mode"
+          aria-label="Toggle dark mode"
+        >
+          {darkMode ? (
+            <Sun size={16} className="text-white" />
+          ) : (
+            <Moon size={16} className="text-black" />
+          )}
+        </button>
+        <button
+          className="text-gray-800 dark:text-white text-lg md:text-xl font-serif font-semibold mb-16 flex items-center w-fit hover:bg-gray-100 dark:hover:bg-[#23232b] px-3 py-1 rounded-lg transition cursor-pointer"
+          onClick={onBack}
+          style={{ outline: "none", border: "none", background: "none" }}
+        >
+          <span className="mr-3">←</span> Back to blog
+        </button>
+        <div className="flex flex-col items-center">
+          <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm mb-8">
+            <ClockIcon />
+            <span>{post.date}</span>
+          </div>
+          <h1 className="text-3xl md:text-5xl font-serif font-semibold mb-12 text-center">
+            {post.title}
+          </h1>
+          <p className="text-gray-500 dark:text-gray-300 text-base mb-16 text-center max-w-2xl">
+            {post.summary ||
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus euismod, nisi vel consectetur cursus, nisl erat aliquet nisl, nec aliquet nunc nisl euismod."}
+          </p>
+          <img
+            src={post.image}
+            alt={post.title}
+            className="rounded-xl object-cover w-full max-w-2xl max-h-[65vh] mx-auto"
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
   );
-}
+};
+
+const BlogPage = ({
+  handleReadMore,
+  latestPosts,
+  featuredPost,
+  darkMode,
+  toggleDarkMode,
+}: {
+  handleReadMore: (id: number) => void;
+  latestPosts: BlogPost[];
+  featuredPost: BlogPost | undefined;
+  darkMode: boolean;
+  toggleDarkMode: () => void;
+}) => (
+  <div className="min-h-screen flex items-center justify-center bg-[#e9e9ef] dark:bg-[#101012]">
+    <div className="relative max-w-6xl w-full rounded-3xl shadow-xl border-8 border-[#181818] dark:border-[#262626] bg-white dark:bg-[#17181c] text-gray-800 dark:text-white p-10 md:p-16 my-10 md:my-16">
+      <button
+        onClick={toggleDarkMode}
+        className="absolute top-6 right-6 bg-white dark:bg-black border border-gray-300 dark:border-[#23232b] rounded-full w-8 h-8 flex items-center justify-center transition hover:scale-105 shadow-sm z-20"
+        title="Toggle dark mode"
+        aria-label="Toggle dark mode"
+      >
+        {darkMode ? (
+          <Sun size={16} className="text-white" />
+        ) : (
+          <Moon size={16} className="text-black" />
+        )}
+      </button>
+
+      <h1 className="text-4xl md:text-5xl font-serif text-gray-800 dark:text-white mb-20">
+        Our Blog
+      </h1>
+
+      {featuredPost && (
+        <section className="mb-12">
+          <div className="flex flex-col md:flex-row gap-8 items-stretch">
+            <div className="md:w-1/2 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center text-base mb-4 text-gray-500 dark:text-gray-400">
+                  <ClockIcon />
+                  <span>{featuredPost.date}</span>
+                </div>
+                <h2
+                  className="text-2xl md:text-3xl font-serif font-semibold text-gray-800 dark:text-white mb-8 cursor-pointer"
+                  onClick={() => handleReadMore(featuredPost.id)}
+                >
+                  {featuredPost.title}
+                </h2>
+                <p className="text-gray-500 dark:text-gray-300 text-base mb-5">
+                  {featuredPost.summary}
+                </p>
+                <button
+                  onClick={() => handleReadMore(featuredPost.id)}
+                  className="border px-4 py-1.5 rounded-md text-sm transition border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-[#23232b]"
+                >
+                  Read More
+                </button>
+              </div>
+            </div>
+            <div className="md:w-1/2 flex">
+              <img
+                src={featuredPost.image}
+                alt={featuredPost.title}
+                className="rounded-xl object-cover w-full h-auto max-h-[370px] md:max-h-[370px]"
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section
+        className="rounded-2xl p-6 md:p-8"
+        style={{
+          backgroundColor: darkMode ? "#262626" : "#f6f7f9",
+        }}
+      >
+        <h2 className="text-2xl font-serif font-semibold text-gray-800 dark:text-white mb-6">
+          Latest Posts
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {latestPosts.slice(0, 4).map((post) => (
+            <div
+              key={post.id}
+              className="rounded-xl overflow-hidden shadow-none cursor-pointer"
+            >
+              <img
+                src={post.image}
+                alt={post.title}
+                className="h-44 w-full object-cover rounded-xl"
+                onClick={() => handleReadMore(post.id)}
+              />
+              <div className="py-4">
+                <h3
+                  className="text-sm font-semibold mb-3 cursor-pointer"
+                  style={{ color: "inherit" }}
+                  onClick={() => handleReadMore(post.id)}
+                >
+                  {post.title}
+                </h3>
+                <div className="flex items-center text-[11px] mt-2 text-gray-500 dark:text-gray-400">
+                  <ClockIcon />
+                  <span>{post.date}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  </div>
+);
+
+const BlogAndArticleWrapper = () => {
+  const [latestPosts] = useState(blogPosts.filter((post) => !post.featured));
+  const featuredPost = blogPosts.find((post) => post.featured);
+  const [selectedArticle, setSelectedArticle] = useState<BlogPost | null>(null);
+
+  const [darkMode, setDarkMode] = useState<boolean | undefined>(undefined);
+
+  useEffect(() => {
+    document.documentElement.classList.remove("dark");
+    setDarkMode(false);
+  }, []);
+
+  useEffect(() => {
+    if (darkMode === undefined) return;
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
+  if (darkMode === undefined) return null;
+
+  const toggleDarkMode = () => setDarkMode((d) => !d);
+
+  const handleReadMore = (id: number) => {
+    const post = blogPosts.find((p) => p.id === id);
+    if (post) setSelectedArticle(post);
+  };
+
+  return selectedArticle ? (
+    <ArticlePage
+      post={selectedArticle}
+      onBack={() => setSelectedArticle(null)}
+      darkMode={darkMode}
+      toggleDarkMode={toggleDarkMode}
+    />
+  ) : (
+    <BlogPage
+      handleReadMore={handleReadMore}
+      latestPosts={latestPosts}
+      featuredPost={featuredPost}
+      darkMode={darkMode}
+      toggleDarkMode={toggleDarkMode}
+    />
+  );
+};
+
+export default BlogAndArticleWrapper;
