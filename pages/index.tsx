@@ -21,7 +21,14 @@ import {
   Star,
   Wallet,
   X,
+  MessageCircle,
+  SendHorizonal,
 } from "lucide-react";
+// Avatar stub for demonstration (replace with your Avatar component if available)
+const Avatar = ({ className = "" }: { className?: string }) => (
+  <div className={`${className} bg-gray-400 rounded-full`} />
+);
+
 import { useEffect, useRef, useState } from "react";
 import {
   CartesianGrid,
@@ -390,6 +397,34 @@ export default function GameLaunchDashboard() {
 
   const [filterField, setFilterField] = useState<string | null>(null);
   const [showFilter, setShowFilter] = useState(false);
+
+  // Chat state
+  const [chatMessages, setChatMessages] = useState([
+    {
+      user: "Downtown",
+      time: "07:12",
+      message: "Wowwww! I won $200 right now, how it possible?",
+    },
+    {
+      user: "Gentleman",
+      time: "05:12",
+      message: "Huuuh, guys, let's play crush",
+    },
+    { user: "Miami", time: "00:05", message: "now?" },
+    { user: "Devilfish", time: "01:11", message: "pleeeease let’s g" },
+    { user: "The Professor", time: "02:03", message: "Like the website" },
+    { user: "The Mathematician", time: "02:45", message: "I got it" },
+    { user: "Texas Dolly", time: "00:36", message: "catched $340,33!!!!!" },
+    { user: "El Matador", time: "12:04", message: "so who wil play?" },
+    { user: "Devilfish", time: "01:11", message: "me" },
+    { user: "Devilfish", time: "01:11", message: "let’s go" },
+  ]);
+  const [chatInput, setChatInput] = useState("");
+  // Chat scroll ref
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages]);
 
   // Carousel 1 (Games)
   const [gamesEmblaRef, gamesEmblaApi] = useEmblaCarousel({ loop: false });
@@ -1469,7 +1504,7 @@ export default function GameLaunchDashboard() {
             className={`hidden md:block sticky top-0 left-0 bottom-0 2xl:w-80 xl:w-64 w-full z-40 transition-colors duration-500 overflow-y-auto md:overflow-y-visible p-3`}
           >
             <div
-              className={`md:top-3 flex flex-col rounded-xl bg-gradient-to-b ${
+              className={`md:top-3 flex flex-col gap-4 rounded-xl bg-gradient-to-b ${
                 isDarkMode
                   ? "from-gray-800 to-gray-900"
                   : "from-gray-200 to-gray-300"
@@ -1516,6 +1551,107 @@ export default function GameLaunchDashboard() {
                         <ArrowRight className="w-4 h-4" />
                       </span>
                     </motion.button>
+                  </div>
+                </div>
+              </div>
+              {/* Chat box */}
+              <div
+                className={`rounded-xl p-4 ${
+                  isDarkMode
+                    ? "bg-gray-900/50 border border-gray-800/30"
+                    : "bg-white border border-gray-200/70"
+                } flex flex-col h-[440px]`}
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex items-center gap-2">
+                    <MessageCircle className="w-5 h-5 text-yellow-400" />
+                    <h3 className="font-semibold text-sm">Chat</h3>
+                  </div>
+                  <div className="flex -space-x-2">
+                    <Avatar className="w-6 h-6 border-2 border-white" />
+                    <Avatar className="w-6 h-6 border-2 border-white" />
+                    <Avatar className="w-6 h-6 border-2 border-white" />
+                  </div>
+                </div>
+                <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+                  {chatMessages.map((msg, idx) => (
+                    <div key={idx} className="text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500 text-xs">
+                          {msg.user}
+                        </span>
+                        <span className="text-gray-500 text-xs">
+                          {msg.time}
+                        </span>
+                      </div>
+                      <div
+                        className={`${
+                          isDarkMode ? "bg-gray-800" : "bg-gray-100"
+                        } rounded-lg px-3 py-2 text-sm mt-1`}
+                      >
+                        {msg.message}
+                      </div>
+                    </div>
+                  ))}
+                  <div ref={chatEndRef} />
+                </div>
+                <div className="mt-3">
+                  <div
+                    className={`flex items-center px-3 py-2 rounded-full ${
+                      isDarkMode ? "bg-gray-800" : "bg-gray-100"
+                    }`}
+                  >
+                    <input
+                      type="text"
+                      placeholder="Send message"
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && chatInput.trim()) {
+                          e.preventDefault();
+                          const now = new Date();
+                          const formattedTime = now.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          });
+                          setChatMessages([
+                            ...chatMessages,
+                            {
+                              user: "You",
+                              time: formattedTime,
+                              message: chatInput,
+                            },
+                          ]);
+                          setChatInput("");
+                        }
+                      }}
+                      className={`bg-transparent flex-1 text-sm outline-none ${
+                        isDarkMode
+                          ? "text-white placeholder-gray-400"
+                          : "text-gray-900 placeholder-gray-500"
+                      }`}
+                    />
+                    <SendHorizonal
+                      className="w-4 h-4 text-blue-500 cursor-pointer ml-2"
+                      onClick={() => {
+                        if (chatInput.trim()) {
+                          const now = new Date();
+                          const formattedTime = now.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          });
+                          setChatMessages([
+                            ...chatMessages,
+                            {
+                              user: "You",
+                              time: formattedTime,
+                              message: chatInput,
+                            },
+                          ]);
+                          setChatInput("");
+                        }
+                      }}
+                    />
                   </div>
                 </div>
               </div>
