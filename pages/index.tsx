@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Moon, Sun } from "lucide-react";
 
 const blogPosts = [
   {
@@ -73,16 +72,9 @@ type BlogPost = {
 type ArticlePageProps = {
   post: BlogPost;
   onBack: () => void;
-  darkMode: boolean;
-  toggleDarkMode: () => void;
 };
 
-const ArticlePage = ({
-  post,
-  onBack,
-  darkMode,
-  toggleDarkMode,
-}: ArticlePageProps) => {
+const ArticlePage = ({ post, onBack }: ArticlePageProps) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [post]);
@@ -90,18 +82,6 @@ const ArticlePage = ({
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#e9e9ef] dark:bg-[#101012]">
       <div className="relative max-w-6xl w-full min-h-[80vw] rounded-3xl shadow-xl border-8 border-[#181818] dark:border-[#262626] bg-white dark:bg-[#17181c] text-gray-800 dark:text-white p-10 md:p-16 my-10 md:my-16 flex flex-col">
-        <button
-          onClick={toggleDarkMode}
-          className="absolute top-6 right-6 bg-white dark:bg-black border border-gray-300 dark:border-[#23232b] rounded-full w-8 h-8 flex items-center justify-center transition hover:scale-105 shadow-sm z-20"
-          title="Toggle dark mode"
-          aria-label="Toggle dark mode"
-        >
-          {darkMode ? (
-            <Sun size={16} className="text-white" />
-          ) : (
-            <Moon size={16} className="text-black" />
-          )}
-        </button>
         <button
           className="text-gray-800 dark:text-white text-lg md:text-xl font-serif font-semibold mb-16 flex items-center w-fit hover:bg-gray-100 dark:hover:bg-[#23232b] px-3 py-1 rounded-lg transition cursor-pointer"
           onClick={onBack}
@@ -136,30 +116,13 @@ const BlogPage = ({
   handleReadMore,
   latestPosts,
   featuredPost,
-  darkMode,
-  toggleDarkMode,
 }: {
   handleReadMore: (id: number) => void;
   latestPosts: BlogPost[];
   featuredPost: BlogPost | undefined;
-  darkMode: boolean;
-  toggleDarkMode: () => void;
 }) => (
   <div className="min-h-screen flex items-center justify-center bg-[#e9e9ef] dark:bg-[#101012]">
     <div className="relative max-w-6xl w-full rounded-3xl shadow-xl border-8 border-[#181818] dark:border-[#262626] bg-white dark:bg-[#17181c] text-gray-800 dark:text-white p-10 md:p-16 my-10 md:my-16">
-      <button
-        onClick={toggleDarkMode}
-        className="absolute top-6 right-6 bg-white dark:bg-black border border-gray-300 dark:border-[#23232b] rounded-full w-8 h-8 flex items-center justify-center transition hover:scale-105 shadow-sm z-20"
-        title="Toggle dark mode"
-        aria-label="Toggle dark mode"
-      >
-        {darkMode ? (
-          <Sun size={16} className="text-white" />
-        ) : (
-          <Moon size={16} className="text-black" />
-        )}
-      </button>
-
       <h1 className="text-4xl md:text-5xl font-serif text-gray-800 dark:text-white mb-20">
         Our Blog
       </h1>
@@ -201,12 +164,7 @@ const BlogPage = ({
         </section>
       )}
 
-      <section
-        className="rounded-2xl p-6 md:p-8"
-        style={{
-          backgroundColor: darkMode ? "#262626" : "#f6f7f9",
-        }}
-      >
+      <section className="rounded-2xl p-6 md:p-8 bg-[#f6f7f9] dark:bg-[#262626]">
         <h2 className="text-2xl font-serif font-semibold text-gray-800 dark:text-white mb-6">
           Latest Posts
         </h2>
@@ -248,26 +206,6 @@ const BlogAndArticleWrapper = () => {
   const featuredPost = blogPosts.find((post) => post.featured);
   const [selectedArticle, setSelectedArticle] = useState<BlogPost | null>(null);
 
-  const [darkMode, setDarkMode] = useState<boolean | undefined>(undefined);
-
-  useEffect(() => {
-    document.documentElement.classList.remove("dark");
-    setDarkMode(false);
-  }, []);
-
-  useEffect(() => {
-    if (darkMode === undefined) return;
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [darkMode]);
-
-  if (darkMode === undefined) return null;
-
-  const toggleDarkMode = () => setDarkMode((d) => !d);
-
   const handleReadMore = (id: number) => {
     const post = blogPosts.find((p) => p.id === id);
     if (post) setSelectedArticle(post);
@@ -277,16 +215,12 @@ const BlogAndArticleWrapper = () => {
     <ArticlePage
       post={selectedArticle}
       onBack={() => setSelectedArticle(null)}
-      darkMode={darkMode}
-      toggleDarkMode={toggleDarkMode}
     />
   ) : (
     <BlogPage
       handleReadMore={handleReadMore}
       latestPosts={latestPosts}
       featuredPost={featuredPost}
-      darkMode={darkMode}
-      toggleDarkMode={toggleDarkMode}
     />
   );
 };
