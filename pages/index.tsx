@@ -11,7 +11,6 @@ import {
   MoreHorizontal,
   TrendingUp,
   Image as ImageIcon,
-  Link,
   Menu,
   X,
   MessageCircle,
@@ -294,14 +293,6 @@ const App = () => {
       commentsList: [],
     },
   ]);
-  // State for which post's comments are open
-  const [openComments, setOpenComments] = useState<{
-    [postId: number]: boolean;
-  }>({});
-  // State for new comment text per post
-  const [newCommentText, setNewCommentText] = useState<{
-    [postId: number]: string;
-  }>({});
 
   const [newPostTitle, setNewPostTitle] = useState("");
   const [newPostImageUrl, setNewPostImageUrl] = useState("");
@@ -416,7 +407,7 @@ const App = () => {
 
   return (
     <div
-      className={`h-screen flex flex-col ${getThemeClasses(
+      className={`min-h-screen flex flex-col overflow-y-auto ${getThemeClasses(
         "bg-[#f1f1f1] text-gray-800",
         "bg-gray-900 text-gray-100"
       )}`}
@@ -598,16 +589,13 @@ const App = () => {
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
-                  className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+                  className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200  dark:hover:text-white"
                   onClick={() => setIsProfileModalOpen(false)}
                   aria-label="Close profile modal"
                   type="button"
                 >
                   <X
-                    className={getThemeClasses(
-                      "text-gray-600",
-                      "text-gray-300"
-                    )}
+                    className={getThemeClasses("text-gray-600", "text-white")}
                   />
                 </button>
                 {currentUser.imageUrl ? (
@@ -794,7 +782,7 @@ const App = () => {
 
       <main className="container mx-auto px-4 py-6 md:px-6 lg:px-8 flex flex-col md:flex-row gap-6 flex-grow overflow-hidden">
         {/* Left Sidebar */}
-        <aside className="hidden md:block md:w-1/4 lg:w-1/5 space-y-6 overflow-y-auto">
+        <aside className="block md:w-1/4 lg:w-1/5 space-y-6 md:overflow-y-auto">
           <div
             className={`${getThemeClasses(
               "bg-white",
@@ -1055,12 +1043,7 @@ const App = () => {
                         "hover:bg-gray-700 bg-gray-600"
                       )}`}
                       // Toggle comment section for this post
-                      onClick={() =>
-                        setOpenComments((prev) => ({
-                          ...prev,
-                          [post.id]: !prev[post.id],
-                        }))
-                      }
+                      onClick={() => toast.info("Feature coming soon!")}
                     >
                       <MessageCircle className="w-5 h-5" />
                       <span>{post.commentsList.length}</span>
@@ -1089,137 +1072,7 @@ const App = () => {
                     </button>
                   </div>
                 </div>
-                {/* Comments section */}
-                <div className="px-2 md:px-4 pb-3">
-                  <button
-                    className={`mt-1 mb-2 px-3 py-1 rounded-full text-xs font-semibold ${
-                      openComments[post.id]
-                        ? getThemeClasses(
-                            "bg-orange-100 text-orange-600",
-                            "bg-orange-900 text-orange-400"
-                          )
-                        : getThemeClasses(
-                            "bg-gray-100 text-gray-600 hover:bg-orange-50",
-                            "bg-gray-700 text-gray-300 hover:bg-orange-950"
-                          )
-                    }`}
-                    onClick={() =>
-                      setOpenComments((prev) => ({
-                        ...prev,
-                        [post.id]: !prev[post.id],
-                      }))
-                    }
-                  >
-                    {openComments[post.id] ? "Hide Comments" : "Comments"}
-                  </button>
-                  {openComments[post.id] && (
-                    <div className="mt-2">
-                      <ul className="mb-2 space-y-2">
-                        {post.commentsList.length === 0 ? (
-                          <li
-                            className={
-                              getThemeClasses(
-                                "text-gray-400",
-                                "text-gray-500"
-                              ) + " text-xs"
-                            }
-                          >
-                            No comments yet.
-                          </li>
-                        ) : (
-                          post.commentsList.map((comment, i) => (
-                            <li
-                              key={i}
-                              className={
-                                getThemeClasses(
-                                  "bg-gray-100 text-gray-700",
-                                  "bg-gray-700 text-gray-200"
-                                ) + " px-3 py-2 rounded"
-                              }
-                            >
-                              <span className="font-semibold mr-2">
-                                {comment.author}
-                              </span>
-                              <span className="text-xs text-gray-400 mr-2">
-                                {comment.timestamp}
-                              </span>
-                              <span>{comment.text}</span>
-                            </li>
-                          ))
-                        )}
-                      </ul>
-                      <form
-                        className="flex items-center space-x-2"
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          const text = (newCommentText[post.id] || "").trim();
-                          if (!text) return;
-                          // Format timestamp as "just now"
-                          const now = new Date();
-                          const pad = (n: number) =>
-                            n.toString().padStart(2, "0");
-                          const formatted =
-                            now.getFullYear() +
-                            "-" +
-                            pad(now.getMonth() + 1) +
-                            "-" +
-                            pad(now.getDate()) +
-                            " " +
-                            pad(now.getHours()) +
-                            ":" +
-                            pad(now.getMinutes());
-                          const newComment: Comment = {
-                            author: currentUser.name,
-                            text,
-                            timestamp: formatted,
-                          };
-                          setPosts((prevPosts) =>
-                            prevPosts.map((p) =>
-                              p.id === post.id
-                                ? {
-                                    ...p,
-                                    commentsList: [
-                                      ...p.commentsList,
-                                      newComment,
-                                    ],
-                                  }
-                                : p
-                            )
-                          );
-                          setNewCommentText((prev) => ({
-                            ...prev,
-                            [post.id]: "",
-                          }));
-                        }}
-                      >
-                        <input
-                          type="text"
-                          className={`flex-1 px-3 py-1 rounded-full border focus:outline-none ${getThemeClasses(
-                            "bg-white border-gray-300",
-                            "bg-gray-800 border-gray-700 text-gray-100"
-                          )}`}
-                          placeholder="Add a comment..."
-                          value={newCommentText[post.id] || ""}
-                          onChange={(e) =>
-                            setNewCommentText((prev) => ({
-                              ...prev,
-                              [post.id]: e.target.value,
-                            }))
-                          }
-                        />
-                        <button
-                          type="submit"
-                          className={getThemeClasses(
-                            "bg-orange-500 text-white px-3 py-1 rounded-full font-semibold text-xs",
-                            "bg-orange-600 text-white px-3 py-1 rounded-full font-semibold text-xs"
-                          )}
-                        >
-                          Submit
-                        </button>
-                      </form>
-                    </div>
-                  )}
-                </div>
+                {/* Comments section removed */}
               </div>
             ))
           ) : (
@@ -1238,7 +1091,7 @@ const App = () => {
         </section>
 
         {/* Right Sidebar */}
-        <aside className="hidden md:block md:w-1/4 lg:w-1/5 space-y-6 overflow-y-auto">
+        <aside className="block md:w-1/4 lg:w-1/5 space-y-6 md:overflow-y-auto">
           <div
             className={`${getThemeClasses(
               "bg-white",
@@ -1442,7 +1295,7 @@ const RedditLiveSection = ({
                   "text-gray-300"
                 )}`}
               >
-                {event.watching}
+                {event.watching} watching
               </p>
             </div>
           </li>
@@ -1562,16 +1415,6 @@ const CreatePostArea = ({
     }
   }
 
-  // If user enters link, clear file
-  function handleLinkPrompt() {
-    const url = prompt("Enter link URL:");
-    if (url) {
-      setNewPostLinkUrl(url);
-      setSelectedFile(null);
-      setInputKey(Date.now());
-    }
-  }
-
   // Preview logic with close ("X") button
   // Handler to clear preview and inputs
   function handleClearPreview() {
@@ -1591,7 +1434,7 @@ const CreatePostArea = ({
         <div className="relative w-full max-w-sm md:max-w-md lg:max-w-lg p-2 my-3 rounded-lg border bg-transparent flex flex-col items-center">
           <button
             type="button"
-            className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white text-sm z-10"
+            className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-800 dark:text-white dark:hover:text-white text-sm z-10"
             onClick={handleClearPreview}
             aria-label="Remove preview"
           >
@@ -1614,7 +1457,7 @@ const CreatePostArea = ({
         <div className="relative w-full max-w-sm md:max-w-md lg:max-w-lg p-2 my-3 rounded-lg border bg-transparent flex flex-col items-center">
           <button
             type="button"
-            className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white text-sm z-10"
+            className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-800 dark:text-white dark:hover:text-white text-sm z-10"
             onClick={handleClearPreview}
             aria-label="Remove preview"
           >
@@ -1640,7 +1483,7 @@ const CreatePostArea = ({
         <div className="relative w-full max-w-sm md:max-w-md lg:max-w-lg p-2 my-3 rounded-lg border bg-transparent flex flex-col items-center">
           <button
             type="button"
-            className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white text-sm z-10"
+            className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-800 dark:text-white dark:hover:text-white text-sm z-10"
             onClick={handleClearPreview}
             aria-label="Remove preview"
           >
@@ -1719,16 +1562,6 @@ const CreatePostArea = ({
               />
               <ImageIcon className="w-5 h-5" />
             </label>
-            <button
-              className={`cursor-pointer p-2 rounded-full ${getThemeClasses(
-                "text-gray-400 hover:text-orange-500 hover:bg-gray-200",
-                "text-gray-300 hover:text-orange-500 hover:bg-gray-700"
-              )}`}
-              onClick={handleLinkPrompt}
-              title="Enter link URL"
-            >
-              <Link className="w-5 h-5" />
-            </button>
           </div>
         </div>
         {/* Create button: mt-2 on mobile, lg:mt-0 on lg screens */}
