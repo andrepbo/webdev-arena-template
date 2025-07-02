@@ -524,8 +524,8 @@ export default function Home() {
                   Wishlist
                 </a>
                 <div className="relative">
-                  <a
-                    href="#"
+                  <button
+                    onClick={() => setCartOpen((prev) => !prev)}
                     className={`${montserrat.className} relative inline-flex items-center gap-1 text-sm hover:text-primary transition-colors`}
                   >
                     <svg
@@ -548,7 +548,7 @@ export default function Home() {
                         {cartItems.length}
                       </span>
                     )}
-                  </a>
+                  </button>
                   {cartOpen && cartItems.length > 0 && (
                     <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 z-40 p-4 text-sm">
                       <ul className="divide-y divide-gray-200 dark:divide-gray-700 max-h-64 overflow-y-auto">
