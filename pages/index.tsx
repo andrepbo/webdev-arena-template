@@ -9,6 +9,7 @@ import { RiVerifiedBadgeLine } from "react-icons/ri";
 import { HiOutlineArchiveBox } from "react-icons/hi2";
 import { MdOutlineComment, MdOutlineLocalPostOffice } from "react-icons/md";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { MdOutlineFavoriteBorder } from "react-icons/md";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -385,6 +386,8 @@ export default function Home() {
         : [...prev, productId]
     );
   };
+  // Wishlist Modal state
+  const [wishlistOpen, setWishlistOpen] = useState(false);
 
   const scrollToProducts = () => {
     productsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -520,12 +523,18 @@ export default function Home() {
                 >
                   Account
                 </a>
-                <a
-                  href="#"
-                  className={`${montserrat.className} hidden md:inline text-sm hover:text-primary transition-colors`}
+                <button
+                  type="button"
+                  onClick={() => setWishlistOpen(true)}
+                  className={`${montserrat.className} relative hidden md:inline text-sm hover:text-primary transition-colors`}
                 >
                   Wishlist
-                </a>
+                  {wishlist.length > 0 && (
+                    <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-1.5 rounded-full">
+                      {wishlist.length}
+                    </span>
+                  )}
+                </button>
                 <div className="relative">
                   <button
                     onClick={() => setCartOpen((prev) => !prev)}
@@ -601,6 +610,83 @@ export default function Home() {
                 </div>
               </div>
             </nav>
+            {wishlistOpen && (
+              <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[9999] w-full max-w-md px-4">
+                <div className="bg-white dark:bg-gray-900 rounded-lg p-6 shadow-lg">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold">Wishlist</h3>
+                    <button
+                      onClick={() => setWishlistOpen(false)}
+                      className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    >
+                      &#x2715;
+                    </button>
+                  </div>
+                  {wishlist.length === 0 ? (
+                    <div className="text-center py-10">
+                      <MdOutlineFavoriteBorder className="mx-auto text-4xl text-gray-400 mb-2" />
+                      <p className="text-gray-500">Your wishlist is empty.</p>
+                      <p className="text-sm text-gray-400">
+                        Start adding your favorite items!
+                      </p>
+                    </div>
+                  ) : (
+                    <ul className="space-y-4">
+                      {wishlist.map((id) => {
+                        const product = FEATURED_PRODUCTS.find(
+                          (p) => p.id.toString() === id
+                        );
+                        // Add to Cart handler for wishlist items
+                        const addToCart = (
+                          product: (typeof FEATURED_PRODUCTS)[0]
+                        ) => {
+                          setCartItems((prev) => [...prev, product]);
+                          toast.success(`${product.name} added to cart`);
+                        };
+                        return product ? (
+                          <li
+                            key={id}
+                            className="flex items-center gap-3 border-b pb-2"
+                          >
+                            <img
+                              src={product.image}
+                              alt={product.name}
+                              className="w-12 h-12 object-cover rounded"
+                            />
+                            <div className="flex-1">
+                              <p className="font-medium">{product.name}</p>
+                              <p className="text-sm text-gray-500">
+                                ${product.price.toFixed(2)}
+                              </p>
+                              <button
+                                onClick={() => addToCart(product)}
+                                className="text-sm text-blue-500 hover:underline"
+                              >
+                                Add to Cart
+                              </button>
+                            </div>
+                            <button
+                              onClick={() => toggleWishlist(id)}
+                              className="text-red-500 hover:underline text-sm"
+                            >
+                              Remove
+                            </button>
+                          </li>
+                        ) : null;
+                      })}
+                    </ul>
+                  )}
+                  <div className="mt-4 text-right">
+                    <button
+                      className="text-sm text-primary hover:underline"
+                      onClick={() => setWishlistOpen(false)}
+                    >
+                      Continue Shopping
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             {menuOpen && (
               <ul className="lg:hidden flex flex-col gap-4 px-4 pb-4 text-base font-medium">
                 {NAV_LINKS.map((link) => (
