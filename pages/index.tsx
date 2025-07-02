@@ -700,19 +700,31 @@ export default function Home() {
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4 my-10 text-center">
           <div className="flex items-center justify-center gap-2">
             <TfiPackage className="w-8 h-8 text-primary" />
-            <span className="font-semibold text-sm">Free Shipping</span>
+            <div className="flex flex-col items-start">
+              <span className="font-semibold text-sm">Free Shipping</span>
+              <span className="text-gray-500 text-xs">Standard shipping</span>
+            </div>
           </div>
           <div className="flex items-center justify-center gap-2">
             <RiVerifiedBadgeLine className="w-8 h-8 text-primary" />
-            <span className="font-semibold text-sm">Special Discounts</span>
+            <div className="flex flex-col items-start">
+              <span className="font-semibold text-sm">Special Discounts</span>
+              <span className="text-gray-500 text-xs">Guaranteed savings</span>
+            </div>
           </div>
           <div className="flex items-center justify-center gap-2">
             <HiOutlineArchiveBox className="w-8 h-8 text-primary" />
-            <span className="font-semibold text-sm">Buyer Protection</span>
+            <div className="flex flex-col items-start">
+              <span className="font-semibold text-sm">Buyer Protection</span>
+              <span className="text-gray-500 text-xs">Secure payment</span>
+            </div>
           </div>
           <div className="flex items-center justify-center gap-2">
             <MdOutlineComment className="w-8 h-8 text-primary" />
-            <span className="font-semibold text-sm">24/7 Support</span>
+            <div className="flex flex-col items-start">
+              <span className="font-semibold text-sm">24/7 Support</span>
+              <span className="text-gray-500 text-xs">Give us feedback</span>
+            </div>
           </div>
         </section>
         {/* Main Content */}
