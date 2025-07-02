@@ -764,20 +764,20 @@ export default function Home() {
             </div>
           </section>
           {/* Deal of the Day */}
-          <section className="bg-card rounded-2xl shadow-lg p-7 flex flex-col gap-5 items-center border border-gray-100 dark:border-gray-800">
-            <h3
-              className={`${montserrat.className} font-bold text-xl tracking-wide text-foreground`}
-              style={{ letterSpacing: 1 }}
-            >
-              Deal of the day!
-            </h3>
-            <DealCountdown />
-            <a
-              href="#"
-              className={`${montserrat.className} bg-primary text-white px-5 py-2 rounded font-semibold hover:bg-primary/90 transition text-base`}
-            >
-              Shop collection
-            </a>
+          <section className="flex justify-center bg-gradient-to-r from-[#3F3D38] via-[#48443E] to-[#3F3D38] text-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="flex-1 p-8 flex flex-col justify-center items-center text-center gap-4">
+              <span className="text-sm text-yellow-400 font-semibold tracking-widest uppercase">
+                Get 30% off on your order
+              </span>
+              <h3 className="text-3xl font-bold">Deal of the day!</h3>
+              <DealCountdown />
+              <a
+                href="#"
+                className="mt-4 bg-white text-black px-5 py-2 rounded font-semibold hover:bg-gray-100 transition text-base"
+              >
+                Shop collection
+              </a>
+            </div>
           </section>
           {/* Blog Preview */}
           <section className="bg-card rounded-2xl shadow-lg p-7 flex flex-col gap-5 border border-gray-100 dark:border-gray-800">
