@@ -1023,7 +1023,7 @@ export default function Home() {
                   type="email"
                   required
                   placeholder="Enter your email..."
-                  className="w-full border-b-2 border-gray-400 bg-transparent py-2 pr-24 pl-4 focus:outline-none text-gray-800 placeholder-gray-500"
+                  className="w-full border-b-2 border-gray-400 bg-transparent py-2 pr-24 pl-4 focus:outline-none text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-white"
                 />
                 <div
                   id="email-error"
@@ -1048,7 +1048,7 @@ export default function Home() {
                       }
                     }
                   }}
-                  className="absolute right-0 top-0 bottom-0 px-4 text-sm font-medium text-gray-800"
+                  className="absolute right-0 top-0 bottom-0 px-4 text-sm font-medium text-gray-800 dark:text-white"
                 >
                   <MdOutlineLocalPostOffice className="inline mr-1" /> Subscribe
                 </button>
