@@ -922,7 +922,7 @@ export default function Home() {
             </div>
           </section>
           {/* Deal of the Day */}
-          <section className="flex justify-center bg-gradient-to-r from-[#3F3D38] via-[#48443E] to-[#3F3D38] text-white rounded-2xl shadow-lg overflow-hidden">
+          <section className="w-full bg-[#3a3730] text-white py-12">
             <div className="flex-1 p-8 flex flex-col justify-center items-center text-center gap-4">
               <span className="text-sm text-yellow-400 font-semibold tracking-widest uppercase">
                 Get 30% off on your order
