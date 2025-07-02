@@ -249,38 +249,6 @@ function ProductCard({
             New
           </span>
         )}
-        <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button className="bg-white dark:bg-gray-900 p-1 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-800">
-            <svg
-              className="w-4 h-4 text-gray-700 dark:text-gray-200"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 15l7-7 7 7"
-              />
-            </svg>
-          </button>
-          <button className="bg-white dark:bg-gray-900 p-1 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-800">
-            <svg
-              className="w-4 h-4 text-gray-700 dark:text-gray-200"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </button>
-        </div>
       </div>
       <div className="mt-4 flex-1 flex flex-col">
         <a
