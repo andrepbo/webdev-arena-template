@@ -114,7 +114,7 @@ const ArticlePage = ({ post, onBack }: ArticlePageProps) => {
           </h1>
           <p className="text-gray-500 dark:text-gray-300 text-base mb-16 text-center max-w-2xl">
             {post.summary ||
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus euismod, nisi vel consectetur cursus, nisl erat aliquet nisl, nec aliquet nunc nisl euismod."}
+              "Explore a world of ideas, techniques, and stories that inspire creative expression and empower artists to develop their unique voice."}
           </p>
           <img
             src={post.image}
