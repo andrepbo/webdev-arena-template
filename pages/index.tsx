@@ -394,6 +394,11 @@ export default function Home() {
   );
   const [cartOpen, setCartOpen] = useState(false);
   const cartRef = useRef<HTMLDivElement>(null);
+  const productsRef = useRef<HTMLDivElement>(null);
+
+  const scrollToProducts = () => {
+    productsRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleAddToCart = (product: (typeof FEATURED_PRODUCTS)[0]) => {
     setCartItems((prev) => [...prev, product]);
@@ -666,12 +671,12 @@ export default function Home() {
               >
                 Summer overcoat
               </h1>
-              <a
-                href="#"
+              <button
+                onClick={scrollToProducts}
                 className={`${montserrat.className} inline-block bg-primary text-white px-6 py-3 rounded font-semibold text-lg shadow hover:bg-primary/90 transition`}
               >
                 Shop collection
-              </a>
+              </button>
             </div>
             <div className="flex-1 flex justify-center sm:justify-end items-center gap-4 pt-10 sm:pt-20 md:pt-0">
               <img
@@ -766,7 +771,7 @@ export default function Home() {
             ))}
           </section>
           {/* Featured Products */}
-          <section>
+          <section ref={productsRef}>
             <h2
               className={`${montserrat.className} text-3xl font-extrabold tracking-wide uppercase mb-7 text-primary`}
               style={{ letterSpacing: 2 }}
