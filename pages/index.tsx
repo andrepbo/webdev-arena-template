@@ -429,87 +429,43 @@ export default function Home() {
         {/* Topbar */}
         <header className="w-full bg-white/90 dark:bg-gray-900/90 shadow-sm sticky top-0 z-30 backdrop-blur-md transition-colors duration-300">
           <div className="max-w-7xl mx-auto w-full">
-            <nav className="flex items-center justify-between px-4 py-4">
-              <div className="flex items-center gap-4">
+            <nav className="flex items-center justify-between px-4 py-4 relative">
+              <button
+                className="lg:hidden text-gray-700 dark:text-gray-200 focus:outline-none"
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-label="Toggle Menu"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  {menuOpen ? (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  ) : (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  )}
+                </svg>
+              </button>
+              <div className="absolute left-1/2 transform -translate-x-1/2 lg:static lg:translate-x-0 flex items-center gap-8">
                 <a
                   href="#"
                   className={`${montserrat.className} text-2xl font-extrabold tracking-tight text-primary`}
                 >
                   HONGO
                 </a>
-                <button
-                  className="lg:hidden text-gray-700 dark:text-gray-200 focus:outline-none"
-                  onClick={() => setMenuOpen(!menuOpen)}
-                  aria-label="Toggle Menu"
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    {menuOpen ? (
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    ) : (
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4 6h16M4 12h16M4 18h16"
-                      />
-                    )}
-                  </svg>
-                </button>
-                {/* Mobile Wishlist & Cart Icons */}
-                <div className="flex items-center gap-4 md:hidden absolute right-4 top-4">
-                  {/* Wishlist Icon */}
-                  <button
-                    onClick={() => setWishlistOpen(true)}
-                    className="relative"
-                    aria-label="Open wishlist"
-                  >
-                    <MdFavoriteBorder className="w-6 h-6 text-gray-700 dark:text-gray-200" />
-                    {wishlist.length > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                        {wishlist.length}
-                      </span>
-                    )}
-                  </button>
-
-                  {/* Cart Icon */}
-                  <button
-                    onClick={() => setCartOpen((prev) => !prev)}
-                    className="relative"
-                    aria-label="Open cart"
-                  >
-                    <svg
-                      className="w-6 h-6 text-gray-700 dark:text-gray-200"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4"
-                      />
-                      <circle cx="7" cy="21" r="1" />
-                      <circle cx="17" cy="21" r="1" />
-                    </svg>
-                    {cartItems.length > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                        {cartItems.length}
-                      </span>
-                    )}
-                  </button>
-                </div>
                 <ul
-                  className={`${montserrat.className} hidden lg:flex flex-wrap gap-6 text-base font-medium`}
+                  className={`${montserrat.className} hidden lg:flex flex-wrap gap-6 text-base font-medium ml-6`}
                 >
                   {NAV_LINKS.map((link) => (
                     <li key={link.name}>
@@ -523,8 +479,52 @@ export default function Home() {
                   ))}
                 </ul>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="relative hidden md:block">
+              {/* Mobile Wishlist & Cart Icons */}
+              <div className="flex items-center gap-4 absolute right-4 top-4 lg:hidden">
+                {/* Wishlist Icon */}
+                <button
+                  onClick={() => setWishlistOpen(true)}
+                  className="relative"
+                  aria-label="Open wishlist"
+                >
+                  <MdFavoriteBorder className="w-6 h-6 text-gray-700 dark:text-gray-200" />
+                  {wishlist.length > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                      {wishlist.length}
+                    </span>
+                  )}
+                </button>
+
+                {/* Cart Icon */}
+                <button
+                  onClick={() => setCartOpen((prev) => !prev)}
+                  className="relative"
+                  aria-label="Open cart"
+                >
+                  <svg
+                    className="w-6 h-6 text-gray-700 dark:text-gray-200"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4"
+                    />
+                    <circle cx="7" cy="21" r="1" />
+                    <circle cx="17" cy="21" r="1" />
+                  </svg>
+                  {cartItems.length > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                      {cartItems.length}
+                    </span>
+                  )}
+                </button>
+              </div>
+              <div className="hidden lg:flex items-center gap-4 ml-auto">
+                <div className="relative hidden lg:block">
                   <svg
                     className="absolute left-2 top-1.5 w-4 h-4 text-gray-400"
                     fill="none"
@@ -545,7 +545,7 @@ export default function Home() {
                 </div>
                 <a
                   href="#"
-                  className={`${montserrat.className} hidden md:inline text-sm hover:text-primary transition-colors`}
+                  className={`${montserrat.className} inline text-sm hover:text-primary transition-colors`}
                 >
                   Account
                 </a>
@@ -561,7 +561,7 @@ export default function Home() {
                     </span>
                   )}
                 </button>
-                <div className="relative hidden md:block">
+                <div className="relative inline-block">
                   <button
                     onClick={() => setCartOpen((prev) => !prev)}
                     className={`${montserrat.className} relative inline-flex items-center gap-1 text-sm hover:text-primary transition-colors`}
@@ -753,7 +753,7 @@ export default function Home() {
                     </a>
                   </li>
                 ))}
-                <li className="md:hidden">
+                <li className="hidden">
                   <a
                     href="#"
                     className="block text-foreground hover:text-primary transition-colors"
@@ -1004,7 +1004,7 @@ export default function Home() {
                         </p>
                       </div>
                       {/* Mobile header icons (wishlist and cart) */}
-                      <div className="md:hidden flex items-center gap-4 px-4 pb-2">
+                      <div className="lg:hidden flex items-center gap-4 px-4 pb-2">
                         <div className="flex items-center gap-4">
                           <button
                             onClick={() => setWishlistOpen(true)}
