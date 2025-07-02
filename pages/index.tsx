@@ -467,8 +467,6 @@ export default function Home() {
         className={`${montserrat.variable} ${roboto.variable} min-h-screen bg-background text-foreground transition-colors duration-300`}
       >
         {/* Topbar */}
-        {/* Removed mobile header support/location/shop line */}
-        {/* Navbar */}
         <header className="w-full bg-white/90 dark:bg-gray-900/90 shadow-sm sticky top-0 z-30 backdrop-blur-md transition-colors duration-300">
           <div className="max-w-7xl mx-auto w-full">
             <nav className="flex items-center justify-between px-4 py-4">
@@ -795,7 +793,6 @@ export default function Home() {
                     Account
                   </a>
                 </li>
-                {/* Removed wishlist and cart icons from mobile menu */}
               </ul>
             )}
           </div>
