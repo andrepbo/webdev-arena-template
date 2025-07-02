@@ -412,18 +412,7 @@ export default function Home() {
         className={`${montserrat.variable} ${roboto.variable} min-h-screen bg-background text-foreground transition-colors duration-300`}
       >
         {/* Topbar */}
-        <div className="w-full bg-muted text-xs py-2 px-4 flex flex-wrap justify-between items-center text-center gap-y-1 border-b border-gray-200 dark:border-gray-800">
-          <div className="w-full flex flex-wrap justify-between items-center gap-2 sm:flex-nowrap">
-            <span>📞 Support</span>
-            <span>
-              Shop at one of the largest fashion houses!{" "}
-              <a href="#" className="underline">
-                See all products
-              </a>
-            </span>
-            <span>🌍 Location</span>
-          </div>
-        </div>
+        {/* Removed mobile header support/location/shop line */}
         {/* Navbar */}
         <header className="w-full bg-white/90 dark:bg-gray-900/90 shadow-sm sticky top-0 z-30 backdrop-blur-md transition-colors duration-300">
           <div className="max-w-7xl mx-auto w-full">
