@@ -946,8 +946,9 @@ export default function Home() {
                 winter collection
               </h3>
               <p className="text-gray-600 mb-6">
-                Lorem ipsum is simply dummy text of the printing typesetting
-                industry. Lorem Ipsum has been standard dummy text.
+                Discover our latest winter arrivals, crafted with premium
+                materials for maximum comfort and style. Stay warm and trendy
+                all season long.
               </p>
               <a
                 href="#"
