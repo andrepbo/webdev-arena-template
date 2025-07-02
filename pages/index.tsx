@@ -152,22 +152,28 @@ const FEATURED_PRODUCTS = [
 
 const BLOG_POSTS = [
   {
-    title: "Everything I know about minimalism in fashion",
+    id: 1,
+    title: "Everything I know about midi skirts and how to wear",
     image:
-      "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80",
-    href: "#",
+      "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
+    date: "09 August 2022",
+    author: "Alexie Richards",
   },
   {
-    title: "A design is only as good as its details",
+    id: 2,
+    title: "A designer is only as good as the star who wears",
     image:
-      "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80",
-    href: "#",
+      "https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=600&q=80",
+    date: "09 August 2022",
+    author: "Alexie Richards",
   },
   {
-    title: "How to style your wardrobe for summer",
+    id: 3,
+    title: "Strong women and fashion",
     image:
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80",
-    href: "#",
+      "https://images.unsplash.com/photo-1519744792095-2f2205e87b6f?auto=format&fit=crop&w=600&q=80",
+    date: "09 August 2022",
+    author: "Alexie Richards",
   },
 ];
 
@@ -748,30 +754,41 @@ export default function Home() {
               </a>
             </div>
           </section>
-          {/* Blog Preview */}
-          <section className="bg-card rounded-2xl shadow-lg p-7 flex flex-col gap-5 border border-gray-100 dark:border-gray-800">
-            <h3
-              className={`${montserrat.className} font-bold text-xl mb-2 tracking-wide text-foreground`}
-              style={{ letterSpacing: 1 }}
-            >
-              Blog of fashion
-            </h3>
-            <div className="flex flex-col gap-3">
-              {BLOG_POSTS.map((post, i) => (
-                <a
-                  key={i}
-                  href={post.href}
-                  className="flex gap-3 items-center hover:bg-muted rounded-lg p-2 transition shadow-sm"
+          {/* Blog Preview - Card Layout */}
+          <section className="my-20 px-4">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-bold">Blog of fashion</h2>
+              <p className="text-gray-500 mt-2">
+                The freshest and most exciting blogs
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {BLOG_POSTS.map((post) => (
+                <div
+                  key={post.id}
+                  className="relative rounded overflow-hidden shadow group"
                 >
                   <img
                     src={post.image}
                     alt={post.title}
-                    className="w-14 h-14 rounded object-cover shadow"
+                    className="w-full h-72 object-cover"
                   />
-                  <span className={`${roboto.className} text-base font-medium`}>
-                    {post.title}
-                  </span>
-                </a>
+                  <div className="absolute inset-0 flex items-end justify-center px-4 pb-6">
+                    <div className="w-full max-w-[90%] text-center">
+                      <div className="bg-white bg-opacity-95 p-4 rounded-t">
+                        <h4 className="text-xs text-gray-500 font-semibold mb-1">
+                          FASHION
+                        </h4>
+                        <p className="text-sm font-medium text-gray-800 leading-snug">
+                          {post.title}
+                        </p>
+                      </div>
+                      <div className="bg-black text-white text-xs text-center px-4 py-2 uppercase tracking-wide rounded-b">
+                        {post.date} | by {post.author}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           </section>
