@@ -371,9 +371,9 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState(FEATURED_PRODUCTS);
-  const [cartItems, setCartItems] = useState<(typeof FEATURED_PRODUCTS)[0][]>(
-    []
-  );
+  // Cart items now include quantity
+  type CartItem = (typeof FEATURED_PRODUCTS)[0] & { quantity: number };
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const cartRef = useRef<HTMLDivElement>(null);
   const productsRef = useRef<HTMLDivElement>(null);
@@ -394,13 +394,37 @@ export default function Home() {
   };
 
   const handleAddToCart = (product: (typeof FEATURED_PRODUCTS)[0]) => {
-    setCartItems((prev) => [...prev, product]);
+    setCartItems((prev) => {
+      const existing = prev.find((item) => item.id === product.id);
+      if (existing) {
+        return prev.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: (item.quantity || 1) + 1 }
+            : item
+        );
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
     setCartOpen(true);
     setTimeout(() => setCartOpen(false), 3000);
   };
 
   const handleRemoveFromCart = (id: number) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+    setCartItems((prev) => {
+      const found = prev.find((item) => item.id === id);
+      if (found) {
+        if ((found.quantity || 1) > 1) {
+          return prev.map((item) =>
+            item.id === id
+              ? { ...item, quantity: (item.quantity || 1) - 1 }
+              : item
+          );
+        } else {
+          return prev.filter((item) => item.id !== id);
+        }
+      }
+      return prev;
+    });
   };
 
   useEffect(() => {
@@ -582,9 +606,10 @@ export default function Home() {
                                 <span className="line-clamp-2 max-w-[140px]">
                                   {item.name}
                                 </span>
-                                <span className="text-xs text-gray-500">
-                                  ${item.price.toFixed(2)}
-                                </span>
+                                <p className="text-sm text-gray-500">
+                                  ${item.price.toFixed(2)} x{" "}
+                                  {item.quantity || 1}
+                                </p>
                               </div>
                             </div>
                             <button
@@ -601,7 +626,11 @@ export default function Home() {
                         <span>
                           $
                           {cartItems
-                            .reduce((acc, item) => acc + item.price, 0)
+                            .reduce(
+                              (acc, item) =>
+                                acc + item.price * (item.quantity || 1),
+                              0
+                            )
                             .toFixed(2)}
                         </span>
                       </div>
@@ -640,7 +669,22 @@ export default function Home() {
                         const addToCart = (
                           product: (typeof FEATURED_PRODUCTS)[0]
                         ) => {
-                          setCartItems((prev) => [...prev, product]);
+                          setCartItems((prev) => {
+                            const existing = prev.find(
+                              (item) => item.id === product.id
+                            );
+                            if (existing) {
+                              return prev.map((item) =>
+                                item.id === product.id
+                                  ? {
+                                      ...item,
+                                      quantity: (item.quantity || 1) + 1,
+                                    }
+                                  : item
+                              );
+                            }
+                            return [...prev, { ...product, quantity: 1 }];
+                          });
                           toast.success(`${product.name} added to cart`);
                         };
                         return product ? (
