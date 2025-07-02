@@ -23,11 +23,9 @@ const roboto = Roboto({
 });
 
 const NAV_LINKS = [
-  { name: "Shop", href: "#" },
-  { name: "Collections", href: "#" },
-  { name: "Pages", href: "#" },
-  { name: "Blog", href: "#" },
-  { name: "Features", href: "#" },
+  { name: "Shop", href: "#shop" },
+  { name: "Collections", href: "#collection" },
+  { name: "Blog", href: "#blog" },
 ];
 
 const FEATURED_PRODUCTS = [
@@ -376,6 +374,43 @@ export default function Home() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [cartOpen]);
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const el = document.querySelector(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleSmoothScroll = (e: Event) => {
+      const target = e.target as HTMLAnchorElement;
+      if (target.tagName === "A" && target.getAttribute("href")) {
+        const href = target.getAttribute("href")!;
+        if (href === "#") {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          return;
+        }
+        if (href.startsWith("#")) {
+          e.preventDefault();
+          const id = href.substring(1);
+          const el = document.getElementById(id);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth" });
+          }
+        }
+      }
+    };
+
+    document.addEventListener("click", handleSmoothScroll);
+
+    return () => {
+      document.removeEventListener("click", handleSmoothScroll);
+    };
+  }, []);
   return (
     <>
       <Head>
@@ -794,10 +829,14 @@ export default function Home() {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 py-12 flex flex-col gap-14">
           {/* Collections */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 grid-rows-2 gap-4 w-full">
+          <section
+            id="collection"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 grid-rows-2 gap-4 w-full"
+          >
             {/* Summer Collection */}
-            <div
-              className="sm:col-span-1 lg:col-span-2 row-span-1 bg-cover bg-center p-6 flex flex-col justify-between text-white min-h-[200px]"
+            <section
+              id="summer"
+              className="sm:col-span-1 lg:col-span-2 row-span-1 bg-cover bg-center p-6 flex flex-col justify-between text-white min-h-[200px] scroll-mt-24"
               style={{
                 backgroundImage:
                   "url('https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80')",
@@ -810,11 +849,12 @@ export default function Home() {
               <button className="mt-4 text-sm border px-4 py-2 w-max">
                 Shop now
               </button>
-            </div>
+            </section>
 
             {/* Woman Collection */}
-            <div
-              className="sm:col-span-1 lg:col-span-2 row-span-2 bg-cover bg-center p-6 flex flex-col justify-end text-white min-h-[400px]"
+            <section
+              id="women"
+              className="sm:col-span-1 lg:col-span-2 row-span-2 bg-cover bg-center p-6 flex flex-col justify-end text-white min-h-[400px] scroll-mt-24"
               style={{
                 backgroundImage:
                   "url('https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=800&q=80')",
@@ -827,10 +867,13 @@ export default function Home() {
                   Shop now
                 </button>
               </div>
-            </div>
+            </section>
 
             {/* Sale */}
-            <div className="col-span-1 bg-yellow-500 text-white flex flex-col justify-between p-6 min-h-[200px]">
+            <section
+              id="sale"
+              className="col-span-1 bg-yellow-500 text-white flex flex-col justify-between p-6 min-h-[200px] scroll-mt-24"
+            >
               <div>
                 <p className="text-sm uppercase">Limited offer</p>
                 <h2 className="text-4xl font-bold lowercase">sale</h2>
@@ -839,11 +882,12 @@ export default function Home() {
               <button className="mt-4 text-sm bg-black text-white px-4 py-2 w-max">
                 Shop now
               </button>
-            </div>
+            </section>
 
             {/* Men's Hoodies */}
-            <div
-              className="col-span-1 bg-cover bg-center p-6 flex flex-col justify-between text-white min-h-[200px]"
+            <section
+              id="mens"
+              className="col-span-1 bg-cover bg-center p-6 flex flex-col justify-between text-white min-h-[200px] scroll-mt-24"
               style={{
                 backgroundImage:
                   "url('https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80')",
@@ -856,10 +900,10 @@ export default function Home() {
               <button className="mt-4 text-sm border px-4 py-2 w-max">
                 Shop now
               </button>
-            </div>
+            </section>
           </section>
           {/* Featured Products */}
-          <section ref={productsRef}>
+          <section id="shop" ref={productsRef}>
             <h2
               className={`${montserrat.className} text-3xl font-extrabold tracking-wide uppercase mb-7 text-primary`}
               style={{ letterSpacing: 2 }}
@@ -922,7 +966,7 @@ export default function Home() {
             </div>
           </section>
           {/* Blog Preview - Card Layout */}
-          <section className="my-20 px-4">
+          <section id="blog" className="my-20 px-4">
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold">Blog of fashion</h2>
               <p className="text-gray-500 mt-2">
