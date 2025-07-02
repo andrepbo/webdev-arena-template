@@ -115,7 +115,7 @@ export default function App() {
             <div className="flex justify-center mb-6">
               <img
                 src={selectedArticle.image}
-                alt={selectedArticle.title}
+                alt={`Cover image for ${selectedArticle.title}`}
                 className="w-full max-w-4xl h-64 sm:h-80 md:h-96 object-cover rounded-xl"
               />
             </div>
@@ -161,7 +161,7 @@ export default function App() {
                     <div className="rounded-lg overflow-hidden">
                       <img
                         src={article.image}
-                        alt={article.title}
+                        alt={`Cover image for ${article.title}`}
                         className={`w-full object-cover h-72 rounded-lg`}
                       />
                       <div className="pt-3 px-1">
@@ -221,7 +221,7 @@ export default function App() {
                         <div className="rounded-lg overflow-hidden">
                           <img
                             src={article.image}
-                            alt={article.title}
+                            alt={`Cover image for ${article.title}`}
                             className={`w-full object-cover ${imageHeight} rounded-lg`}
                           />
                           <div className="pt-3 px-1">
