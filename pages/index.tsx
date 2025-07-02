@@ -1061,12 +1061,33 @@ export default function Home() {
               <div className="relative max-w-xl w-full">
                 <input
                   type="email"
+                  required
                   placeholder="Enter your email..."
                   className="w-full border-b-2 border-gray-400 bg-transparent py-2 pr-24 pl-4 focus:outline-none text-gray-800 placeholder-gray-500"
                 />
+                <div
+                  id="email-error"
+                  className="text-red-500 text-sm mt-1 text-left"
+                ></div>
                 <button
                   type="button"
-                  onClick={() => toast.info("Thank you for subscribing!")}
+                  onClick={() => {
+                    const emailInput = document.querySelector<HTMLInputElement>(
+                      'input[type="email"]'
+                    );
+                    const errorDiv = document.getElementById("email-error");
+                    if (emailInput) {
+                      if (emailInput.validity.valid) {
+                        if (errorDiv) errorDiv.textContent = "";
+                        emailInput.value = "";
+                        toast.info("Thank you for subscribing!");
+                      } else {
+                        if (errorDiv)
+                          errorDiv.textContent =
+                            "Please enter a valid email address.";
+                      }
+                    }
+                  }}
                   className="absolute right-0 top-0 bottom-0 px-4 text-sm font-medium text-gray-800"
                 >
                   <MdOutlineLocalPostOffice className="inline mr-1" /> Subscribe
