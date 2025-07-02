@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-page-custom-font */
 
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Montserrat, Roboto } from "next/font/google";
 import { toast, Toaster } from "sonner";
 
@@ -393,6 +393,7 @@ export default function Home() {
     []
   );
   const [cartOpen, setCartOpen] = useState(false);
+  const cartRef = useRef<HTMLDivElement>(null);
 
   const handleAddToCart = (product: (typeof FEATURED_PRODUCTS)[0]) => {
     setCartItems((prev) => [...prev, product]);
@@ -410,6 +411,24 @@ export default function Home() {
     );
     setFilteredProducts(results);
   }, [searchTerm]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (cartRef.current && !cartRef.current.contains(event.target as Node)) {
+        setCartOpen(false);
+      }
+    }
+
+    if (cartOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [cartOpen]);
   return (
     <>
       <Head>
@@ -550,7 +569,10 @@ export default function Home() {
                     )}
                   </button>
                   {cartOpen && cartItems.length > 0 && (
-                    <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 z-40 p-4 text-sm">
+                    <div
+                      ref={cartRef}
+                      className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 z-40 p-4 text-sm"
+                    >
                       <ul className="divide-y divide-gray-200 dark:divide-gray-700 max-h-64 overflow-y-auto">
                         {cartItems.map((item) => (
                           <li
