@@ -3,6 +3,7 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { Montserrat, Roboto } from "next/font/google";
+import { toast, Toaster } from "sonner";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -831,7 +832,7 @@ export default function Home() {
               className="flex flex-col gap-3 w-full max-w-xs"
               onSubmit={(e) => {
                 e.preventDefault();
-                alert("Thank you for subscribing!");
+                toast.info("Thank you for subscribing!");
               }}
             >
               <input
@@ -856,6 +857,7 @@ export default function Home() {
           © {new Date().getFullYear()} Fashion E-Commerce. All rights reserved.
         </footer>
       </div>
+      <Toaster richColors />
     </>
   );
 }
