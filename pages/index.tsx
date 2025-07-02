@@ -9,7 +9,7 @@ import { RiVerifiedBadgeLine } from "react-icons/ri";
 import { HiOutlineArchiveBox } from "react-icons/hi2";
 import { MdOutlineComment, MdOutlineLocalPostOffice } from "react-icons/md";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import { MdOutlineFavoriteBorder } from "react-icons/md";
+import { MdOutlineFavoriteBorder, MdFavoriteBorder } from "react-icons/md";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -506,6 +506,50 @@ export default function Home() {
                     )}
                   </svg>
                 </button>
+                {/* Mobile Wishlist & Cart Icons */}
+                <div className="flex items-center gap-4 md:hidden absolute right-4 top-4">
+                  {/* Wishlist Icon */}
+                  <button
+                    onClick={() => setWishlistOpen(true)}
+                    className="relative"
+                    aria-label="Open wishlist"
+                  >
+                    <MdFavoriteBorder className="w-6 h-6 text-gray-700 dark:text-gray-200" />
+                    {wishlist.length > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                        {wishlist.length}
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Cart Icon */}
+                  <button
+                    onClick={() => setCartOpen((prev) => !prev)}
+                    className="relative"
+                    aria-label="Open cart"
+                  >
+                    <svg
+                      className="w-6 h-6 text-gray-700 dark:text-gray-200"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4"
+                      />
+                      <circle cx="7" cy="21" r="1" />
+                      <circle cx="17" cy="21" r="1" />
+                    </svg>
+                    {cartItems.length > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                        {cartItems.length}
+                      </span>
+                    )}
+                  </button>
+                </div>
                 <ul
                   className={`${montserrat.className} hidden lg:flex flex-wrap gap-6 text-base font-medium`}
                 >
@@ -559,7 +603,7 @@ export default function Home() {
                     </span>
                   )}
                 </button>
-                <div className="relative">
+                <div className="relative hidden md:block">
                   <button
                     onClick={() => setCartOpen((prev) => !prev)}
                     className={`${montserrat.className} relative inline-flex items-center gap-1 text-sm hover:text-primary transition-colors`}
@@ -751,14 +795,7 @@ export default function Home() {
                     Account
                   </a>
                 </li>
-                <li className="md:hidden">
-                  <a
-                    href="#"
-                    className="block text-foreground hover:text-primary transition-colors"
-                  >
-                    Wishlist
-                  </a>
-                </li>
+                {/* Removed wishlist and cart icons from mobile menu */}
               </ul>
             )}
           </div>
@@ -931,6 +968,47 @@ export default function Home() {
                         <p className="text-sm font-medium text-gray-800 leading-snug">
                           {post.title}
                         </p>
+                      </div>
+                      {/* Mobile header icons (wishlist and cart) */}
+                      <div className="md:hidden flex items-center gap-4 px-4 pb-2">
+                        <div className="flex items-center gap-4">
+                          <button
+                            onClick={() => setWishlistOpen(true)}
+                            className="relative text-gray-500 hover:text-primary transition-colors"
+                          >
+                            <AiOutlineHeart className="w-6 h-6" />
+                            {wishlist.length > 0 && (
+                              <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
+                                {wishlist.length}
+                              </span>
+                            )}
+                          </button>
+                          <button
+                            onClick={() => setCartOpen((prev) => !prev)}
+                            className="relative text-gray-500 hover:text-primary transition-colors"
+                          >
+                            <svg
+                              className="w-6 h-6"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4"
+                              />
+                              <circle cx="7" cy="21" r="1" />
+                              <circle cx="17" cy="21" r="1" />
+                            </svg>
+                            {cartItems.length > 0 && (
+                              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                                {cartItems.length}
+                              </span>
+                            )}
+                          </button>
+                        </div>
                       </div>
                       <div className="bg-black text-white text-xs text-center px-4 py-2 uppercase tracking-wide rounded-b">
                         {post.date} | by {post.author}
