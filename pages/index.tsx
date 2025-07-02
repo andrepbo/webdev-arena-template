@@ -150,16 +150,6 @@ const FEATURED_PRODUCTS = [
   },
 ];
 
-const NEW_ARRIVALS = [
-  {
-    name: "Winter Collection",
-    desc: "New arrival winter collection",
-    image:
-      "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80",
-    href: "#",
-  },
-];
-
 const BLOG_POSTS = [
   {
     title: "Everything I know about minimalism in fashion",
@@ -179,12 +169,6 @@ const BLOG_POSTS = [
       "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80",
     href: "#",
   },
-];
-
-const BRANDS = [
-  { name: "NORD", logo: "N", href: "#" },
-  { name: "WHITE", logo: "WHITE", href: "#" },
-  { name: "NORD STUDIO", logo: "NORD STUDIO", href: "#" },
 ];
 
 function StarRating({ rating }: { rating: number }) {
@@ -722,45 +706,30 @@ export default function Home() {
             </div>
           </section>
           {/* New Arrivals */}
-          <section className="bg-card rounded-2xl shadow-lg p-7 flex flex-col gap-5 items-center border border-gray-100 dark:border-gray-800">
-            <h3
-              className={`${montserrat.className} font-bold text-xl mb-2 tracking-wide text-foreground`}
-              style={{ letterSpacing: 1 }}
-            >
-              New Arrival
-            </h3>
-            {NEW_ARRIVALS.map((item, i) => (
-              <div key={i} className="flex flex-col gap-2 items-center">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="rounded-xl object-cover w-40 h-28 shadow"
-                />
-                <span className={`${montserrat.className} font-bold text-lg`}>
-                  {item.name}
-                </span>
-                <span
-                  className={`${roboto.className} text-xs text-gray-500 dark:text-gray-400`}
-                >
-                  {item.desc}
-                </span>
-                <a
-                  href={item.href}
-                  className={`${montserrat.className} text-primary text-sm font-semibold hover:underline`}
-                >
-                  Shop the collection
-                </a>
-              </div>
-            ))}
-            <div className="flex gap-2 mt-2">
-              {BRANDS.map((brand) => (
-                <span
-                  key={brand.name}
-                  className={`${roboto.className} bg-muted rounded px-2 py-1 text-xs font-semibold`}
-                >
-                  {brand.logo}
-                </span>
-              ))}
+          <section className="flex flex-col md:flex-row items-center justify-between gap-8 my-16">
+            <div className="relative w-full md:w-1/2">
+              <img
+                src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80"
+                alt="New Arrival"
+                className="w-full h-auto max-h-[400px] object-cover rounded"
+              />
+            </div>
+            <div className="w-full md:w-1/2 text-center md:text-left px-4">
+              <h3 className="text-3xl font-bold mb-4">
+                New arrival
+                <br />
+                winter collection
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Lorem ipsum is simply dummy text of the printing typesetting
+                industry. Lorem Ipsum has been standard dummy text.
+              </p>
+              <a
+                href="#"
+                className="inline-block bg-black text-white px-6 py-3 rounded font-medium hover:bg-gray-900 transition"
+              >
+                Shop the collection
+              </a>
             </div>
           </section>
           {/* Deal of the Day */}
