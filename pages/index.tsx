@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Moon, Sun, TrendingUp, Users } from "lucide-react";
+import { ArrowRight, Check, Moon, TrendingUp, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const quizQuestions = [
@@ -359,7 +359,7 @@ const PersonalityQuiz = () => {
   const [showResult, setShowResult] = useState(false);
   const [animating, setAnimating] = useState(false);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode] = useState(false);
 
   useEffect(() => {
     document.body.classList.toggle("dark-mode", darkMode);
@@ -404,10 +404,6 @@ const PersonalityQuiz = () => {
     setSelectedOption(null);
   };
 
-  const toggleTheme = () => {
-    setDarkMode(!darkMode);
-  };
-
   const progressPercentage =
     ((currentQuestion + 1) / quizQuestions.length) * 100;
 
@@ -444,14 +440,6 @@ const PersonalityQuiz = () => {
       >
         Question {currentQuestion + 1}/{quizQuestions.length}
       </div>
-
-      <button
-        className="theme-toggle"
-        onClick={toggleTheme}
-        aria-label="Toggle theme"
-      >
-        {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-      </button>
 
       {!showResult ? (
         <div className="quiz-card relative border-[2px] border-black">
