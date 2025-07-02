@@ -30,37 +30,6 @@ const NAV_LINKS = [
   { name: "Features", href: "#" },
 ];
 
-const COLLECTIONS = [
-  {
-    title: "Summer collection",
-    image:
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80",
-    href: "#",
-    highlight: false,
-  },
-  {
-    title: "Women collection",
-    image:
-      "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80",
-    href: "#",
-    highlight: true,
-  },
-  {
-    title: "Men's hoodies",
-    image:
-      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80",
-    href: "#",
-    highlight: false,
-  },
-  {
-    title: "Limited sale",
-    image: "",
-    href: "#",
-    highlight: false,
-    sale: true,
-  },
-];
-
 const FEATURED_PRODUCTS = [
   {
     id: 1,
@@ -285,50 +254,6 @@ function ProductCard({
           Add to cart
         </button>
       </div>
-    </div>
-  );
-}
-
-function CollectionCard({
-  collection,
-}: {
-  collection: (typeof COLLECTIONS)[0];
-}) {
-  if (collection.sale) {
-    return (
-      <div className="bg-primary text-white rounded-lg flex flex-col items-center justify-center p-6 min-h-[180px]">
-        <span className={`${montserrat.className} text-lg font-bold mb-2`}>
-          Limited Sale
-        </span>
-        <span className={`${roboto.className} text-2xl font-extrabold mb-2`}>
-          Save up to 30% off
-        </span>
-        <a
-          href={collection.href}
-          className={`${montserrat.className} bg-white text-primary font-semibold px-4 py-2 rounded hover:bg-gray-100 transition`}
-        >
-          Shop now
-        </a>
-      </div>
-    );
-  }
-  return (
-    <div className="relative rounded-lg overflow-hidden group min-h-[180px]">
-      <img
-        src={collection.image}
-        alt={collection.title}
-        className="object-cover w-full h-full group-hover:scale-105 transition-transform"
-      />
-      <a
-        href={collection.href}
-        className="absolute inset-0 bg-black/30 flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity"
-      >
-        <span
-          className={`${montserrat.className} text-white text-lg font-semibold`}
-        >
-          {collection.title}
-        </span>
-      </a>
     </div>
   );
 }
@@ -869,10 +794,63 @@ export default function Home() {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 py-12 flex flex-col gap-14">
           {/* Collections */}
-          <section className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-            {COLLECTIONS.map((col, i) => (
-              <CollectionCard key={i} collection={col} />
-            ))}
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 grid-rows-2 gap-4 w-full">
+            {/* Summer Collection */}
+            <div
+              className="sm:col-span-1 lg:col-span-2 row-span-1 bg-cover bg-center p-6 flex flex-col justify-between text-white min-h-[200px]"
+              style={{
+                backgroundImage:
+                  "url('https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80')",
+              }}
+            >
+              <div>
+                <p className="text-sm uppercase">Latest design</p>
+                <h2 className="text-2xl font-bold">Summer collection</h2>
+              </div>
+              <button className="mt-4 underline">Shop now</button>
+            </div>
+
+            {/* Woman Collection */}
+            <div
+              className="sm:col-span-1 lg:col-span-2 row-span-2 bg-cover bg-center p-6 flex flex-col justify-end text-white min-h-[400px]"
+              style={{
+                backgroundImage:
+                  "url('https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=800&q=80')",
+              }}
+            >
+              <div>
+                <p className="text-sm uppercase">Up to 20% off</p>
+                <h2 className="text-2xl font-bold">Women collection</h2>
+                <button className="mt-4 underline">Shop now</button>
+              </div>
+            </div>
+
+            {/* Sale */}
+            <div className="col-span-1 bg-yellow-500 text-white flex flex-col justify-between p-6 min-h-[200px]">
+              <div>
+                <p className="text-sm uppercase">Limited offer</p>
+                <h2 className="text-4xl font-bold lowercase">sale</h2>
+                <p className="text-sm mt-2">Save up to 30% off</p>
+              </div>
+              <button className="mt-4 text-sm bg-black text-white px-4 py-2 w-max">
+                Shop now
+              </button>
+            </div>
+
+            {/* Men's Hoodies */}
+            <div
+              className="col-span-1 bg-cover bg-center p-6 flex flex-col justify-between text-white min-h-[200px]"
+              style={{
+                backgroundImage:
+                  "url('https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80')",
+              }}
+            >
+              <div>
+                <p className="text-sm uppercase">Hot season</p>
+                <h2 className="text-2xl font-bold">Men&#39;s hoodies</h2>
+              </div>
+              <button className="mt-4 underline">Shop now</button>
+            </div>
           </section>
           {/* Featured Products */}
           <section ref={productsRef}>
