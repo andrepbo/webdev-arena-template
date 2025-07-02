@@ -7,7 +7,7 @@ import { toast, Toaster } from "sonner";
 import { TfiPackage } from "react-icons/tfi";
 import { RiVerifiedBadgeLine } from "react-icons/ri";
 import { HiOutlineArchiveBox } from "react-icons/hi2";
-import { MdOutlineComment } from "react-icons/md";
+import { MdOutlineComment, MdOutlineLocalPostOffice } from "react-icons/md";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -793,33 +793,26 @@ export default function Home() {
             </div>
           </section>
           {/* Newsletter */}
-          <section className="bg-card rounded-2xl shadow-lg p-7 flex flex-col gap-3 items-center border border-gray-100 dark:border-gray-800">
-            <h3
-              className={`${montserrat.className} font-bold text-xl tracking-wide text-foreground`}
-              style={{ letterSpacing: 1 }}
-            >
-              Subscribe to get 30% discount!
-            </h3>
-            <form
-              className="flex flex-col gap-3 w-full max-w-xs"
-              onSubmit={(e) => {
-                e.preventDefault();
-                toast.info("Thank you for subscribing!");
-              }}
-            >
-              <input
-                type="email"
-                required
-                placeholder="Your email"
-                className={`${roboto.className} rounded px-3 py-2 border border-gray-200 dark:border-gray-700 bg-muted text-sm focus:outline-none focus:ring-2 focus:ring-primary`}
-              />
-              <button
-                type="submit"
-                className={`${montserrat.className} bg-primary text-white px-4 py-2 rounded font-semibold hover:bg-primary/90 transition`}
-              >
-                Subscribe
-              </button>
-            </form>
+          <section className="px-4">
+            <div className="py-10 px-6 md:px-12 rounded text-center flex flex-col items-center justify-center">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6">
+                Subscribe to get 30% discount!
+              </h2>
+              <div className="relative max-w-xl w-full">
+                <input
+                  type="email"
+                  placeholder="Enter your email..."
+                  className="w-full border-b-2 border-gray-400 bg-transparent py-2 pr-24 pl-4 focus:outline-none text-gray-800 placeholder-gray-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => toast.info("Thank you for subscribing!")}
+                  className="absolute right-0 top-0 bottom-0 px-4 text-sm font-medium text-gray-800"
+                >
+                  <MdOutlineLocalPostOffice className="inline mr-1" /> Subscribe
+                </button>
+              </div>
+            </div>
           </section>
         </main>
         {/* Footer */}
