@@ -601,6 +601,15 @@ export default function Home() {
                           </li>
                         ))}
                       </ul>
+                      <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between text-sm font-semibold">
+                        <span>Total:</span>
+                        <span>
+                          $
+                          {cartItems
+                            .reduce((acc, item) => acc + item.price, 0)
+                            .toFixed(2)}
+                        </span>
+                      </div>
                     </div>
                   )}
                 </div>
