@@ -4,6 +4,10 @@ import Head from "next/head";
 import { useEffect, useState, useRef } from "react";
 import { Montserrat, Roboto } from "next/font/google";
 import { toast, Toaster } from "sonner";
+import { TfiPackage } from "react-icons/tfi";
+import { RiVerifiedBadgeLine } from "react-icons/ri";
+import { HiOutlineArchiveBox } from "react-icons/hi2";
+import { MdOutlineComment } from "react-icons/md";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -695,70 +699,19 @@ export default function Home() {
         {/* Value Offers Section */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4 my-10 text-center">
           <div className="flex flex-col items-center gap-2">
-            <svg
-              className="w-8 h-8 text-primary"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 3h18M3 9h18M3 15h18M3 21h18"
-              />
-            </svg>
+            <TfiPackage className="w-8 h-8 text-primary" />
             <span className="font-semibold text-sm">Free Shipping</span>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <svg
-              className="w-8 h-8 text-primary"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 8v4l3 3"
-              />
-              <circle cx="12" cy="12" r="10" />
-            </svg>
+            <RiVerifiedBadgeLine className="w-8 h-8 text-primary" />
             <span className="font-semibold text-sm">Special Discounts</span>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <svg
-              className="w-8 h-8 text-primary"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 11c1.656 0 3-1.567 3-3.5S13.656 4 12 4s-3 1.567-3 3.5S10.344 11 12 11z"
-              />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 11v7" />
-            </svg>
+            <HiOutlineArchiveBox className="w-8 h-8 text-primary" />
             <span className="font-semibold text-sm">Buyer Protection</span>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <svg
-              className="w-8 h-8 text-primary"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M18.364 5.636a9 9 0 11-12.728 0"
-              />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v4" />
-            </svg>
+            <MdOutlineComment className="w-8 h-8 text-primary" />
             <span className="font-semibold text-sm">24/7 Support</span>
           </div>
         </section>
