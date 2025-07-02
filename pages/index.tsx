@@ -187,26 +187,10 @@ const BlogPage = ({
           {latestPosts.slice(0, 4).map((post) => (
             <div
               key={post.id}
-              className="rounded-xl overflow-hidden shadow-none cursor-pointer"
+              className="rounded-xl overflow-hidden shadow-none"
             >
-              <img
-                src={post.image}
-                alt={post.title}
-                className="h-44 w-full object-cover rounded-xl"
-                onClick={() => handleReadMore(post.id)}
-              />
-              <div className="py-4">
-                <h3
-                  className="text-sm font-semibold mb-3 cursor-pointer"
-                  style={{ color: "inherit" }}
-                  onClick={() => handleReadMore(post.id)}
-                >
-                  {post.title}
-                </h3>
-                <div className="flex items-center text-[11px] mt-2 text-gray-500 dark:text-gray-400">
-                  <ClockIcon />
-                  <span>{post.date}</span>
-                </div>
+              <div className="rounded-xl overflow-hidden shadow-none bg-gray-100 dark:bg-gray-800 h-44 flex items-center justify-center text-sm text-gray-500">
+                Placeholder content
               </div>
             </div>
           ))}
