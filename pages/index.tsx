@@ -579,14 +579,16 @@ export default function Home() {
                             key={item.id}
                             className="py-2 flex justify-between items-center"
                           >
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 overflow-hidden max-w-[180px]">
                               <img
                                 src={item.image}
                                 alt={item.name}
                                 className="w-10 h-10 object-cover rounded"
                               />
-                              <div className="flex flex-col">
-                                <span className="truncate">{item.name}</span>
+                              <div className="flex flex-col overflow-hidden">
+                                <span className="line-clamp-2 max-w-[140px]">
+                                  {item.name}
+                                </span>
                                 <span className="text-xs text-gray-500">
                                   ${item.price.toFixed(2)}
                                 </span>
