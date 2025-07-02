@@ -8,6 +8,7 @@ import { TfiPackage } from "react-icons/tfi";
 import { RiVerifiedBadgeLine } from "react-icons/ri";
 import { HiOutlineArchiveBox } from "react-icons/hi2";
 import { MdOutlineComment, MdOutlineLocalPostOffice } from "react-icons/md";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -222,9 +223,13 @@ function ColorDots({ colors }: { colors: string[] }) {
 function ProductCard({
   product,
   handleAddToCart,
+  wishlist,
+  toggleWishlist,
 }: {
   product: (typeof FEATURED_PRODUCTS)[0];
   handleAddToCart: (product: (typeof FEATURED_PRODUCTS)[0]) => void;
+  wishlist: string[];
+  toggleWishlist: (productId: string) => void;
 }) {
   return (
     <div className="bg-card rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-4 flex flex-col group transition hover:shadow-2xl hover:-translate-y-1 hover:border-primary/40 duration-200">
@@ -239,6 +244,20 @@ function ProductCard({
             New
           </span>
         )}
+        <button
+          onClick={() => toggleWishlist(product.id.toString())}
+          className={`absolute top-3 right-3 text-xl ${
+            wishlist.includes(product.id.toString())
+              ? "text-red-500"
+              : "text-gray-400"
+          }`}
+        >
+          {wishlist.includes(product.id.toString()) ? (
+            <AiFillHeart />
+          ) : (
+            <AiOutlineHeart />
+          )}
+        </button>
       </div>
       <div className="mt-4 flex-1 flex flex-col">
         <a
@@ -357,6 +376,15 @@ export default function Home() {
   const [cartOpen, setCartOpen] = useState(false);
   const cartRef = useRef<HTMLDivElement>(null);
   const productsRef = useRef<HTMLDivElement>(null);
+  // Wishlist state
+  const [wishlist, setWishlist] = useState<string[]>([]);
+  const toggleWishlist = (productId: string) => {
+    setWishlist((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
+    );
+  };
 
   const scrollToProducts = () => {
     productsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -696,6 +724,8 @@ export default function Home() {
                   key={product.id}
                   product={product}
                   handleAddToCart={handleAddToCart}
+                  wishlist={wishlist}
+                  toggleWishlist={toggleWishlist}
                 />
               ))}
             </div>
