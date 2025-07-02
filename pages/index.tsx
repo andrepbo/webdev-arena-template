@@ -178,6 +178,9 @@ export default function App() {
                         <h2 className="text-base font-medium mt-2">
                           {article.title}
                         </h2>
+                        <p className="text-sm text-neutral-600 dark:text-neutral-300 mt-1">
+                          {article.description.slice(0, 100)}...
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -234,6 +237,9 @@ export default function App() {
                             <h2 className="text-xl font-medium mt-6">
                               {article.title}
                             </h2>
+                            <p className="text-sm text-neutral-600 dark:text-neutral-300 mt-1">
+                              {article.description.slice(0, 100)}...
+                            </p>
                           </div>
                         </div>
                       </div>
