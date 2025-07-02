@@ -854,7 +854,7 @@ export default function Home() {
                 <p className="text-sm uppercase">Latest design</p>
                 <h2 className="text-2xl font-bold">Summer collection</h2>
               </div>
-              <button className="mt-4 text-sm border px-4 py-2 w-max">
+              <button className="mt-4 text-sm dark:bg-black border px-4 py-2 w-max">
                 Shop now
               </button>
             </section>
@@ -871,7 +871,7 @@ export default function Home() {
               <div>
                 <p className="text-sm uppercase">Up to 20% off</p>
                 <h2 className="text-2xl font-bold">Women collection</h2>
-                <button className="mt-4 text-sm border px-4 py-2 w-max">
+                <button className="mt-4 text-sm dark:bg-black border px-4 py-2 w-max">
                   Shop now
                 </button>
               </div>
@@ -905,7 +905,7 @@ export default function Home() {
                 <p className="text-sm uppercase">Hot season</p>
                 <h2 className="text-2xl font-bold">Men&#39;s hoodies</h2>
               </div>
-              <button className="mt-4 text-sm border px-4 py-2 w-max">
+              <button className="mt-4 text-sm dark:bg-black border px-4 py-2 w-max">
                 Shop now
               </button>
             </section>
