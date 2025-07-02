@@ -784,7 +784,7 @@ export default function Home() {
               </h1>
               <button
                 onClick={scrollToProducts}
-                className={`${montserrat.className} inline-block bg-primary text-white px-6 py-3 rounded font-semibold text-lg shadow hover:bg-primary/90 transition`}
+                className={`${montserrat.className} inline-block bg-primary dark:bg-secondary text-white px-6 py-3 rounded font-semibold text-lg shadow hover:bg-primary/90 transition`}
               >
                 Shop collection
               </button>
