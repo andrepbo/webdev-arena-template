@@ -1003,47 +1003,6 @@ export default function Home() {
                           {post.title}
                         </p>
                       </div>
-                      {/* Mobile header icons (wishlist and cart) */}
-                      <div className="lg:hidden flex items-center gap-4 px-4 pb-2">
-                        <div className="flex items-center gap-4">
-                          <button
-                            onClick={() => setWishlistOpen(true)}
-                            className="relative text-gray-500 hover:text-primary transition-colors"
-                          >
-                            <AiOutlineHeart className="w-6 h-6" />
-                            {wishlist.length > 0 && (
-                              <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
-                                {wishlist.length}
-                              </span>
-                            )}
-                          </button>
-                          <button
-                            onClick={() => setCartOpen((prev) => !prev)}
-                            className="relative text-gray-500 hover:text-primary transition-colors"
-                          >
-                            <svg
-                              className="w-6 h-6"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M3 3h2l.4 2M7 13h10l4-8H5.4"
-                              />
-                              <circle cx="7" cy="21" r="1" />
-                              <circle cx="17" cy="21" r="1" />
-                            </svg>
-                            {cartItems.length > 0 && (
-                              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                                {cartItems.length}
-                              </span>
-                            )}
-                          </button>
-                        </div>
-                      </div>
                       <div className="bg-black text-white text-xs text-center px-4 py-2 uppercase tracking-wide rounded-b">
                         {post.date} | by {post.author}
                       </div>
