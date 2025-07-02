@@ -715,14 +715,14 @@ export default function Home() {
           <div className="flex items-center justify-center gap-2">
             <HiOutlineArchiveBox className="w-8 h-8 text-primary" />
             <div className="flex flex-col items-start">
-              <span className="font-semibold text-sm">Buyer Protection</span>
+              <span className="font-semibold text-sm">Buyers Protection</span>
               <span className="text-gray-500 text-xs">Secure payment</span>
             </div>
           </div>
           <div className="flex items-center justify-center gap-2">
             <MdOutlineComment className="w-8 h-8 text-primary" />
             <div className="flex flex-col items-start">
-              <span className="font-semibold text-sm">24/7 Support</span>
+              <span className="font-semibold text-sm">Customer service</span>
               <span className="text-gray-500 text-xs">Give us feedback</span>
             </div>
           </div>
