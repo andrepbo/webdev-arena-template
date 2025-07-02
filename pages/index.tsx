@@ -392,9 +392,12 @@ export default function Home() {
   const [cartItems, setCartItems] = useState<(typeof FEATURED_PRODUCTS)[0][]>(
     []
   );
+  const [cartOpen, setCartOpen] = useState(false);
 
   const handleAddToCart = (product: (typeof FEATURED_PRODUCTS)[0]) => {
     setCartItems((prev) => [...prev, product]);
+    setCartOpen(true);
+    setTimeout(() => setCartOpen(false), 3000);
   };
 
   const handleRemoveFromCart = (id: number) => {
@@ -546,7 +549,7 @@ export default function Home() {
                       </span>
                     )}
                   </a>
-                  {cartItems.length > 0 && (
+                  {cartOpen && cartItems.length > 0 && (
                     <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 z-40 p-4 text-sm">
                       <ul className="divide-y divide-gray-200 dark:divide-gray-700 max-h-64 overflow-y-auto">
                         {cartItems.map((item) => (
