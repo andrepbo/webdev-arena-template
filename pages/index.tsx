@@ -579,7 +579,14 @@ export default function Home() {
                             key={item.id}
                             className="py-2 flex justify-between items-center"
                           >
-                            <span className="truncate">{item.name}</span>
+                            <div className="flex items-center gap-2">
+                              <img
+                                src={item.image}
+                                alt={item.name}
+                                className="w-10 h-10 object-cover rounded"
+                              />
+                              <span className="truncate">{item.name}</span>
+                            </div>
                             <button
                               onClick={() => handleRemoveFromCart(item.id)}
                               className="text-red-500 hover:underline"
