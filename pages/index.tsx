@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Calendar,
   Check,
@@ -86,6 +87,16 @@ interface ChatMessage {
   content: string;
   timestamp: Date;
   isFromCurrentUser: boolean;
+  contactId: string;
+}
+
+interface Group {
+  id: number;
+  name: string;
+  members: number;
+  image: string;
+  icon: string;
+  iconColor: string;
 }
 
 interface AppContextType {
@@ -95,6 +106,8 @@ interface AppContextType {
   isStoryViewerOpen: boolean;
   isContactProfileOpen: boolean;
   isChatDialogOpen: boolean;
+  isFollowersModalOpen: boolean;
+  isGroupsDialogOpen: boolean;
   currentStoryIndex: number;
   currentImageIndex: number;
   storyProgress: number;
@@ -106,10 +119,12 @@ interface AppContextType {
   newPostImage: string | null;
   suggestions: Suggestion[];
   followedContacts: Contact[];
+  followers: Contact[];
   ignoredSuggestionIds: Set<number>;
   chatMessages: ChatMessage[];
   newMessageText: string;
   globalSearchQuery: string;
+  rightBarSearchQuery: string;
   toggleMobileChat: () => void;
   closeMobileChat: () => void;
   toggleMobileNav: () => void;
@@ -122,9 +137,14 @@ interface AppContextType {
   closeContactProfile: () => void;
   openChatDialog: (contact: Contact) => void;
   closeChatDialog: () => void;
+  openFollowersModal: () => void;
+  closeFollowersModal: () => void;
+  openGroupsDialog: () => void;
+  closeGroupsDialog: () => void;
   sendMessage: (message: string) => void;
   setNewMessageText: (text: string) => void;
   setGlobalSearchQuery: (query: string) => void;
+  setRightBarSearchQuery: (query: string) => void;
   nextStoryImage: () => void;
   prevStoryImage: () => void;
   setStoryProgress: (progress: number) => void;
@@ -135,6 +155,10 @@ interface AppContextType {
   showComingSoonToast: () => void;
   followSuggestion: (id: number) => void;
   ignoreSuggestion: (id: number) => void;
+  unfollowContact: (email: string) => void;
+  removeFollower: (email: string) => void;
+  joinedGroups: Set<number>;
+  handleJoinGroup: (groupId: number) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -145,6 +169,8 @@ function AppProvider({ children }: { children: React.ReactNode }) {
   const [isEventsDialogOpen, setIsEventsDialogOpen] = useState(false);
   const [isStoryViewerOpen, setIsStoryViewerOpen] = useState(false);
   const [isContactProfileOpen, setIsContactProfileOpen] = useState(false);
+  const [isFollowersModalOpen, setIsFollowersModalOpen] = useState(false);
+  const [isGroupsDialogOpen, setIsGroupsDialogOpen] = useState(false);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [storyProgress, setStoryProgress] = useState(0);
@@ -152,6 +178,22 @@ function AppProvider({ children }: { children: React.ReactNode }) {
   const [newPostText, setNewPostText] = useState("");
   const [newPostImage, setNewPostImage] = useState<string | null>(null);
   const [followedContacts, setFollowedContacts] = useState<Contact[]>([]);
+  const [followers, setFollowers] = useState<Contact[]>([
+    {
+      name: "Anna Konjufca",
+      location: "Tirana, Albania",
+      avatar:
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=464&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      email: "anna.konjufca@example.com",
+    },
+    {
+      name: "Mike Finavskie",
+      location: "Sydney, Australia",
+      avatar:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      email: "mike.finavskie@example.com",
+    },
+  ]);
   const [ignoredSuggestionIds, setIgnoredSuggestionIds] = useState<Set<number>>(
     new Set()
   );
@@ -160,6 +202,8 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     useState<Contact | null>(null);
   const [newMessageText, setNewMessageText] = useState("");
   const [globalSearchQuery, setGlobalSearchQuery] = useState("");
+  const [rightBarSearchQuery, setRightBarSearchQuery] = useState("");
+  const [joinedGroups, setJoinedGroups] = useState<Set<number>>(new Set());
 
   // Sample chat data for each contact
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
@@ -167,6 +211,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 1,
       senderId: "julia.clarke@example.com",
+      contactId: "julia.clarke@example.com",
       senderName: "Julia Clarke",
       content: "Hey! How's your new design project going?",
       timestamp: new Date(Date.now() - 3600000),
@@ -175,6 +220,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 2,
       senderId: "current-user",
+      contactId: "julia.clarke@example.com",
       senderName: "Cyndy Littbridge",
       content:
         "It's going really well! Thanks for asking. The client loves the mockups.",
@@ -184,6 +230,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 3,
       senderId: "julia.clarke@example.com",
+      contactId: "julia.clarke@example.com",
       senderName: "Julia Clarke",
       content:
         "That's awesome! I'd love to see them when you're ready to share.",
@@ -195,6 +242,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 4,
       senderId: "sara.cliene@example.com",
+      contactId: "sara.cliene@example.com",
       senderName: "Sara Cliene",
       content: "Are you free for coffee this weekend?",
       timestamp: new Date(Date.now() - 7200000),
@@ -203,6 +251,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 5,
       senderId: "current-user",
+      contactId: "sara.cliene@example.com",
       senderName: "Cyndy Littbridge",
       content: "Yes! Saturday afternoon works for me. Same place as usual?",
       timestamp: new Date(Date.now() - 7000000),
@@ -211,6 +260,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 6,
       senderId: "sara.cliene@example.com",
+      contactId: "sara.cliene@example.com",
       senderName: "Sara Cliene",
       content: "Perfect! See you at 2pm ☕",
       timestamp: new Date(Date.now() - 6800000),
@@ -221,6 +271,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 7,
       senderId: "amy.ruth@example.com",
+      contactId: "amy.ruth@example.com",
       senderName: "Amy Ruth",
       content: "Just saw your latest post! The photography is stunning 📸",
       timestamp: new Date(Date.now() - 1800000),
@@ -229,6 +280,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 8,
       senderId: "current-user",
+      contactId: "amy.ruth@example.com",
       senderName: "Cyndy Littbridge",
       content: "Thank you so much! It was such a beautiful sunrise that day.",
       timestamp: new Date(Date.now() - 1600000),
@@ -239,6 +291,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 9,
       senderId: "mark.stefine@example.com",
+      contactId: "mark.stefine@example.com",
       senderName: "Mark Stefine",
       content:
         "Hope you're doing well! Been working on any interesting projects lately?",
@@ -248,6 +301,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 10,
       senderId: "current-user",
+      contactId: "mark.stefine@example.com",
       senderName: "Cyndy Littbridge",
       content: "Always! Just finished a mobile app redesign. How about you?",
       timestamp: new Date(Date.now() - 10600000),
@@ -258,6 +312,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 11,
       senderId: "trinity.sipson@example.com",
+      contactId: "trinity.sipson@example.com",
       senderName: "Trinity Sipson",
       content:
         "The event photos turned out amazing! Thank you for capturing those moments.",
@@ -267,6 +322,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 12,
       senderId: "current-user",
+      contactId: "trinity.sipson@example.com",
       senderName: "Cyndy Littbridge",
       content: "You're so welcome! It was such a fun event to photograph.",
       timestamp: new Date(Date.now() - 800000),
@@ -277,6 +333,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 13,
       senderId: "albin.vjosa@example.com",
+      contactId: "albin.vjosa@example.com",
       senderName: "Albin Vjosa",
       content: "Hello! How are things going in New York?",
       timestamp: new Date(Date.now() - 5400000),
@@ -285,6 +342,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     {
       id: 14,
       senderId: "current-user",
+      contactId: "albin.vjosa@example.com",
       senderName: "Cyndy Littbridge",
       content:
         "Great! The city never sleeps, you know. How's Tokyo treating you?",
@@ -448,6 +506,12 @@ function AppProvider({ children }: { children: React.ReactNode }) {
   const closeEventsDialog = () => setIsEventsDialogOpen(false);
   const showComingSoonToast = () => toast("Coming soon");
 
+  const openFollowersModal = () => setIsFollowersModalOpen(true);
+  const closeFollowersModal = () => setIsFollowersModalOpen(false);
+
+  const openGroupsDialog = () => setIsGroupsDialogOpen(true);
+  const closeGroupsDialog = () => setIsGroupsDialogOpen(false);
+
   const openContactProfile = (contact: Contact) => {
     setSelectedContact(contact);
     setIsContactProfileOpen(true);
@@ -470,7 +534,8 @@ function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const sendMessage = (message: string) => {
-    if (!selectedChatContact || !message.trim()) return;
+    if (!selectedChatContact || !selectedChatContact.email || !message.trim())
+      return;
 
     const newMessage: ChatMessage = {
       id: Date.now(),
@@ -479,11 +544,11 @@ function AppProvider({ children }: { children: React.ReactNode }) {
       content: message.trim(),
       timestamp: new Date(),
       isFromCurrentUser: true,
+      contactId: selectedChatContact.email,
     };
 
     setChatMessages((prev) => [...prev, newMessage]);
     setNewMessageText("");
-    toast("Message sent!");
   };
 
   const followSuggestion = (id: number) => {
@@ -582,6 +647,26 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     setNewPostImage(null);
   };
 
+  const unfollowContact = (email: string) => {
+    setFollowedContacts((prev) => prev.filter((c) => c.email !== email));
+    toast("You have unfollowed this contact.");
+  };
+
+  const removeFollower = (email: string) => {
+    setFollowers((prev) => prev.filter((f) => f.email !== email));
+    toast("Follower has been removed.");
+  };
+
+  const handleJoinGroup = (groupId: number) => {
+    const newJoinedGroups = new Set(joinedGroups);
+    if (newJoinedGroups.has(groupId)) {
+      newJoinedGroups.delete(groupId);
+    } else {
+      newJoinedGroups.add(groupId);
+    }
+    setJoinedGroups(newJoinedGroups);
+  };
+
   const value: AppContextType = {
     isMobileChatOpen,
     isMobileNavOpen,
@@ -589,6 +674,8 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     isStoryViewerOpen,
     isContactProfileOpen,
     isChatDialogOpen,
+    isFollowersModalOpen,
+    isGroupsDialogOpen,
     currentStoryIndex,
     currentImageIndex,
     storyProgress,
@@ -600,10 +687,12 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     newPostImage,
     suggestions,
     followedContacts,
+    followers,
     ignoredSuggestionIds,
     chatMessages,
     newMessageText,
     globalSearchQuery,
+    rightBarSearchQuery,
     toggleMobileChat,
     closeMobileChat,
     toggleMobileNav,
@@ -616,9 +705,14 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     closeContactProfile,
     openChatDialog,
     closeChatDialog,
+    openFollowersModal,
+    closeFollowersModal,
+    openGroupsDialog,
+    closeGroupsDialog,
     sendMessage,
     setNewMessageText,
     setGlobalSearchQuery,
+    setRightBarSearchQuery,
     nextStoryImage,
     prevStoryImage,
     setStoryProgress,
@@ -629,6 +723,10 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     showComingSoonToast,
     followSuggestion,
     ignoreSuggestion,
+    unfollowContact,
+    removeFollower,
+    joinedGroups,
+    handleJoinGroup,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
@@ -699,7 +797,7 @@ function MobileOverlay({
 function Header() {
   const {
     toggleMobileNav,
-    showComingSoonToast,
+    openFollowersModal,
     globalSearchQuery,
     setGlobalSearchQuery,
   } = useAppContext();
@@ -727,7 +825,7 @@ function Header() {
       <div className="flex items-center space-x-3">
         <div
           className="hidden items-center space-x-3 xl:flex cursor-pointer group"
-          onClick={showComingSoonToast}
+          onClick={openFollowersModal}
         >
           <span className="text-sm font-medium text-gray-800 dark:text-neutral-200 group-hover:text-pink-600 dark:group-hover:text-pink-500 transition-colors duration-200">
             Cyndy Littbridge
@@ -760,6 +858,7 @@ function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
     showComingSoonToast,
     openContactProfile,
     followedContacts,
+    openGroupsDialog,
   } = useAppContext();
   const navigationItems = [
     { icon: Home, label: "Feed", active: true },
@@ -860,7 +959,9 @@ function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (!item.active) {
+                  if (item.label === "Groups") {
+                    openGroupsDialog();
+                  } else if (!item.active) {
                     showComingSoonToast();
                   }
                 }}
@@ -1075,7 +1176,7 @@ interface Event {
 }
 
 function PostList() {
-  const { posts } = useAppContext();
+  const { posts, globalSearchQuery, showComingSoonToast } = useAppContext();
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [postLikes, setPostLikes] = useState<Record<number, number>>({});
   const [postComments, setPostComments] = useState<Record<number, Comment[]>>(
@@ -1087,6 +1188,14 @@ function PostList() {
   const [commentCounts, setCommentCounts] = useState<Record<number, number>>(
     {}
   );
+
+  const filteredPosts = posts.filter((post) => {
+    if (!globalSearchQuery.trim()) return true;
+    const query = globalSearchQuery.toLowerCase().trim();
+    const authorMatch = post.author.toLowerCase().includes(query);
+    const contentMatch = post.content?.toLowerCase().includes(query);
+    return authorMatch || contentMatch;
+  });
 
   const handleLike = (postId: number, currentLikes: number) => {
     const isLiked = likedPosts.has(postId);
@@ -1172,6 +1281,24 @@ function PostList() {
     }));
   };
 
+  if (filteredPosts.length === 0) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center p-8 text-center dark:bg-neutral-800">
+          <div className="w-16 h-16 bg-gray-100 dark:bg-neutral-900 rounded-full flex items-center justify-center mb-4">
+            <Search className="w-8 h-8 text-gray-400 dark:text-neutral-500" />
+          </div>
+          <h3 className="font-medium text-gray-900 dark:text-neutral-100 mb-2">
+            No posts found
+          </h3>
+          <p className="text-sm text-gray-500 dark:text-neutral-400">
+            {`Your search for "${globalSearchQuery}" did not return any results.`}
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   function CommentsList({ postId }: { postId: number }) {
     const comments = postComments[postId] || [];
 
@@ -1213,7 +1340,7 @@ function PostList() {
 
   return (
     <div className="space-y-6">
-      {posts.map((post) => (
+      {filteredPosts.map((post) => (
         <Card key={post.id}>
           <CardHeader className="pb-3 dark:bg-neutral-800">
             <div className="flex items-center justify-between">
@@ -1239,7 +1366,7 @@ function PostList() {
                   </p>
                 </div>
               </div>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" onClick={showComingSoonToast}>
                 <MoreHorizontal className="w-4 h-4" />
               </Button>
             </div>
@@ -1330,6 +1457,7 @@ function PostList() {
                 variant="ghost"
                 size="sm"
                 className="flex-1 text-gray-500 dark:text-neutral-400"
+                onClick={showComingSoonToast}
               >
                 <Share2 className="w-4 h-4 mr-2" />
                 Share
@@ -1433,10 +1561,16 @@ function YouMightLike() {
                 <p className="font-medium text-gray-900 dark:text-neutral-100">
                   {person.name}
                 </p>
-                <div className="flex items-center space-x-1">
-                  <div className="flex -space-x-1">
-                    <div className="w-4 h-4 rounded-full bg-gray-300 dark:bg-neutral-700"></div>
-                    <div className="w-4 h-4 rounded-full bg-gray-300 dark:bg-neutral-700"></div>
+                <div className="flex items-center space-x-2">
+                  <div className="flex -space-x-2">
+                    <Avatar className="w-5 h-5 border-2 border-white dark:border-neutral-800">
+                      <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=464&auto=format&fit=crop" />
+                      <AvatarFallback>A</AvatarFallback>
+                    </Avatar>
+                    <Avatar className="w-5 h-5 border-2 border-white dark:border-neutral-800">
+                      <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=387&auto=format&fit=crop" />
+                      <AvatarFallback>M</AvatarFallback>
+                    </Avatar>
                   </div>
                   <span className="text-xs text-gray-500 dark:text-neutral-400">
                     {person.mutualFriends} Mutual
@@ -1468,190 +1602,140 @@ function YouMightLike() {
   );
 }
 
-function UpcomingEvents() {
-  const { openEventsDialog, isEventsDialogOpen, closeEventsDialog } =
-    useAppContext();
-  const [joinedEvents, setJoinedEvents] = useState<Set<number>>(new Set([1]));
+const groups: Group[] = [
+  {
+    id: 1,
+    name: "Designers UI UX",
+    members: 1198,
+    image:
+      "https://images.unsplash.com/photo-1750779940923-8d6cf0867df7?q=80&w=871&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    icon: "D",
+    iconColor: "bg-green-500",
+  },
+  {
+    id: 2,
+    name: "React Developers",
+    members: 856,
+    image:
+      "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?q=80&w=871&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    icon: "R",
+    iconColor: "bg-blue-500",
+  },
+  {
+    id: 3,
+    name: "Photography Club",
+    members: 2400,
+    image:
+      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=464&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    icon: "P",
+    iconColor: "bg-purple-500",
+  },
+  {
+    id: 4,
+    name: "Startup Founders",
+    members: 950,
+    image:
+      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    icon: "S",
+    iconColor: "bg-orange-500",
+  },
+];
 
-  const events: Event[] = [
-    {
-      id: 1,
-      title: "Design Talks",
-      date: "12 Dec, 1:00 PM",
-      description:
-        "A General talk about design with Sr Designer of Logitech Michael Sprinlik.",
-      attendees: 112,
-      category: "Design",
-      location: "Online",
-    },
-    {
-      id: 2,
-      title: "UX Research Workshop",
-      date: "15 Dec, 2:00 PM",
-      description:
-        "Learn advanced UX research techniques with industry experts.",
-      attendees: 89,
-      category: "Design",
-      location: "San Francisco, CA",
-    },
-    {
-      id: 3,
-      title: "JavaScript Conference",
-      date: "18 Dec, 9:00 AM",
-      description:
-        "Latest trends and best practices in modern JavaScript development.",
-      attendees: 245,
-      category: "Tech",
-      location: "New York, NY",
-    },
-    {
-      id: 4,
-      title: "Marketing Strategies Meetup",
-      date: "20 Dec, 6:00 PM",
-      description: "Digital marketing strategies for 2024 and beyond.",
-      attendees: 67,
-      category: "Marketing",
-      location: "Los Angeles, CA",
-    },
-    {
-      id: 5,
-      title: "Product Management Summit",
-      date: "22 Dec, 10:00 AM",
-      description:
-        "Product strategy and roadmap planning for successful launches.",
-      attendees: 156,
-      category: "Business",
-      location: "Seattle, WA",
-    },
-    {
-      id: 6,
-      title: "AI & Machine Learning Talk",
-      date: "25 Dec, 3:00 PM",
-      description: "Introduction to AI and ML for software developers.",
-      attendees: 203,
-      category: "Tech",
-      location: "Online",
-    },
-    {
-      id: 7,
-      title: "Startup Pitch Night",
-      date: "28 Dec, 7:00 PM",
-      description: "Watch emerging startups pitch their ideas to investors.",
-      attendees: 134,
-      category: "Business",
-      location: "Austin, TX",
-    },
-    {
-      id: 8,
-      title: "React Developer Meetup",
-      date: "30 Dec, 4:00 PM",
-      description: "Building scalable React applications with modern tools.",
-      attendees: 178,
-      category: "Tech",
-      location: "Boston, MA",
-    },
-  ];
+const events: Event[] = [
+  {
+    id: 1,
+    title: "Design Talks",
+    date: "12 Dec, 1:00 PM",
+    description:
+      "A General talk about design with Sr Designer of Logitech Michael Sprinlik.",
+    attendees: 112,
+    category: "Design",
+    location: "Online",
+  },
+  {
+    id: 2,
+    title: "UX Research Workshop",
+    date: "15 Dec, 2:00 PM",
+    description: "Learn advanced UX research techniques with industry experts.",
+    attendees: 89,
+    category: "Design",
+    location: "San Francisco, CA",
+  },
+  {
+    id: 3,
+    title: "JavaScript Conference",
+    date: "18 Dec, 9:00 AM",
+    description:
+      "Latest trends and best practices in modern JavaScript development.",
+    attendees: 245,
+    category: "Tech",
+    location: "New York, NY",
+  },
+  {
+    id: 4,
+    title: "Marketing Strategies Meetup",
+    date: "20 Dec, 6:00 PM",
+    description: "Digital marketing strategies for 2024 and beyond.",
+    attendees: 67,
+    category: "Marketing",
+    location: "Los Angeles, CA",
+  },
+  {
+    id: 5,
+    title: "Product Management Summit",
+    date: "22 Dec, 10:00 AM",
+    description:
+      "Product strategy and roadmap planning for successful launches.",
+    attendees: 156,
+    category: "Business",
+    location: "Seattle, WA",
+  },
+  {
+    id: 6,
+    title: "AI & Machine Learning Talk",
+    date: "25 Dec, 3:00 PM",
+    description: "Introduction to AI and ML for software developers.",
+    attendees: 203,
+    category: "Tech",
+    location: "Online",
+  },
+  {
+    id: 7,
+    title: "Startup Pitch Night",
+    date: "28 Dec, 7:00 PM",
+    description: "Watch emerging startups pitch their ideas to investors.",
+    attendees: 134,
+    category: "Business",
+    location: "Austin, TX",
+  },
+  {
+    id: 8,
+    title: "React Developer Meetup",
+    date: "30 Dec, 4:00 PM",
+    description: "Building scalable React applications with modern tools.",
+    attendees: 178,
+    category: "Tech",
+    location: "Boston, MA",
+  },
+];
 
-  const handleJoinEvent = (eventId: number) => {
-    const newJoinedEvents = new Set(joinedEvents);
-    if (newJoinedEvents.has(eventId)) {
-      newJoinedEvents.delete(eventId);
-    } else {
-      newJoinedEvents.add(eventId);
-    }
-    setJoinedEvents(newJoinedEvents);
-  };
-
-  const getCategoryColor = (category: Event["category"]) => {
-    switch (category) {
-      case "Design":
-        return "bg-purple-100 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400";
-      case "Tech":
-        return "bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400";
-      case "Business":
-        return "bg-green-100 text-green-600 dark:bg-green-500/10 dark:text-green-400";
-      case "Marketing":
-        return "bg-orange-100 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400";
-      default:
-        return "bg-gray-100 text-gray-600 dark:bg-neutral-700 dark:text-neutral-300";
-    }
-  };
-
-  function EventsDialog() {
-    return (
-      <Dialog open={isEventsDialogOpen} onOpenChange={closeEventsDialog}>
-        <DialogContent className="max-w-2xl max-h-[80vh] bg-white dark:bg-neutral-800">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-neutral-100">
-              All Upcoming Events
-            </DialogTitle>
-          </DialogHeader>
-          <div className="overflow-y-auto max-h-[60vh] pr-2">
-            <div className="space-y-4">
-              {events.map((event) => (
-                <Card key={event.id} className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start space-x-3 flex-1">
-                      <div className="w-10 h-10 bg-purple-100 dark:bg-purple-950 rounded-lg flex items-center justify-center">
-                        <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h4 className="font-medium text-gray-900 dark:text-neutral-100">
-                            {event.title}
-                          </h4>
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(
-                              event.category
-                            )}`}
-                          >
-                            {event.category}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-500 dark:text-neutral-400 mb-1">
-                          {event.date} • {event.location}
-                        </p>
-                        <p className="text-sm text-gray-600 dark:text-neutral-300 mb-3">
-                          {event.description}
-                        </p>
-                        <div className="flex items-center space-x-2">
-                          <div className="flex -space-x-1">
-                            <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-neutral-700 border-2 border-white dark:border-neutral-950"></div>
-                            <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-neutral-700 border-2 border-white dark:border-neutral-950"></div>
-                            <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-neutral-700 border-2 border-white dark:border-neutral-950"></div>
-                          </div>
-                          <span className="text-sm text-gray-500 dark:text-neutral-400">
-                            {event.attendees} Joined
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <Button
-                      onClick={() => handleJoinEvent(event.id)}
-                      className={`ml-4 transition-all duration-200 ${
-                        joinedEvents.has(event.id)
-                          ? "bg-green-500 hover:bg-green-600 text-white transform scale-105"
-                          : "bg-pink-500 hover:bg-pink-600 text-white"
-                      }`}
-                    >
-                      {joinedEvents.has(event.id) ? (
-                        <>
-                          <Check className="w-4 h-4 mr-1" />
-                          Joined
-                        </>
-                      ) : (
-                        "Join"
-                      )}
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
+const getCategoryColor = (category: Event["category"]) => {
+  switch (category) {
+    case "Design":
+      return "bg-purple-100 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400";
+    case "Tech":
+      return "bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400";
+    case "Business":
+      return "bg-green-100 text-green-600 dark:bg-green-500/10 dark:text-green-400";
+    case "Marketing":
+      return "bg-orange-100 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400";
+    default:
+      return "bg-gray-100 text-gray-600 dark:bg-neutral-700 dark:text-neutral-300";
   }
+};
+
+function UpcomingEvents() {
+  const { openEventsDialog } = useAppContext();
 
   return (
     <>
@@ -1689,10 +1773,19 @@ function UpcomingEvents() {
                     {event.description}
                   </p>
                   <div className="flex items-center space-x-2">
-                    <div className="flex -space-x-1">
-                      <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-neutral-700 border-2 border-white dark:border-neutral-950"></div>
-                      <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-neutral-700 border-2 border-white dark:border-neutral-950"></div>
-                      <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-neutral-700 border-2 border-white dark:border-neutral-950"></div>
+                    <div className="flex -space-x-2">
+                      <Avatar className="w-6 h-6 border-2 border-white dark:border-neutral-800">
+                        <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=464&auto=format&fit=crop" />
+                        <AvatarFallback>A</AvatarFallback>
+                      </Avatar>
+                      <Avatar className="w-6 h-6 border-2 border-white dark:border-neutral-800">
+                        <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=387&auto=format&fit=crop" />
+                        <AvatarFallback>M</AvatarFallback>
+                      </Avatar>
+                      <Avatar className="w-6 h-6 border-2 border-white dark:border-neutral-800">
+                        <AvatarImage src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=387&auto=format&fit=crop" />
+                        <AvatarFallback>J</AvatarFallback>
+                      </Avatar>
                     </div>
                     <span className="text-sm text-gray-500 dark:text-neutral-400">
                       {event.attendees} Joined
@@ -1704,46 +1797,110 @@ function UpcomingEvents() {
           ))}
         </CardContent>
       </Card>
-
-      <EventsDialog />
     </>
   );
 }
 
-function SuggestedGroups() {
-  const { showComingSoonToast } = useAppContext();
-  const [joinedGroups, setJoinedGroups] = useState<Set<number>>(new Set());
+function EventsDialog() {
+  const { isEventsDialogOpen, closeEventsDialog } = useAppContext();
+  const [joinedEvents, setJoinedEvents] = useState<Set<number>>(new Set([1]));
 
-  const groups = [
-    {
-      id: 1,
-      name: "Designers UI UX",
-      members: 1198,
-      image:
-        "https://images.unsplash.com/photo-1750779940923-8d6cf0867df7?q=80&w=871&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      icon: "D",
-      iconColor: "bg-green-500",
-    },
-    {
-      id: 2,
-      name: "React Developers",
-      members: 856,
-      image:
-        "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?q=80&w=871&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      icon: "R",
-      iconColor: "bg-blue-500",
-    },
-  ];
-
-  const handleJoinGroup = (groupId: number) => {
-    const newJoinedGroups = new Set(joinedGroups);
-    if (newJoinedGroups.has(groupId)) {
-      newJoinedGroups.delete(groupId);
+  const handleJoinEvent = (eventId: number) => {
+    const newJoinedEvents = new Set(joinedEvents);
+    if (newJoinedEvents.has(eventId)) {
+      newJoinedEvents.delete(eventId);
     } else {
-      newJoinedGroups.add(groupId);
+      newJoinedEvents.add(eventId);
     }
-    setJoinedGroups(newJoinedGroups);
+    setJoinedEvents(newJoinedEvents);
   };
+
+  return (
+    <Dialog open={isEventsDialogOpen} onOpenChange={closeEventsDialog}>
+      <DialogContent className="max-w-2xl max-h-[80vh] bg-white dark:bg-neutral-800">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-neutral-100">
+            All Upcoming Events
+          </DialogTitle>
+        </DialogHeader>
+        <div className="overflow-y-auto max-h-[60vh] pr-2">
+          <div className="space-y-4">
+            {events.map((event) => (
+              <Card key={event.id} className="p-4 dark:bg-neutral-900">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start space-x-3 flex-1">
+                    <div className="w-10 h-10 bg-purple-100 dark:bg-purple-950 rounded-lg flex items-center justify-center">
+                      <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <h4 className="font-medium text-gray-900 dark:text-neutral-100">
+                          {event.title}
+                        </h4>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(
+                            event.category
+                          )}`}
+                        >
+                          {event.category}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-500 dark:text-neutral-400 mb-1">
+                        {event.date} • {event.location}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-neutral-300 mb-3">
+                        {event.description}
+                      </p>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex -space-x-2">
+                          <Avatar className="w-6 h-6 border-2 border-white dark:border-neutral-900">
+                            <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=464&auto=format&fit=crop" />
+                            <AvatarFallback>A</AvatarFallback>
+                          </Avatar>
+                          <Avatar className="w-6 h-6 border-2 border-white dark:border-neutral-900">
+                            <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=387&auto=format&fit=crop" />
+                            <AvatarFallback>M</AvatarFallback>
+                          </Avatar>
+                          <Avatar className="w-6 h-6 border-2 border-white dark:border-neutral-900">
+                            <AvatarImage src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=387&auto=format&fit=crop" />
+                            <AvatarFallback>J</AvatarFallback>
+                          </Avatar>
+                        </div>
+                        <span className="text-sm text-gray-500 dark:text-neutral-400">
+                          {event.attendees} Joined
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => handleJoinEvent(event.id)}
+                    className={`ml-4 transition-all duration-200 ${
+                      joinedEvents.has(event.id)
+                        ? "bg-green-500 hover:bg-green-600 text-white transform scale-105"
+                        : "bg-pink-500 hover:bg-pink-600 text-white"
+                    }`}
+                  >
+                    {joinedEvents.has(event.id) ? (
+                      <>
+                        <Check className="w-4 h-4 mr-1" />
+                        Joined
+                      </>
+                    ) : (
+                      "Join"
+                    )}
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function SuggestedGroups() {
+  const { openGroupsDialog, joinedGroups, handleJoinGroup } = useAppContext();
 
   return (
     <Card>
@@ -1756,7 +1913,7 @@ function SuggestedGroups() {
             variant="ghost"
             size="sm"
             className="text-blue-600 dark:text-blue-500"
-            onClick={showComingSoonToast}
+            onClick={openGroupsDialog}
           >
             See all
           </Button>
@@ -1764,7 +1921,7 @@ function SuggestedGroups() {
       </CardHeader>
       <CardContent className="pt-0 dark:bg-neutral-800">
         <div className="space-y-4">
-          {groups.map((group) => (
+          {groups.slice(0, 2).map((group) => (
             <div key={group.id} className="space-y-3">
               <img
                 src={group.image || "/placeholder.svg"}
@@ -1812,6 +1969,108 @@ function SuggestedGroups() {
   );
 }
 
+function GroupsDialog() {
+  const {
+    isGroupsDialogOpen,
+    closeGroupsDialog,
+    joinedGroups,
+    handleJoinGroup,
+  } = useAppContext();
+
+  const myGroups = groups.filter((g) => joinedGroups.has(g.id));
+
+  const renderGroupList = (groupsToRender: Group[], from: "all" | "joined") => {
+    if (groupsToRender.length === 0) {
+      return (
+        <div className="text-center text-gray-500 dark:text-neutral-400 py-8">
+          <p>
+            {from === "joined"
+              ? "You haven't joined any groups yet."
+              : "No groups to show."}
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
+        {groupsToRender.map((group) => (
+          <Card key={group.id} className="p-4 dark:bg-neutral-800">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4 flex-1">
+                <img
+                  src={group.image}
+                  alt={group.name}
+                  className="w-16 h-16 rounded-lg object-cover"
+                />
+                <div>
+                  <p className="font-semibold text-gray-900 dark:text-neutral-100">
+                    {group.name}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-neutral-400">
+                    {group.members} members
+                  </p>
+                </div>
+              </div>
+              <Button
+                onClick={() => handleJoinGroup(group.id)}
+                className={`ml-4 transition-all duration-200 ${
+                  joinedGroups.has(group.id)
+                    ? "bg-green-500 hover:bg-green-600 text-white"
+                    : "bg-pink-500 hover:bg-pink-600 text-white"
+                }`}
+              >
+                {joinedGroups.has(group.id) ? (
+                  <>
+                    <Check className="w-4 h-4 mr-1" />
+                    Joined
+                  </>
+                ) : (
+                  "Join"
+                )}
+              </Button>
+            </div>
+          </Card>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <Dialog open={isGroupsDialogOpen} onOpenChange={closeGroupsDialog}>
+      <DialogContent className="sm:max-w-2xl bg-white dark:bg-neutral-900">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold text-gray-900 dark:text-neutral-100">
+            Groups
+          </DialogTitle>
+        </DialogHeader>
+        <Tabs defaultValue="all" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-neutral-800 rounded-lg p-1">
+            <TabsTrigger
+              value="all"
+              className="data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-pink-700 dark:data-[state=active]:text-neutral-50 data-[state=inactive]:text-gray-500 dark:data-[state=inactive]:text-neutral-400 rounded-md"
+            >
+              All Groups
+            </TabsTrigger>
+            <TabsTrigger
+              value="joined"
+              className="data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-pink-700 dark:data-[state=active]:text-neutral-50 data-[state=inactive]:text-gray-500 dark:data-[state=inactive]:text-neutral-400 rounded-md"
+            >
+              My Groups
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="all" className="mt-4">
+            {renderGroupList(groups, "all")}
+          </TabsContent>
+          <TabsContent value="joined" className="mt-4">
+            {renderGroupList(myGroups, "joined")}
+          </TabsContent>
+        </Tabs>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 // Right Bar Component
 function RightBar({ isMobile = false }: { isMobile?: boolean }) {
   const {
@@ -1819,8 +2078,8 @@ function RightBar({ isMobile = false }: { isMobile?: boolean }) {
     stories,
     openStoryViewer,
     openChatDialog,
-    globalSearchQuery,
-    setGlobalSearchQuery,
+    rightBarSearchQuery,
+    setRightBarSearchQuery,
   } = useAppContext();
 
   const recentChats: Contact[] = [
@@ -1878,16 +2137,16 @@ function RightBar({ isMobile = false }: { isMobile?: boolean }) {
   const filteredStories = stories.filter((story) =>
     story.user.name
       .toLowerCase()
-      .includes(globalSearchQuery.toLowerCase().trim())
+      .includes(rightBarSearchQuery.toLowerCase().trim())
   );
 
   const filteredRecentChats = recentChats.filter((chat) =>
-    chat.name.toLowerCase().includes(globalSearchQuery.toLowerCase().trim())
+    chat.name.toLowerCase().includes(rightBarSearchQuery.toLowerCase().trim())
   );
 
   // Check if search has no results
   const hasNoResults =
-    globalSearchQuery.trim() &&
+    rightBarSearchQuery.trim() &&
     filteredStories.length === 0 &&
     filteredRecentChats.length === 0;
 
@@ -1918,8 +2177,8 @@ function RightBar({ isMobile = false }: { isMobile?: boolean }) {
             <Input
               placeholder="Search people and stories..."
               className="pl-10 bg-gray-50 dark:bg-neutral-900 border-gray-200 dark:border-neutral-800 dark:text-neutral-200"
-              value={globalSearchQuery}
-              onChange={(e) => setGlobalSearchQuery(e.target.value)}
+              value={rightBarSearchQuery}
+              onChange={(e) => setRightBarSearchQuery(e.target.value)}
             />
           </div>
         </div>
@@ -2026,16 +2285,13 @@ function Feed() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <WhatsHappening />
+          <PostList />
         </div>
 
         <div className="space-y-6 lg:col-start-3 lg:row-start-1 lg:row-span-2">
           <YouMightLike />
           <UpcomingEvents />
           <SuggestedGroups />
-        </div>
-
-        <div className="lg:col-span-2 lg:row-start-2">
-          <PostList />
         </div>
       </div>
     </main>
@@ -2387,16 +2643,10 @@ function ChatDialog() {
   };
 
   const getContactMessages = () => {
-    if (!selectedChatContact) return [];
+    if (!selectedChatContact || !selectedChatContact.email) return [];
 
     return chatMessages
-      .filter(
-        (message) =>
-          message.senderId === selectedChatContact.email ||
-          (message.isFromCurrentUser &&
-            (message.senderId === "current-user" ||
-              message.senderId === "cyndy.littbridge@example.com"))
-      )
+      .filter((message) => message.contactId === selectedChatContact.email)
       .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
   };
 
@@ -2556,6 +2806,112 @@ function ChatDialog() {
   );
 }
 
+function FollowersDialog() {
+  const {
+    isFollowersModalOpen,
+    closeFollowersModal,
+    followedContacts,
+    followers,
+    unfollowContact,
+    removeFollower,
+  } = useAppContext();
+
+  const renderContactList = (
+    contacts: Contact[],
+    action: "unfollow" | "remove"
+  ) => {
+    if (contacts.length === 0) {
+      return (
+        <div className="text-center text-gray-500 dark:text-neutral-400 py-8">
+          <p>No contacts to show here.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
+        {contacts.map((contact) => (
+          <div
+            key={contact.email}
+            className="flex items-center justify-between"
+          >
+            <div className="flex items-center space-x-3">
+              <Avatar className="w-12 h-12">
+                <AvatarImage src={contact.avatar} className="object-cover" />
+                <AvatarFallback>
+                  {contact.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-semibold text-gray-900 dark:text-neutral-100">
+                  {contact.name}
+                </p>
+                <p className="text-sm text-gray-500 dark:text-neutral-400">
+                  {contact.location}
+                </p>
+              </div>
+            </div>
+            {action === "unfollow" ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => contact.email && unfollowContact(contact.email)}
+              >
+                Unfollow
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => contact.email && removeFollower(contact.email)}
+              >
+                Remove
+              </Button>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <Dialog open={isFollowersModalOpen} onOpenChange={closeFollowersModal}>
+      <DialogContent className="sm:max-w-md bg-white dark:bg-neutral-900">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold text-gray-900 dark:text-neutral-100">
+            Connections
+          </DialogTitle>
+        </DialogHeader>
+        <Tabs defaultValue="following" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-neutral-800 rounded-lg p-1">
+            <TabsTrigger
+              value="following"
+              className="data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-pink-700 dark:data-[state=active]:text-neutral-50 data-[state=inactive]:text-gray-500 dark:data-[state=inactive]:text-neutral-400 rounded-md"
+            >
+              Following
+            </TabsTrigger>
+            <TabsTrigger
+              value="followers"
+              className="data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-pink-700 dark:data-[state=active]:text-neutral-50 data-[state=inactive]:text-gray-500 dark:data-[state=inactive]:text-neutral-400 rounded-md"
+            >
+              Followers
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="following" className="mt-4">
+            {renderContactList(followedContacts, "unfollow")}
+          </TabsContent>
+          <TabsContent value="followers" className="mt-4">
+            {renderContactList(followers, "remove")}
+          </TabsContent>
+        </Tabs>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 // Main App Component
 function SocialMediaAppContent() {
   const { isMobileChatOpen, isMobileNavOpen, closeMobileChat, closeMobileNav } =
@@ -2583,7 +2939,10 @@ function SocialMediaAppContent() {
 
         <StoryViewer />
         <ContactProfileDialog />
+        <FollowersDialog />
         <ChatDialog />
+        <EventsDialog />
+        <GroupsDialog />
       </div>
     </div>
   );
