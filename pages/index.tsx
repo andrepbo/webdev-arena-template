@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -1823,6 +1824,10 @@ function EventsDialog() {
             All Upcoming Events
           </DialogTitle>
         </DialogHeader>
+        <DialogDescription className="sr-only">
+          Browse the full list of upcoming events and join the ones you’re
+          interested in.
+        </DialogDescription>
         <div className="overflow-y-auto max-h-[60vh] pr-2">
           <div className="space-y-4">
             {events.map((event) => (
@@ -2044,6 +2049,9 @@ function GroupsDialog() {
             Groups
           </DialogTitle>
         </DialogHeader>
+        <DialogDescription className="sr-only">
+          View and manage the list of participants in the event.
+        </DialogDescription>
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-neutral-800 rounded-lg p-1">
             <TabsTrigger
@@ -2557,7 +2565,9 @@ function ContactProfileDialog() {
             </div>
           </div>
         </DialogHeader>
-
+        <DialogDescription className="sr-only">
+          Contact profile details including biography and contact information.
+        </DialogDescription>
         <div className="space-y-4">
           {selectedContact.bio && (
             <div>
@@ -2702,7 +2712,10 @@ function ChatDialog() {
             </div>
           </div>
         </DialogHeader>
-
+        <DialogDescription className="sr-only">
+          Private chat conversation interface. Type and send messages to your
+          contact.
+        </DialogDescription>
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 dark:bg-neutral-900">
           {messages.length === 0 ? (
@@ -2885,6 +2898,9 @@ function FollowersDialog() {
             Connections
           </DialogTitle>
         </DialogHeader>
+        <DialogDescription className="sr-only">
+          View and manage the list of followers and following.
+        </DialogDescription>
         <Tabs defaultValue="following" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-neutral-800 rounded-lg p-1">
             <TabsTrigger
