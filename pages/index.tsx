@@ -5,28 +5,30 @@ import { useToast } from "@/hooks/use-toast";
 import {
   ArrowRight,
   Bookmark,
+  Calendar,
   CheckCircle,
   Copy,
-  ExternalLink,
   Eye,
   Gift,
+  Globe,
   Heart,
   Home,
+  ImageIcon,
+  Instagram,
   Menu,
-  Moon,
   Plus,
   Search,
   Settings,
   Share2,
-  Sun,
   TrendingUp,
+  Twitter,
   User,
+  Users,
   Wallet,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-// Web3 Integration Types
 interface WalletState {
   isConnected: boolean;
   address: string | null;
@@ -34,31 +36,25 @@ interface WalletState {
   chainId: number | null;
 }
 
-// Theme hook
 const useTheme = () => {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
-    // Check localStorage first
-    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else {
-      // Check system preference
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      setTheme(prefersDark ? "dark" : "light");
-    }
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    setTheme(prefersDark ? "dark" : "light");
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e: MediaQueryListEvent) => {
+      setTheme(e.matches ? "dark" : "light");
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-  };
-
-  return { theme, toggleTheme };
+  return { theme };
 };
 
 interface Collection {
@@ -74,8 +70,101 @@ interface Collection {
   contractAddress: string;
 }
 
-// Mock NFT data with enhanced information
-const collections = [
+interface Creator {
+  name: string;
+  handle: string;
+  avatar: string;
+  verified: boolean;
+  bio: string;
+  collections: number;
+  followers: number;
+  following: number;
+  totalVolume: string;
+  joinedDate: string;
+  website?: string;
+  twitter?: string;
+  instagram?: string;
+}
+
+const creatorsData: Record<string, Creator> = {
+  "Jackie Hong": {
+    name: "Jackie Hong",
+    handle: "@jackie_nft",
+    avatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=jackie&backgroundColor=b6e3f4",
+    verified: true,
+    bio: "Digital artist creating cosmic dreams and surreal landscapes. Exploring the intersection of technology and imagination.",
+    collections: 12,
+    followers: 15420,
+    following: 892,
+    totalVolume: "247.8 ETH",
+    joinedDate: "March 2021",
+    website: "https://jackiehong.art",
+    twitter: "@jackie_hong",
+    instagram: "@jackie.digital",
+  },
+  "Johnny Paul": {
+    name: "Johnny Paul",
+    handle: "@johnny_artifacts",
+    avatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=johnny&backgroundColor=c0aede",
+    verified: true,
+    bio: "Collector and creator of rare digital artifacts. Passionate about preserving digital culture through NFTs.",
+    collections: 8,
+    followers: 9876,
+    following: 543,
+    totalVolume: "156.3 ETH",
+    joinedDate: "June 2021",
+    twitter: "@johnny_artifacts",
+  },
+  "Sir Jonas": {
+    name: "Sir Jonas",
+    handle: "@sir_jonas",
+    avatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=jonas&backgroundColor=ffd93d",
+    verified: true,
+    bio: "Abstract artist pushing the boundaries of digital expression. Each piece tells a story of our digital future.",
+    collections: 15,
+    followers: 23456,
+    following: 1234,
+    totalVolume: "389.2 ETH",
+    joinedDate: "January 2021",
+    website: "https://sirjonas.com",
+    twitter: "@sir_jonas_art",
+    instagram: "@sirjonas.abstract",
+  },
+  "Alex Chen": {
+    name: "Alex Chen",
+    handle: "@alex_visions",
+    avatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=alex&backgroundColor=ffdfbf",
+    verified: false,
+    bio: "Emerging artist exploring future visions through digital art. Creating tomorrow's masterpieces today.",
+    collections: 3,
+    followers: 2341,
+    following: 456,
+    totalVolume: "45.7 ETH",
+    joinedDate: "November 2022",
+    twitter: "@alex_future_art",
+  },
+  "Lynn Chang": {
+    name: "Lynn Chang",
+    handle: "@lynnchang_nft",
+    avatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=lynn&backgroundColor=b6e3f4",
+    verified: true,
+    bio: "Robot enthusiast and digital sculptor. Creating the future of AI-inspired art one pixel at a time.",
+    collections: 7,
+    followers: 12890,
+    following: 678,
+    totalVolume: "198.4 ETH",
+    joinedDate: "April 2021",
+    website: "https://lynnchang.digital",
+    twitter: "@lynn_robots",
+  },
+};
+
+const allCollections = [
   {
     id: 1,
     title: "Cosmic Dreams",
@@ -128,25 +217,33 @@ const collections = [
     bgGradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
     contractAddress: "0x4567...8901",
   },
+  {
+    id: 5,
+    title: "Neon Nights",
+    creator: "Jackie Hong",
+    creatorAvatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=jackie&backgroundColor=b6e3f4",
+    verified: true,
+    items: 28,
+    price: "5.2 ETH",
+    image: "https://picsum.photos/400/300?random=5&blur=1",
+    bgGradient: "linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%)",
+    contractAddress: "0x5678...9012",
+  },
+  {
+    id: 6,
+    title: "Cyber Punk",
+    creator: "Sir Jonas",
+    creatorAvatar:
+      "https://api.dicebear.com/7.x/avataaars/svg?seed=jonas&backgroundColor=ffd93d",
+    verified: true,
+    items: 45,
+    price: "7.8 ETH",
+    image: "https://picsum.photos/400/300?random=6&blur=1",
+    bgGradient: "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+    contractAddress: "0x6789...0123",
+  },
 ];
-
-const featuredNFT = {
-  id: 141,
-  title: "Adventure Robot",
-  creator: "Lynn Chang",
-  creatorHandle: "@lynnchang_nft",
-  creatorAvatar:
-    "https://api.dicebear.com/7.x/avataaars/svg?seed=lynn&backgroundColor=b6e3f4",
-  verified: true,
-  price: "21.345 ETH",
-  priceUSD: "$42,690",
-  views: 120,
-  likes: 89,
-  image: "https://picsum.photos/600/400?random=robot&blur=1",
-  bgGradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
-  contractAddress: "0x5678...9012",
-  tokenId: "141",
-};
 
 const historyData = {
   all: [
@@ -266,10 +363,8 @@ function useWindowWidth() {
   const [width, setWidth] = useState<number | null>(null);
 
   useEffect(() => {
-    // Esto sólo corre en el cliente
     const handleResize = () => setWidth(window.innerWidth);
-    setWidth(window.innerWidth); // Valor inicial
-
+    setWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -278,19 +373,20 @@ function useWindowWidth() {
 }
 
 export default function NFTDashboard() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const [userType, setUserType] = useState<"creator" | "collector">("creator");
   const [selectedCollection, setSelectedCollection] = useState<Collection>(
-    collections[0]
-  );
-  const [hoveredCollection, setHoveredCollection] = useState<number | null>(
-    null
+    allCollections[0]
   );
   const [activeHistoryTab, setActiveHistoryTab] = useState<
     "all" | "purchase" | "transfer"
   >("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showAddNFTModal, setShowAddNFTModal] = useState(false);
+  const [showCreatorModal, setShowCreatorModal] = useState(false);
+  const [selectedCreator, setSelectedCreator] = useState<Creator | null>(null);
+  const [newCollections, setNewCollections] = useState<Collection[]>([]);
   const [wallet, setWallet] = useState<WalletState>({
     isConnected: false,
     address: null,
@@ -299,7 +395,15 @@ export default function NFTDashboard() {
   });
   const [isConnecting, setIsConnecting] = useState(false);
   const { toast } = useToast();
-  // Theme colors
+
+  const filteredCollections = [...allCollections, ...newCollections].filter(
+    (collection) =>
+      collection.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      collection.creator.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const width = useWindowWidth();
+
   const colors = {
     light: {
       bg: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
@@ -310,6 +414,7 @@ export default function NFTDashboard() {
       textSecondary: "#64748b",
       border: "rgba(0, 0, 0, 0.1)",
       historyBg: "rgba(255, 255, 255, 0.9)",
+      modalBg: "rgba(255, 255, 255, 0.95)",
     },
     dark: {
       bg: "linear-gradient(135deg, #2D1B69 0%, #11052C 100%)",
@@ -320,18 +425,23 @@ export default function NFTDashboard() {
       textSecondary: "#94a3b8",
       border: "rgba(255, 255, 255, 0.1)",
       historyBg: "rgba(17, 5, 44, 0.6)",
+      modalBg: "rgba(17, 5, 44, 0.95)",
     },
   };
-  const width = useWindowWidth();
+
   const currentColors = colors[theme];
 
-  // Web3 Wallet Integration
   const connectWallet = useCallback(async () => {
     if (typeof window === "undefined" || !window.ethereum) {
       toast({
         title: "Wallet Not Found",
         description: "Please install MetaMask or another Web3 wallet.",
-        variant: "destructive",
+        variant: "default",
+        style: {
+          background: currentColors.modalBg,
+          color: currentColors.text,
+          border: `1px solid ${currentColors.border}`,
+        },
       });
       return;
     }
@@ -368,6 +478,12 @@ export default function NFTDashboard() {
           description: `Connected to ${address.slice(0, 6)}...${address.slice(
             -4
           )}`,
+          variant: "default",
+          style: {
+            background: currentColors.modalBg,
+            color: currentColors.text,
+            border: `1px solid ${currentColors.border}`,
+          },
         });
       }
     } catch (error) {
@@ -380,7 +496,7 @@ export default function NFTDashboard() {
     } finally {
       setIsConnecting(false);
     }
-  }, [toast, setWallet, setIsConnecting]);
+  }, [currentColors.border, currentColors.modalBg, currentColors.text, toast]);
 
   const disconnectWallet = useCallback(() => {
     setWallet({
@@ -392,24 +508,32 @@ export default function NFTDashboard() {
     toast({
       title: "Wallet Disconnected",
       description: "Your wallet has been disconnected.",
+      variant: "default",
+      style: {
+        background: currentColors.modalBg,
+        color: currentColors.text,
+        border: `1px solid ${currentColors.border}`,
+      },
     });
-  }, [toast, setWallet]);
+  }, [currentColors.border, currentColors.modalBg, currentColors.text, toast]);
 
   const copyAddress = (address: string) => {
     navigator.clipboard.writeText(address);
     toast({
       title: "Address Copied!",
       description: "Address copied to clipboard.",
+      variant: "default",
+      style: {
+        background: currentColors.modalBg,
+        color: currentColors.text,
+        border: `1px solid ${currentColors.border}`,
+      },
     });
   };
 
-  const viewOnEtherscan = (txHash: string) => {
-    window.open(`https://etherscan.io/tx/${txHash}`, "_blank");
-  };
-
-  // Listen for account changes
   useEffect(() => {
     if (typeof window === "undefined" || !window.ethereum) return;
+
     const eth = window.ethereum;
 
     const handleAccountsChanged = (...args: unknown[]) => {
@@ -439,17 +563,13 @@ export default function NFTDashboard() {
       title: "Coming Soon!",
       description: `${feature} feature will be available soon.`,
       duration: 2000,
-      variant: "destructive",
+      variant: "default",
+      style: {
+        background: currentColors.modalBg,
+        color: currentColors.text,
+        border: `1px solid ${currentColors.border}`,
+      },
     });
-  };
-
-  const handleCollectionHover = (collection: Collection) => {
-    setSelectedCollection(collection);
-    setHoveredCollection(collection.id);
-  };
-
-  const handleCollectionLeave = () => {
-    setHoveredCollection(null);
   };
 
   const handleBuyNow = () => {
@@ -457,7 +577,12 @@ export default function NFTDashboard() {
       toast({
         title: "Connect Wallet",
         description: "Please connect your wallet to make a purchase.",
-        variant: "destructive",
+        variant: "default",
+        style: {
+          background: currentColors.modalBg,
+          color: currentColors.text,
+          border: `1px solid ${currentColors.border}`,
+        },
       });
       return;
     }
@@ -469,11 +594,71 @@ export default function NFTDashboard() {
       toast({
         title: "Connect Wallet",
         description: "Please connect your wallet to make an offer.",
-        variant: "destructive",
+        variant: "default",
+        style: {
+          background: currentColors.modalBg,
+          color: currentColors.text,
+          border: `1px solid ${currentColors.border}`,
+        },
       });
       return;
     }
     showComingSoon("Make Offer");
+  };
+
+  const handleCreatorClick = (creatorName: string) => {
+    const creator = creatorsData[creatorName];
+    if (creator) {
+      setSelectedCreator(creator);
+      setShowCreatorModal(true);
+    }
+  };
+
+  const handleAddNFT = (formData: FormData) => {
+    const title = formData.get("title") as string;
+    const creator = formData.get("creator") as string;
+    const price = formData.get("price") as string;
+    const items = Number.parseInt(formData.get("items") as string);
+
+    let image = "";
+    const file = formData.get("image") as File;
+    if (file && file.size > 0) {
+      image = URL.createObjectURL(file);
+    } else {
+      image = `https://picsum.photos/400/300?random=${Date.now()}&blur=1`;
+    }
+
+    const newCollection: Collection = {
+      id: Date.now(),
+      title,
+      creator,
+      creatorAvatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${creator.toLowerCase()}&backgroundColor=b6e3f4`,
+      verified: false,
+      items,
+      price: `${price} ETH`,
+      image,
+      bgGradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      contractAddress: `0x${Math.random()
+        .toString(16)
+        .substr(2, 8)}...${Math.random().toString(16).substr(2, 4)}`,
+    };
+
+    setNewCollections((prev) => [newCollection, ...prev]);
+    setShowAddNFTModal(false);
+    toast({
+      title: "NFT Collection Added!",
+      description: `${title} has been added to your collections.`,
+      variant: "default",
+      style: {
+        background: currentColors.modalBg,
+        color: currentColors.text,
+        border: `1px solid ${currentColors.border}`,
+      },
+    });
+  };
+
+  const handleTransactionClick = () => {
+    showComingSoon("Transaction Details");
   };
 
   return (
@@ -485,7 +670,6 @@ export default function NFTDashboard() {
         color: currentColors.text,
       }}
     >
-      {/* Header */}
       <header
         className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-4"
         style={{
@@ -495,7 +679,6 @@ export default function NFTDashboard() {
         }}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* Logo and Mobile Menu */}
           <div className="flex items-center gap-4 sm:gap-8">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 flex items-center justify-center shadow-xl">
               <span className="text-white text-lg sm:text-xl font-bold">
@@ -503,7 +686,6 @@ export default function NFTDashboard() {
               </span>
             </div>
 
-            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="lg:hidden w-10 h-10 rounded-xl flex items-center justify-center hover:bg-black/10 transition-colors"
@@ -515,7 +697,6 @@ export default function NFTDashboard() {
               )}
             </button>
 
-            {/* Desktop Toggle */}
             <div
               className="hidden lg:flex rounded-full p-1"
               style={{
@@ -557,9 +738,7 @@ export default function NFTDashboard() {
             </div>
           </div>
 
-          {/* Search and Actions */}
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* Search - Hidden on mobile */}
             <div className="relative hidden sm:block">
               <Search
                 className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${currentColors.textSecondary}`}
@@ -569,40 +748,18 @@ export default function NFTDashboard() {
                 placeholder="Search NFT's, Collections"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 pr-6 py-3 w-64 lg:w-96 rounded-full placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400/50 transition-all"
+                className={`pl-12 pr-6 py-3 w-64 lg:w-96 rounded-full placeholder:transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400/50 transition-all
+                ${
+                  theme === "dark"
+                    ? "bg-black/20 text-white placeholder-gray-400"
+                    : "bg-white/80 text-gray-900 placeholder-gray-600"
+                }`}
                 style={{
-                  background:
-                    theme === "dark"
-                      ? "rgba(0, 0, 0, 0.2)"
-                      : "rgba(255, 255, 255, 0.8)",
-                  backdropFilter: "blur(10px)",
                   border: `1px solid ${currentColors.border}`,
-                  color: currentColors.text,
                 }}
               />
             </div>
 
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/10 transition-colors"
-              style={{
-                background:
-                  theme === "dark"
-                    ? "rgba(0, 0, 0, 0.2)"
-                    : "rgba(255, 255, 255, 0.8)",
-                backdropFilter: "blur(10px)",
-                border: `1px solid ${currentColors.border}`,
-              }}
-            >
-              {theme === "dark" ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </button>
-
-            {/* Wallet Connection - Responsive */}
             {wallet.isConnected ? (
               <div className="flex items-center gap-2">
                 <div
@@ -645,9 +802,8 @@ export default function NFTDashboard() {
               </button>
             )}
 
-            {/* Add NFT Button - Hidden on mobile */}
             <button
-              onClick={() => showComingSoon("Add NFT")}
+              onClick={() => setShowAddNFTModal(true)}
               className="hidden sm:flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-white text-black font-semibold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg text-xs sm:text-sm"
             >
               <Plus className="w-4 h-4" />
@@ -656,7 +812,6 @@ export default function NFTDashboard() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div
             className="lg:hidden mt-4 p-4 rounded-2xl"
@@ -666,7 +821,6 @@ export default function NFTDashboard() {
               border: `1px solid ${currentColors.border}`,
             }}
           >
-            {/* Mobile Search */}
             <div className="relative mb-4">
               <Search
                 className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${currentColors.textSecondary}`}
@@ -689,7 +843,6 @@ export default function NFTDashboard() {
               />
             </div>
 
-            {/* Mobile Toggle */}
             <div
               className="flex rounded-full p-1 mb-4"
               style={{
@@ -722,9 +875,8 @@ export default function NFTDashboard() {
               </button>
             </div>
 
-            {/* Mobile Add NFT */}
             <button
-              onClick={() => showComingSoon("Add NFT")}
+              onClick={() => setShowAddNFTModal(true)}
               className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white text-black font-semibold hover:bg-gray-100 transition-all shadow-lg"
             >
               <Plus className="w-4 h-4" />
@@ -734,7 +886,6 @@ export default function NFTDashboard() {
         )}
       </header>
 
-      {/* Sidebar - Desktop Only */}
       <aside
         className="hidden lg:flex fixed left-6 top-24 bottom-6 w-20 flex-col items-center py-8 z-40"
         style={{
@@ -774,143 +925,395 @@ export default function NFTDashboard() {
 
         <button
           onClick={() => showComingSoon("Profile")}
-          className="w-14 h-14 rounded-2xl overflow-hidden hover:scale-110 transition-transform duration-300 shadow-xl"
+          className="w-14 h-14 rounded-full overflow-hidden hover:scale-110 transition-transform duration-300 shadow-xl"
         >
           <img
             src="https://api.dicebear.com/7.x/avataaars/svg?seed=currentuser&backgroundColor=b6e3f4"
             alt="Profile"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-full border-2 border-white"
           />
         </button>
       </aside>
 
-      {/* Main Content */}
-      <main className="pt-24 lg:pt-32 px-4 sm:px-6 lg:ml-32 lg:px-8">
+      <main className="pt-24 lg:pt-32 px-4 sm:px-6 lg:ml-32 lg:px-8 pb-8 sm:pb-12">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col xl:flex-row gap-8 xl:gap-12">
-            {/* Left Column - Collections and History */}
-            <section className="flex-1 flex flex-col gap-12 lg:gap-16">
-              {/* Recent Collections */}
+            <section className="flex-1 flex flex-col gap-16 lg:gap-20">
               <div>
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8 lg:mb-12">
                   Recent Collections
                 </h2>
                 <div className="flex justify-center lg:justify-start">
-                  <div className="relative w-full max-w-md sm:max-w-lg lg:max-w-2xl h-60 sm:h-72 lg:h-80 overflow-visible">
-                    {collections.map((collection, index) => {
-                      const isHovered = hoveredCollection === collection.id;
-                      const zIndex = isHovered ? 50 : 40 - index * 5;
-                      const translateX = isHovered ? -20 : index * 12;
-                      const translateY = isHovered ? -30 : index * 8;
-                      const rotate = isHovered ? -8 : index * 2;
-                      const scale = isHovered ? 1.1 : 1;
-
-                      return (
-                        <div
-                          key={collection.id}
-                          className="absolute cursor-pointer transition-all duration-500 ease-out"
-                          style={{
-                            width:
-                              width == null
-                                ? "320px" // Fallback SSR/1st render
-                                : width < 640
-                                ? "240px"
-                                : width < 1024
-                                ? "280px"
-                                : "320px",
-                            height:
-                              width == null
-                                ? "240px"
-                                : width < 640
-                                ? "180px"
-                                : width < 1024
-                                ? "210px"
-                                : "240px",
-                            zIndex,
-                            transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotate}deg) scale(${scale})`,
-                            background: currentColors.cardBg,
-                            backdropFilter: "blur(20px)",
-                            borderRadius: "20px",
-                            border: `1px solid ${currentColors.border}`,
-                            boxShadow: isHovered
-                              ? "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
-                              : "0 10px 25px -5px rgba(0, 0, 0, 0.3)",
+                  {width != null && width < 640 ? (
+                    <div className="relative w-full max-w-xs mx-auto flex flex-col items-center">
+                      <div className="flex items-center justify-between w-full mb-3">
+                        <button
+                          className="p-2 rounded-full hover:bg-black/10 transition-colors"
+                          onClick={() => {
+                            const idx = filteredCollections.findIndex(
+                              (c) => c.id === selectedCollection.id
+                            );
+                            if (idx > 0)
+                              setSelectedCollection(
+                                filteredCollections[idx - 1]
+                              );
                           }}
-                          onMouseEnter={() => handleCollectionHover(collection)}
-                          onMouseLeave={handleCollectionLeave}
+                          disabled={
+                            filteredCollections.findIndex(
+                              (c) => c.id === selectedCollection.id
+                            ) === 0
+                          }
+                          style={{
+                            opacity:
+                              filteredCollections.findIndex(
+                                (c) => c.id === selectedCollection.id
+                              ) === 0
+                                ? 0.3
+                                : 1,
+                          }}
+                          aria-label="Anterior"
                         >
-                          <div className="relative h-full overflow-hidden rounded-2xl">
-                            <div
-                              className="absolute inset-0 opacity-30"
-                              style={{ background: collection.bgGradient }}
-                            />
+                          <ArrowRight style={{ transform: "rotate(180deg)" }} />
+                        </button>
+                        <div className="text-xs text-gray-400">
+                          {filteredCollections.findIndex(
+                            (c) => c.id === selectedCollection.id
+                          ) + 1}{" "}
+                          / {filteredCollections.length}
+                        </div>
+                        <button
+                          className="p-2 rounded-full hover:bg-black/10 transition-colors"
+                          onClick={() => {
+                            const idx = filteredCollections.findIndex(
+                              (c) => c.id === selectedCollection.id
+                            );
+                            if (idx < filteredCollections.length - 1)
+                              setSelectedCollection(
+                                filteredCollections[idx + 1]
+                              );
+                          }}
+                          disabled={
+                            filteredCollections.findIndex(
+                              (c) => c.id === selectedCollection.id
+                            ) ===
+                            filteredCollections.length - 1
+                          }
+                          style={{
+                            opacity:
+                              filteredCollections.findIndex(
+                                (c) => c.id === selectedCollection.id
+                              ) ===
+                              filteredCollections.length - 1
+                                ? 0.3
+                                : 1,
+                          }}
+                          aria-label="Siguiente"
+                        >
+                          <ArrowRight />
+                        </button>
+                      </div>
+                      <div
+                        className="relative w-full"
+                        style={{
+                          height: "260px",
+                          background: currentColors.cardBg,
+                          borderRadius: "20px",
+                          border: `1px solid ${currentColors.border}`,
+                          boxShadow: "0 10px 25px -5px rgba(0,0,0,0.18)",
+                          pointerEvents:
+                            showAddNFTModal || showCreatorModal
+                              ? "none"
+                              : "auto",
+                        }}
+                        onClick={() =>
+                          setSelectedCollection(selectedCollection)
+                        }
+                      >
+                        <div
+                          className="flex items-center gap-2 sm:gap-3 px-4 py-2 absolute top-0 left-0 right-0 z-10"
+                          style={{
+                            background:
+                              theme === "dark"
+                                ? "rgba(20,16,41,0.85)"
+                                : "rgba(255,255,255,0.85)",
+                            backdropFilter: "blur(14px)",
+                            borderTopLeftRadius: 20,
+                            borderTopRightRadius: 20,
+                            borderBottom: `1px solid ${currentColors.border}`,
+                            minHeight: 44,
+                          }}
+                        >
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCreatorClick(selectedCollection.creator);
+                            }}
+                            className="flex items-center gap-2 hover:scale-105 transition-transform"
+                            tabIndex={
+                              showAddNFTModal || showCreatorModal ? -1 : 0
+                            }
+                          >
                             <img
-                              src={collection.image || "/placeholder.svg"}
-                              alt={collection.title}
-                              className="w-full h-full object-cover"
+                              src={
+                                selectedCollection.creatorAvatar ||
+                                "/placeholder.svg"
+                              }
+                              alt={selectedCollection.creator}
+                              className="w-7 h-7 rounded-full border-2 border-white/30 shadow-lg"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-
-                            {/* Creator Info */}
-                            <div className="absolute top-4 left-4 flex items-center gap-2 sm:gap-3">
-                              <img
-                                src={
-                                  collection.creatorAvatar || "/placeholder.svg"
-                                }
-                                alt={collection.creator}
-                                className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full border-2 border-white/30 shadow-lg"
-                              />
-                              <div>
-                                <div className="flex items-center gap-1 sm:gap-2">
-                                  <span className="text-white text-xs sm:text-sm font-semibold">
-                                    {collection.creator}
-                                  </span>
-                                  {collection.verified && (
-                                    <div className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                                      <CheckCircle className="w-2 h-2 sm:w-3 sm:h-3 text-white" />
-                                    </div>
-                                  )}
-                                </div>
+                            <div>
+                              <div className="flex items-center gap-1">
+                                <span
+                                  className={`text-xs font-semibold ${
+                                    theme === "dark"
+                                      ? "text-gray-200"
+                                      : "text-gray-800"
+                                  }`}
+                                >
+                                  {selectedCollection.creator}
+                                </span>
+                                {selectedCollection.verified && (
+                                  <div className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                                    <CheckCircle className="w-2 h-2 text-white" />
+                                  </div>
+                                )}
                               </div>
                             </div>
-
-                            {/* Bottom Info */}
-                            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+                          </button>
+                          <span
+                            className={`ml-3 text-base font-bold truncate ${
+                              theme === "dark" ? "text-white" : "text-black"
+                            }`}
+                          >
+                            {selectedCollection.title}
+                          </span>
+                        </div>
+                        <div
+                          className="flex items-center justify-center w-full"
+                          style={{
+                            height: "calc(100% - 56px)",
+                            marginTop: 44,
+                            padding: 12,
+                            boxSizing: "border-box",
+                          }}
+                        >
+                          <div
+                            className="w-full h-full rounded-xl overflow-hidden relative shadow-lg"
+                            style={{
+                              background: selectedCollection.bgGradient,
+                              borderRadius: 15,
+                            }}
+                          >
+                            <img
+                              src={
+                                selectedCollection.image || "/placeholder.svg"
+                              }
+                              alt={selectedCollection.title}
+                              className="w-full h-full object-cover"
+                              style={{ borderRadius: 15 }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent rounded-xl" />
+                            <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center">
                               <div
-                                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-full text-white text-xs sm:text-sm font-medium"
+                                className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium"
                                 style={{
-                                  background: "rgba(0, 0, 0, 0.4)",
-                                  backdropFilter: "blur(10px)",
+                                  background: "rgba(0,0,0,0.42)",
+                                  color: "#fff",
+                                  backdropFilter: "blur(6px)",
                                 }}
                               >
-                                <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
-                                <span>{collection.items}</span>
+                                <Eye className="w-3 h-3" />
+                                <span>{selectedCollection.items}</span>
                               </div>
                               <div
-                                className="px-2 sm:px-4 py-1 sm:py-2 rounded-full text-white text-sm sm:text-lg font-bold"
+                                className="px-3 py-1 rounded-full text-base font-bold"
                                 style={{
-                                  background: "rgba(0, 0, 0, 0.4)",
-                                  backdropFilter: "blur(10px)",
+                                  background: "rgba(0,0,0,0.42)",
+                                  color: "#fff",
+                                  backdropFilter: "blur(6px)",
                                 }}
                               >
-                                {collection.price}
+                                {selectedCollection.price}
                               </div>
                             </div>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative w-full max-w-md sm:max-w-lg lg:max-w-2xl h-60 sm:h-72 lg:h-80 overflow-visible">
+                      {filteredCollections
+                        .slice(0, 10)
+                        .map((collection, index) => {
+                          const isSelected =
+                            selectedCollection?.id === collection.id;
+                          const gapX = 48;
+                          const gapY = 22;
+                          const zIndex = isSelected ? 49 : 10 + index;
+                          const translateX = index * gapX;
+                          const translateY = index * gapY;
+                          const rotate = index * 2;
+                          const scale = isSelected ? 1.08 : 1;
+
+                          return (
+                            <div
+                              key={collection.id}
+                              className="absolute cursor-pointer transition-all duration-500 ease-out"
+                              style={{
+                                width:
+                                  width == null
+                                    ? "320px"
+                                    : width < 640
+                                    ? "240px"
+                                    : width < 1024
+                                    ? "280px"
+                                    : "320px",
+                                height:
+                                  width == null
+                                    ? "240px"
+                                    : width < 640
+                                    ? "180px"
+                                    : width < 1024
+                                    ? "210px"
+                                    : "240px",
+                                zIndex,
+                                transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotate}deg) scale(${scale})`,
+                                background: currentColors.cardBg,
+                                backdropFilter: "blur(20px)",
+                                borderRadius: "20px",
+                                border: `1px solid ${currentColors.border}`,
+                                boxShadow: isSelected
+                                  ? "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
+                                  : "0 10px 25px -5px rgba(0, 0, 0, 0.3)",
+                                pointerEvents:
+                                  showAddNFTModal || showCreatorModal
+                                    ? "none"
+                                    : "auto",
+                              }}
+                              onClick={() => setSelectedCollection(collection)}
+                            >
+                              <div
+                                className="flex items-center gap-2 sm:gap-3 px-4 py-2 absolute top-0 left-0 right-0 z-10"
+                                style={{
+                                  background:
+                                    theme === "dark"
+                                      ? "rgba(20,16,41,0.85)"
+                                      : "rgba(255,255,255,0.85)",
+                                  backdropFilter: "blur(14px)",
+                                  borderTopLeftRadius: 20,
+                                  borderTopRightRadius: 20,
+                                  borderBottom: `1px solid ${currentColors.border}`,
+                                  minHeight: 44,
+                                }}
+                              >
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleCreatorClick(collection.creator);
+                                  }}
+                                  className="flex items-center gap-2 sm:gap-3 hover:scale-105 transition-transform"
+                                  tabIndex={
+                                    showAddNFTModal || showCreatorModal ? -1 : 0
+                                  }
+                                >
+                                  <img
+                                    src={
+                                      collection.creatorAvatar ||
+                                      "/placeholder.svg"
+                                    }
+                                    alt={collection.creator}
+                                    className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-full border-2 border-white/30 shadow-lg"
+                                  />
+                                  <div>
+                                    <div className="flex items-center gap-1 sm:gap-2">
+                                      <span
+                                        className={`text-xs sm:text-sm font-semibold ${
+                                          theme === "dark"
+                                            ? "text-gray-200"
+                                            : "text-gray-800"
+                                        }`}
+                                      >
+                                        {collection.creator}
+                                      </span>
+                                      {collection.verified && (
+                                        <div className="w-3 h-3 sm:w-4 sm:h-4 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                                          <CheckCircle className="w-2 h-2 sm:w-3 sm:h-3 text-white" />
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </button>
+                                <span
+                                  className={`ml-3 text-base sm:text-lg font-bold truncate ${
+                                    theme === "dark"
+                                      ? "text-white"
+                                      : "text-black"
+                                  }`}
+                                >
+                                  {collection.title}
+                                </span>
+                              </div>
+                              <div
+                                className="flex items-center justify-center w-full"
+                                style={{
+                                  height: "calc(100% - 56px)",
+                                  marginTop: 44,
+                                  padding: 12,
+                                  boxSizing: "border-box",
+                                }}
+                              >
+                                <div
+                                  className="w-full h-full rounded-xl overflow-hidden relative shadow-lg"
+                                  style={{
+                                    background: collection.bgGradient,
+                                    borderRadius: 15,
+                                  }}
+                                >
+                                  <img
+                                    src={collection.image || "/placeholder.svg"}
+                                    alt={collection.title}
+                                    className="w-full h-full object-cover"
+                                    style={{ borderRadius: 15 }}
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent rounded-xl" />
+                                  <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center">
+                                    <div
+                                      className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium"
+                                      style={{
+                                        background: "rgba(0,0,0,0.42)",
+                                        color: "#fff",
+                                        backdropFilter: "blur(6px)",
+                                      }}
+                                    >
+                                      <Eye className="w-3 h-3" />
+                                      <span>{collection.items}</span>
+                                    </div>
+                                    <div
+                                      className="px-3 py-1 rounded-full text-base font-bold"
+                                      style={{
+                                        background: "rgba(0,0,0,0.42)",
+                                        color: "#fff",
+                                        backdropFilter: "blur(6px)",
+                                      }}
+                                    >
+                                      {collection.price}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* History Section */}
-              <div>
+              <div className="p-6 lg:p-8 mb-12">
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8 lg:mb-12">
                   History
                 </h2>
 
-                {/* History Tabs */}
                 <div
                   className="flex gap-1 sm:gap-2 mb-6 lg:mb-8 p-1 sm:p-2 rounded-full w-fit mx-auto sm:mx-0"
                   style={{
@@ -948,7 +1351,6 @@ export default function NFTDashboard() {
                   ))}
                 </div>
 
-                {/* History Table */}
                 <div
                   className="overflow-hidden"
                   style={{
@@ -958,7 +1360,6 @@ export default function NFTDashboard() {
                     border: `1px solid ${currentColors.border}`,
                   }}
                 >
-                  {/* Table Header - Hidden on mobile */}
                   <div
                     className="hidden sm:grid grid-cols-5 gap-4 lg:gap-6 p-4 lg:p-8 border-b text-xs sm:text-sm font-semibold"
                     style={{
@@ -973,15 +1374,13 @@ export default function NFTDashboard() {
                     <div>Date</div>
                   </div>
 
-                  {/* Table Rows */}
                   {historyData[activeHistoryTab].map((item) => (
                     <div
                       key={item.id}
                       className="grid grid-cols-1 sm:grid-cols-5 gap-2 sm:gap-4 lg:gap-6 p-4 lg:p-8 border-b last:border-0 hover:bg-black/5 transition-all duration-300 group cursor-pointer"
                       style={{ borderColor: currentColors.border }}
-                      onClick={() => viewOnEtherscan(item.txHash)}
+                      onClick={handleTransactionClick}
                     >
-                      {/* Mobile Layout */}
                       <div className="sm:hidden space-y-3">
                         <div className="flex items-center justify-between">
                           <span
@@ -1015,7 +1414,7 @@ export default function NFTDashboard() {
                           <img
                             src={item.toAvatar || "/placeholder.svg"}
                             alt="To"
-                            className="w-6 h-6 rounded-full"
+                            className="w-full h-full object-cover rounded-full border-2 border-white"
                           />
                         </div>
                         <div className="flex justify-between items-center">
@@ -1034,7 +1433,6 @@ export default function NFTDashboard() {
                         </div>
                       </div>
 
-                      {/* Desktop Layout */}
                       <div className="hidden sm:contents">
                         <div>
                           <span
@@ -1083,10 +1481,6 @@ export default function NFTDashboard() {
                           <span style={{ color: currentColors.textSecondary }}>
                             {item.date}
                           </span>
-                          <ExternalLink
-                            className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                            style={{ color: currentColors.textSecondary }}
-                          />
                         </div>
                       </div>
                     </div>
@@ -1095,10 +1489,8 @@ export default function NFTDashboard() {
               </div>
             </section>
 
-            {/* Right Column - Featured NFT */}
             <section className="w-full xl:w-96 flex flex-col gap-6 lg:gap-8">
               <div
-                className="overflow-hidden"
                 style={{
                   background: currentColors.cardBg,
                   backdropFilter: "blur(20px)",
@@ -1110,73 +1502,128 @@ export default function NFTDashboard() {
                 <div className="relative">
                   <div
                     className="absolute inset-0 opacity-40"
-                    style={{ background: selectedCollection.bgGradient }}
+                    style={{
+                      background: selectedCollection.bgGradient,
+                      borderRadius: 24,
+                      zIndex: 1,
+                    }}
                   />
-                  <img
-                    src={selectedCollection.image || "/placeholder.svg"}
-                    alt={featuredNFT.title}
-                    className="w-full h-64 sm:h-80 lg:h-96 object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                  {/* Action Buttons */}
-                  <div className="absolute top-4 lg:top-6 right-4 lg:right-6 flex gap-2 lg:gap-3">
+                  <div
+                    className="absolute top-0 left-0 right-0 flex flex-col gap-2 z-20"
+                    style={{
+                      background:
+                        theme === "dark"
+                          ? "rgba(20,16,41,0.94)"
+                          : "rgba(255,255,255,0.96)",
+                      backdropFilter: "blur(15px)",
+                      borderTopLeftRadius: 24,
+                      borderTopRightRadius: 24,
+                      padding: width && width < 640 ? 14 : 24,
+                      paddingBottom: width && width < 640 ? 10 : 14,
+                      minHeight: width && width < 640 ? 74 : 92,
+                      boxSizing: "border-box",
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={
+                          selectedCollection.creatorAvatar || "/placeholder.svg"
+                        }
+                        alt={selectedCollection.creator}
+                        className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border-2 border-white/30 shadow-lg"
+                      />
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`font-semibold text-base sm:text-lg ${
+                              theme === "dark"
+                                ? "text-gray-200"
+                                : "text-gray-800"
+                            }`}
+                          >
+                            {selectedCollection.creator}
+                          </span>
+                          {selectedCollection.verified && (
+                            <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                              <CheckCircle className="w-2 h-2 text-white" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <h3
+                      className="text-lg sm:text-2xl lg:text-3xl font-bold mb-1 mt-2"
+                      style={{ color: theme === "dark" ? "#fff" : "#18181b" }}
+                    >
+                      {selectedCollection.title}
+                    </h3>
+                  </div>
+
+                  <div
+                    style={{
+                      paddingTop: width && width < 640 ? 74 : 92,
+                      borderBottomLeftRadius: 24,
+                      borderBottomRightRadius: 24,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <img
+                      src={selectedCollection.image || "/placeholder.svg"}
+                      alt={selectedCollection.title}
+                      className="w-full h-64 sm:h-80 lg:h-96 object-cover"
+                      style={{
+                        borderTopLeftRadius: 0,
+                        borderTopRightRadius: 0,
+                        borderBottomLeftRadius: 24,
+                        borderBottomRightRadius: 24,
+                      }}
+                    />
+                    <div
+                      className="absolute left-0 right-0"
+                      style={{
+                        bottom: 0,
+                        height: "50%",
+                        background:
+                          "linear-gradient(0deg,rgba(0,0,0,0.4),transparent)",
+                        borderBottomLeftRadius: 24,
+                        borderBottomRightRadius: 24,
+                        zIndex: 10,
+                        pointerEvents: "none",
+                      }}
+                    />
+                  </div>
+
+                  <div className="absolute top-4 right-4 flex gap-2 z-30">
                     <button
                       onClick={() => showComingSoon("Like")}
-                      className="w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300"
+                      className="w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300"
                       style={{
                         background: "rgba(0, 0, 0, 0.4)",
                         backdropFilter: "blur(10px)",
                       }}
                     >
-                      <Heart className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
+                      <Heart className="w-4 h-4 text-white" />
                     </button>
                     <button
                       onClick={() => showComingSoon("Share")}
-                      className="w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300"
+                      className="w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300"
                       style={{
                         background: "rgba(0, 0, 0, 0.4)",
                         backdropFilter: "blur(10px)",
                       }}
                     >
-                      <Share2 className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
+                      <Share2 className="w-4 h-4 text-white" />
                     </button>
-                  </div>
-
-                  {/* Creator Info */}
-                  <div className="absolute top-4 lg:top-6 left-4 lg:left-6 flex items-center gap-3 lg:gap-4">
-                    <img
-                      src={featuredNFT.creatorAvatar || "/placeholder.svg"}
-                      alt={featuredNFT.creator}
-                      className="w-10 h-10 lg:w-12 lg:h-12 rounded-full border-2 border-white/30 shadow-lg"
-                    />
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-white font-bold text-sm lg:text-lg">
-                          {featuredNFT.creator}
-                        </span>
-                        {featuredNFT.verified && (
-                          <div className="w-4 h-4 lg:w-5 lg:h-5 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                            <CheckCircle className="w-2 h-2 lg:w-3 lg:h-3 text-white" />
-                          </div>
-                        )}
-                      </div>
-                      <span className="text-white/70 text-xs lg:text-sm">
-                        {featuredNFT.creatorHandle}
-                      </span>
-                    </div>
                   </div>
                 </div>
 
                 <div className="p-6 lg:p-8">
-                  <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">
-                    {featuredNFT.title}
-                  </h3>
                   <p
                     className="text-sm lg:text-lg mb-6 lg:mb-8"
                     style={{ color: currentColors.textSecondary }}
                   >
-                    #{featuredNFT.id}
+                    #{selectedCollection.id}
                   </p>
 
                   <div className="flex items-center justify-between mb-6 lg:mb-8">
@@ -1192,19 +1639,13 @@ export default function NFTDashboard() {
                     >
                       <Eye className="w-4 h-4 lg:w-5 lg:h-5" />
                       <span className="font-semibold text-sm lg:text-lg">
-                        {featuredNFT.views}
+                        {selectedCollection.items}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 lg:gap-3">
                       <div className="text-right">
                         <div className="text-xl sm:text-2xl lg:text-3xl font-bold">
-                          {featuredNFT.price}
-                        </div>
-                        <div
-                          className="text-xs lg:text-sm"
-                          style={{ color: currentColors.textSecondary }}
-                        >
-                          {featuredNFT.priceUSD}
+                          {selectedCollection.price}
                         </div>
                       </div>
                       <TrendingUp className="w-5 h-5 lg:w-6 lg:h-6 text-green-400" />
@@ -1220,7 +1661,7 @@ export default function NFTDashboard() {
                     </button>
                     <button
                       onClick={handleMakeOffer}
-                      className="flex-1 py-3 lg:py-4 px-4 lg:px-6 rounded-full text-pink-600 font-bold text-sm lg:text-lg hover:bg-black/10 transition-all transform hover:scale-105"
+                      className="flex-1 py-3 lg:py-4 px-4 lg:px-6 rounded-full font-bold text-sm lg:text-lg hover:bg-black/10 transition-all transform hover:scale-105 text-black dark:text-white"
                       style={{
                         border: `2px solid ${currentColors.border}`,
                       }}
@@ -1229,7 +1670,6 @@ export default function NFTDashboard() {
                     </button>
                   </div>
 
-                  {/* Contract Info */}
                   {wallet.isConnected && (
                     <div
                       className="text-xs space-y-2"
@@ -1239,26 +1679,25 @@ export default function NFTDashboard() {
                         <span>Contract:</span>
                         <button
                           onClick={() =>
-                            copyAddress(featuredNFT.contractAddress)
+                            copyAddress(selectedCollection.contractAddress)
                           }
                           className="flex items-center gap-1 hover:text-white transition-colors"
                         >
-                          <span>{featuredNFT.contractAddress}</span>
+                          <span>{selectedCollection.contractAddress}</span>
                           <Copy className="w-3 h-3" />
                         </button>
                       </div>
                       <div className="flex items-center justify-between">
                         <span>Token ID:</span>
-                        <span>{featuredNFT.tokenId}</span>
+                        <span>{selectedCollection.id}</span>
                       </div>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Quick Stats */}
               <div
-                className="p-6 lg:p-8"
+                className="p-6 lg:p-8 mb-12"
                 style={{
                   background: currentColors.cardBg,
                   backdropFilter: "blur(20px)",
@@ -1308,6 +1747,324 @@ export default function NFTDashboard() {
           </div>
         </div>
       </main>
+
+      {showAddNFTModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: "rgba(0, 0, 0, 0.8)" }}
+          onClick={() => setShowAddNFTModal(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl p-6"
+            style={{
+              background: currentColors.modalBg,
+              backdropFilter: "blur(20px)",
+              border: `1px solid ${currentColors.border}`,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Add New NFT Collection</h2>
+              <button
+                onClick={() => setShowAddNFTModal(false)}
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/10 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                handleAddNFT(formData);
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Collection Title
+                </label>
+                <input
+                  type="text"
+                  name="title"
+                  required
+                  className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+                  style={{
+                    background:
+                      theme === "dark"
+                        ? "rgba(0, 0, 0, 0.2)"
+                        : "rgba(255, 255, 255, 0.8)",
+                    border: `1px solid ${currentColors.border}`,
+                    color: currentColors.text,
+                  }}
+                  placeholder="Enter collection title"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Creator Name
+                </label>
+                <input
+                  type="text"
+                  name="creator"
+                  required
+                  className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+                  style={{
+                    background:
+                      theme === "dark"
+                        ? "rgba(0, 0, 0, 0.2)"
+                        : "rgba(255, 255, 255, 0.8)",
+                    border: `1px solid ${currentColors.border}`,
+                    color: currentColors.text,
+                  }}
+                  placeholder="Enter creator name"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Price (ETH)
+                </label>
+                <input
+                  type="number"
+                  name="price"
+                  step="0.01"
+                  required
+                  className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+                  style={{
+                    background:
+                      theme === "dark"
+                        ? "rgba(0, 0, 0, 0.2)"
+                        : "rgba(255, 255, 255, 0.8)",
+                    border: `1px solid ${currentColors.border}`,
+                    color: currentColors.text,
+                  }}
+                  placeholder="0.00"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Number of Items
+                </label>
+                <input
+                  type="number"
+                  name="items"
+                  required
+                  min="1"
+                  className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+                  style={{
+                    background:
+                      theme === "dark"
+                        ? "rgba(0, 0, 0, 0.2)"
+                        : "rgba(255, 255, 255, 0.8)",
+                    border: `1px solid ${currentColors.border}`,
+                    color: currentColors.text,
+                  }}
+                  placeholder="Enter number of items"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Image</label>
+                <input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  required
+                  className="w-full"
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAddNFTModal(false)}
+                  className="flex-1 py-3 px-4 rounded-xl font-semibold hover:bg-black/10 transition-colors"
+                  style={{ border: `1px solid ${currentColors.border}` }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:from-purple-700 hover:to-pink-700 transition-all"
+                >
+                  Add Collection
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showCreatorModal && selectedCreator && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: "rgba(0, 0, 0, 0.8)" }}
+          onClick={() => setShowCreatorModal(false)}
+        >
+          <div
+            className="w-full max-w-2xl rounded-2xl p-6 max-h-[90vh] overflow-y-auto"
+            style={{
+              background: currentColors.modalBg,
+              backdropFilter: "blur(20px)",
+              border: `1px solid ${currentColors.border}`,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Creator Profile</h2>
+              <button
+                onClick={() => setShowCreatorModal(false)}
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/10 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-6 mb-8">
+              <img
+                src={selectedCreator.avatar || "/placeholder.svg"}
+                alt={selectedCreator.name}
+                className="w-20 h-20 rounded-full border-4 border-purple-500/30"
+              />
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <h3 className="text-2xl font-bold">{selectedCreator.name}</h3>
+                  {selectedCreator.verified && (
+                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                </div>
+                <p
+                  className={`text-sm lg:text-lg mb-6 lg:mb-8 ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-700"
+                  }`}
+                >
+                  {selectedCreator.handle}
+                </p>
+                <p
+                  className={`text-sm lg:text-lg mb-6 lg:mb-8 ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-700"
+                  }`}
+                >
+                  {selectedCreator.bio}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {[
+                {
+                  label: "Collections",
+                  value: selectedCreator.collections,
+                  icon: ImageIcon,
+                },
+                {
+                  label: "Followers",
+                  value: selectedCreator.followers.toLocaleString(),
+                  icon: Users,
+                },
+                {
+                  label: "Following",
+                  value: selectedCreator.following.toLocaleString(),
+                  icon: Heart,
+                },
+                {
+                  label: "Volume",
+                  value: selectedCreator.totalVolume,
+                  icon: TrendingUp,
+                },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="p-4 rounded-xl text-center"
+                  style={{
+                    background:
+                      theme === "dark"
+                        ? "rgba(0, 0, 0, 0.2)"
+                        : "rgba(255, 255, 255, 0.5)",
+                    border: `1px solid ${currentColors.border}`,
+                  }}
+                >
+                  <stat.icon
+                    className="w-6 h-6 mx-auto mb-2"
+                    style={{ color: currentColors.textSecondary }}
+                  />
+                  <div className="text-xl font-bold">{stat.value}</div>
+                  <div
+                    className="text-sm"
+                    style={{ color: currentColors.textSecondary }}
+                  >
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Calendar
+                  className="w-5 h-5"
+                  style={{ color: currentColors.textSecondary }}
+                />
+                <span>Joined {selectedCreator.joinedDate}</span>
+              </div>
+
+              {selectedCreator.website && (
+                <div className="flex items-center gap-3">
+                  <Globe
+                    className="w-5 h-5"
+                    style={{ color: currentColors.textSecondary }}
+                  />
+                  <a
+                    href={selectedCreator.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-purple-400 hover:text-purple-300 transition-colors"
+                  >
+                    {selectedCreator.website}
+                  </a>
+                </div>
+              )}
+
+              {selectedCreator.twitter && (
+                <div className="flex items-center gap-3">
+                  <Twitter
+                    className="w-5 h-5"
+                    style={{ color: currentColors.textSecondary }}
+                  />
+                  <span>{selectedCreator.twitter}</span>
+                </div>
+              )}
+
+              {selectedCreator.instagram && (
+                <div className="flex items-center gap-3">
+                  <Instagram
+                    className="w-5 h-5"
+                    style={{ color: currentColors.textSecondary }}
+                  />
+                  <span>{selectedCreator.instagram}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 mt-8">
+              <button
+                onClick={() => showComingSoon("Follow Creator")}
+                className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:from-purple-700 hover:to-pink-700 transition-all"
+              >
+                Follow
+              </button>
+              <button
+                onClick={() => showComingSoon("Message Creator")}
+                className="flex-1 py-3 px-4 rounded-xl font-semibold hover:bg-black/10 transition-colors"
+                style={{ border: `1px solid ${currentColors.border}` }}
+              >
+                Message
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Toaster />
     </div>
