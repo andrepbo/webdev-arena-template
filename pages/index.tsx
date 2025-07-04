@@ -1816,15 +1816,30 @@ function UpcomingEvents() {
 function EventsDialog() {
   const { isEventsDialogOpen, closeEventsDialog } = useAppContext();
   const [joinedEvents, setJoinedEvents] = useState<Set<number>>(new Set([1]));
+  // Local state for event list with attendee counts
+  const [eventList, setEventList] = useState(events);
 
   const handleJoinEvent = (eventId: number) => {
     const newJoinedEvents = new Set(joinedEvents);
+    const updatedEvents = eventList.map((event) => {
+      if (event.id === eventId) {
+        const alreadyJoined = newJoinedEvents.has(eventId);
+        const attendees = alreadyJoined
+          ? event.attendees - 1
+          : event.attendees + 1;
+        return { ...event, attendees };
+      }
+      return event;
+    });
+
     if (newJoinedEvents.has(eventId)) {
       newJoinedEvents.delete(eventId);
     } else {
       newJoinedEvents.add(eventId);
     }
+
     setJoinedEvents(newJoinedEvents);
+    setEventList(updatedEvents);
   };
 
   return (
@@ -1841,7 +1856,7 @@ function EventsDialog() {
         </DialogDescription>
         <div className="overflow-y-auto max-h-[60vh] pr-2">
           <div className="space-y-4">
-            {events.map((event) => (
+            {eventList.map((event) => (
               <Card key={event.id} className="p-4 dark:bg-neutral-900">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3 flex-1">
