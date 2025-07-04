@@ -161,6 +161,7 @@ interface AppContextType {
   removeFollower: (email: string) => void;
   joinedGroups: Set<number>;
   handleJoinGroup: (groupId: number) => void;
+  groupList: Group[];
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -206,6 +207,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
   const [globalSearchQuery, setGlobalSearchQuery] = useState("");
   const [rightBarSearchQuery, setRightBarSearchQuery] = useState("");
   const [joinedGroups, setJoinedGroups] = useState<Set<number>>(new Set());
+  const [groupList, setGroupList] = useState<Group[]>(groups);
 
   // Sample chat data for each contact
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
@@ -670,12 +672,23 @@ function AppProvider({ children }: { children: React.ReactNode }) {
 
   const handleJoinGroup = (groupId: number) => {
     const newJoinedGroups = new Set(joinedGroups);
+    const updatedGroups = groupList.map((group) => {
+      if (group.id === groupId) {
+        const alreadyJoined = newJoinedGroups.has(groupId);
+        const members = alreadyJoined ? group.members - 1 : group.members + 1;
+        return { ...group, members };
+      }
+      return group;
+    });
+
     if (newJoinedGroups.has(groupId)) {
       newJoinedGroups.delete(groupId);
     } else {
       newJoinedGroups.add(groupId);
     }
+
     setJoinedGroups(newJoinedGroups);
+    setGroupList(updatedGroups);
   };
 
   const value: AppContextType = {
@@ -739,6 +752,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     removeFollower,
     joinedGroups,
     handleJoinGroup,
+    groupList,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
@@ -1931,7 +1945,8 @@ function EventsDialog() {
 }
 
 function SuggestedGroups() {
-  const { openGroupsDialog, joinedGroups, handleJoinGroup } = useAppContext();
+  const { openGroupsDialog, joinedGroups, handleJoinGroup, groupList } =
+    useAppContext();
 
   return (
     <Card>
@@ -1952,7 +1967,7 @@ function SuggestedGroups() {
       </CardHeader>
       <CardContent className="pt-0 dark:bg-neutral-800">
         <div className="space-y-4">
-          {groups.slice(0, 2).map((group) => (
+          {groupList.slice(0, 2).map((group) => (
             <div key={group.id} className="space-y-3">
               <img
                 src={group.image || "/placeholder.svg"}
@@ -2006,9 +2021,10 @@ function GroupsDialog() {
     closeGroupsDialog,
     joinedGroups,
     handleJoinGroup,
+    groupList,
   } = useAppContext();
 
-  const myGroups = groups.filter((g) => joinedGroups.has(g.id));
+  const myGroups = groupList.filter((g) => joinedGroups.has(g.id));
 
   const renderGroupList = (groupsToRender: Group[], from: "all" | "joined") => {
     if (groupsToRender.length === 0) {
@@ -2094,7 +2110,7 @@ function GroupsDialog() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="all" className="mt-4">
-            {renderGroupList(groups, "all")}
+            {renderGroupList(groupList, "all")}
           </TabsContent>
           <TabsContent value="joined" className="mt-4">
             {renderGroupList(myGroups, "joined")}
