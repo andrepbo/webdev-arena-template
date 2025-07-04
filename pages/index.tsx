@@ -1486,15 +1486,17 @@ function PostList() {
                 <MessageCircle className="w-4 h-4 mr-2" />
                 Comments ({postComments[post.id]?.length || 0})
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex-1 text-gray-500 dark:text-neutral-400"
-                onClick={showComingSoonToast}
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  toast.success("Post link copied to clipboard!");
+                }}
+                className="flex flex-1 items-center gap-1 text-sm text-gray-500 hover:text-primary dark:text-neutral-400"
+                type="button"
               >
                 <Share2 className="w-4 h-4 mr-2" />
                 Share
-              </Button>
+              </button>
             </div>
 
             {expandedComments[post.id] && <CommentsList postId={post.id} />}
