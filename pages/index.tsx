@@ -979,76 +979,76 @@ function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
           </Button>
         </div>
       )}
-      <nav className="p-4">
-        <ul className="space-y-2">
-          {navigationItems.map((item, index) => (
-            <li key={index}>
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (isMobile) closeMobileNav();
-                  if (item.label === "Groups") {
-                    openGroupsDialog();
-                  } else if (!item.active) {
-                    showComingSoonToast();
-                  }
-                }}
-                className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                  item.active
-                    ? "bg-pink-50 text-pink-600 dark:bg-pink-900/50 dark:text-pink-400"
-                    : "text-gray-700 hover:bg-gray-50 dark:text-neutral-300 dark:hover:bg-neutral-900"
-                }`}
-              >
-                <item.icon className="w-5 h-5" />
-                <span className="text-sm font-medium">{item.label}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      {/* Remove the wrapper div, move content directly into aside */}
-      <h3 className="text-sm font-semibold text-gray-900 dark:text-neutral-100 mb-3 px-4 border-t border-gray-100 dark:border-neutral-800 pt-4">
-        My Contacts
-      </h3>
-      <div className="space-y-3 max-h-80 overflow-y-auto pr-2 px-4">
-        {allContacts.map((contact, index) => (
-          <div
-            key={index}
-            className="flex items-center space-x-3 p-2 hover:bg-gray-50 dark:hover:bg-neutral-900 rounded-lg cursor-pointer transition-colors duration-200"
-            onClick={() => {
-              openContactProfile(contact);
-              if (isMobile) closeMobileNav();
-            }}
-          >
-            <Avatar className="w-10 h-10">
-              <AvatarImage
-                src={contact.avatar || "/placeholder.svg"}
-                className="object-cover"
-              />
-              <AvatarFallback>
-                {contact.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-medium text-gray-900 dark:text-neutral-100 truncate">
-                  {contact.name}
+      <div className="flex flex-col h-full">
+        <nav className="p-4">
+          <ul className="space-y-2">
+            {navigationItems.map((item, index) => (
+              <li key={index}>
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (isMobile) closeMobileNav();
+                    if (item.label === "Groups") {
+                      openGroupsDialog();
+                    } else if (!item.active) {
+                      showComingSoonToast();
+                    }
+                  }}
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                    item.active
+                      ? "bg-pink-50 text-pink-600 dark:bg-pink-900/50 dark:text-pink-400"
+                      : "text-gray-700 hover:bg-gray-50 dark:text-neutral-300 dark:hover:bg-neutral-900"
+                  }`}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span className="text-sm font-medium">{item.label}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-neutral-100 mb-3 px-4 border-t border-gray-100 dark:border-neutral-800 pt-4">
+          My Contacts
+        </h3>
+        <div className="space-y-3 overflow-y-auto px-4 pr-2 flex-1">
+          {allContacts.map((contact, index) => (
+            <div
+              key={index}
+              className="flex items-center space-x-3 p-2 hover:bg-gray-50 dark:hover:bg-neutral-900 rounded-lg cursor-pointer transition-colors duration-200"
+              onClick={() => {
+                openContactProfile(contact);
+                if (isMobile) closeMobileNav();
+              }}
+            >
+              <Avatar className="w-10 h-10">
+                <AvatarImage
+                  src={contact.avatar || "/placeholder.svg"}
+                  className="object-cover"
+                />
+                <AvatarFallback>
+                  {contact.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium text-gray-900 dark:text-neutral-100 truncate">
+                    {contact.name}
+                  </p>
+                  {contact.status === "online" && (
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 dark:text-neutral-400 truncate">
+                  {contact.location}
                 </p>
-                {contact.status === "online" && (
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                )}
               </div>
-              <p className="text-xs text-gray-500 dark:text-neutral-400 truncate">
-                {contact.location}
-              </p>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </aside>
   );
