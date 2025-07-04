@@ -1215,9 +1215,6 @@ function PostList() {
   const [commentInputs, setCommentInputs] = useState<Record<number, string>>(
     {}
   );
-  const [commentCounts, setCommentCounts] = useState<Record<number, number>>(
-    {}
-  );
 
   const filteredPosts = posts.filter((post) => {
     if (!globalSearchQuery.trim()) return true;
@@ -1256,10 +1253,6 @@ function PostList() {
     return likedPosts.has(postId);
   };
 
-  const getCommentCount = (postId: number, originalComments: number) => {
-    return commentCounts[postId] ?? originalComments;
-  };
-
   const getTimeAgo = (timestamp: Date) => {
     const now = new Date();
     const diffInSeconds = Math.floor(
@@ -1289,13 +1282,6 @@ function PostList() {
     setPostComments((prev) => ({
       ...prev,
       [postId]: [newComment, ...(prev[postId] || [])],
-    }));
-
-    const post = posts.find((p) => p.id === postId);
-    const originalComments = post?.comments || 0;
-    setCommentCounts((prev) => ({
-      ...prev,
-      [postId]: (prev[postId] ?? originalComments) + 1,
     }));
 
     setCommentInputs((prev) => ({
@@ -1329,13 +1315,19 @@ function PostList() {
     );
   }
 
+  // Localized CommentsList component
   function CommentsList({ postId }: { postId: number }) {
+    // Count comments directly from postComments state
+    const commentsCount = postComments[postId]?.length || 0;
     const comments = postComments[postId] || [];
 
-    if (comments.length === 0) return null;
+    if (commentsCount === 0) return null;
 
     return (
       <div className="mt-3 pt-3 border-t border-gray-100 dark:border-neutral-800">
+        <p className="text-sm text-gray-500 dark:text-neutral-400 mb-2">
+          {commentsCount} {commentsCount === 1 ? "Comment" : "Comments"}
+        </p>
         <div className="space-y-3 max-h-60 overflow-y-auto">
           {comments.map((comment) => (
             <div key={comment.id} className="flex items-start space-x-3">
@@ -1426,7 +1418,7 @@ function PostList() {
                   ))}
                 </div>
                 <span className="text-sm text-gray-500 dark:text-neutral-400">
-                  {getCommentCount(post.id, post.comments)} Comments
+                  {postComments[post.id]?.length || 0} Comments
                 </span>
                 <span className="text-sm text-gray-500 dark:text-neutral-400">
                   {getLikeCount(post.id, post.likes)} Likes
@@ -1436,16 +1428,16 @@ function PostList() {
 
             {!post.reactions &&
               (getLikeCount(post.id, post.likes) > 0 ||
-                getCommentCount(post.id, post.comments) > 0) && (
+                (postComments[post.id]?.length || 0) > 0) && (
                 <div className="flex items-center space-x-2 mb-3">
                   {getLikeCount(post.id, post.likes) > 0 && (
                     <span className="text-sm text-gray-500 dark:text-neutral-400">
                       {getLikeCount(post.id, post.likes)} Likes
                     </span>
                   )}
-                  {getCommentCount(post.id, post.comments) > 0 && (
+                  {(postComments[post.id]?.length || 0) > 0 && (
                     <span className="text-sm text-gray-500 dark:text-neutral-400">
-                      {getCommentCount(post.id, post.comments)} Comments
+                      {postComments[post.id]?.length || 0} Comments
                     </span>
                   )}
                 </div>
@@ -1481,7 +1473,7 @@ function PostList() {
                 className="flex-1 text-gray-500 dark:text-neutral-400"
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
-                Comments ({getCommentCount(post.id, post.comments)})
+                Comments ({postComments[post.id]?.length || 0})
               </Button>
               <Button
                 variant="ghost"
