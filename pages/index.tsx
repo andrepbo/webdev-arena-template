@@ -985,6 +985,7 @@ function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
+                  if (isMobile) closeMobileNav();
                   if (item.label === "Groups") {
                     openGroupsDialog();
                   } else if (!item.active) {
@@ -1014,7 +1015,10 @@ function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
             <div
               key={index}
               className="flex items-center space-x-3 p-2 hover:bg-gray-50 dark:hover:bg-neutral-900 rounded-lg cursor-pointer transition-colors duration-200"
-              onClick={() => openContactProfile(contact)}
+              onClick={() => {
+                openContactProfile(contact);
+                if (isMobile) closeMobileNav();
+              }}
             >
               <Avatar className="w-10 h-10">
                 <AvatarImage
