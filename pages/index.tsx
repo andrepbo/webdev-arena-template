@@ -115,6 +115,7 @@ interface AppContextType {
   selectedContact: Contact | null;
   selectedChatContact: Contact | null;
   stories: StoryData[];
+  setStories: React.Dispatch<React.SetStateAction<StoryData[]>>;
   posts: Post[];
   newPostText: string;
   newPostImage: string | null;
@@ -407,7 +408,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     },
   ];
 
-  const stories: StoryData[] = [
+  const [stories, setStories] = useState<StoryData[]>([
     {
       id: 1,
       user: {
@@ -463,7 +464,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
       timestamp: new Date(Date.now() - 5400000),
       viewed: true,
     },
-  ];
+  ]);
 
   const [posts, setPosts] = useState<Post[]>([
     {
@@ -592,6 +593,15 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     setCurrentImageIndex(0);
     setStoryProgress(0);
     setIsStoryViewerOpen(true);
+    // Mark story as viewed
+    const updatedStories = [...stories];
+    if (!updatedStories[storyIndex].viewed) {
+      updatedStories[storyIndex] = {
+        ...updatedStories[storyIndex],
+        viewed: true,
+      };
+      setStories(updatedStories);
+    }
   };
 
   const closeStoryViewer = () => {
@@ -683,6 +693,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     selectedContact,
     selectedChatContact,
     stories,
+    setStories,
     posts,
     newPostText,
     newPostImage,
