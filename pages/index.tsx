@@ -959,7 +959,9 @@ function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
 
   const baseClasses =
     "bg-white dark:bg-neutral-800 border-r border-gray-200 dark:border-neutral-800 overflow-y-auto";
-  const desktopClasses = "w-64 h-screen sticky top-16 hidden xl:block";
+  // Top-16 is 4rem (64px). We want the sidebar to be fixed below header, so height is 100vh - 4rem.
+  const desktopClasses =
+    "w-64 h-[calc(100vh-4rem)] fixed top-16 left-0 z-40 hidden xl:block";
   const mobileClasses =
     "fixed top-0 left-0 h-full z-[60] w-72 shadow-2xl transform transition-transform duration-300 ease-in-out";
 
@@ -1006,48 +1008,47 @@ function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-gray-100 dark:border-neutral-800 flex-1 overflow-hidden">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-neutral-100 mb-3">
-          My Contacts
-        </h3>
-        <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
-          {allContacts.map((contact, index) => (
-            <div
-              key={index}
-              className="flex items-center space-x-3 p-2 hover:bg-gray-50 dark:hover:bg-neutral-900 rounded-lg cursor-pointer transition-colors duration-200"
-              onClick={() => {
-                openContactProfile(contact);
-                if (isMobile) closeMobileNav();
-              }}
-            >
-              <Avatar className="w-10 h-10">
-                <AvatarImage
-                  src={contact.avatar || "/placeholder.svg"}
-                  className="object-cover"
-                />
-                <AvatarFallback>
-                  {contact.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-gray-900 dark:text-neutral-100 truncate">
-                    {contact.name}
-                  </p>
-                  {contact.status === "online" && (
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  )}
-                </div>
-                <p className="text-xs text-gray-500 dark:text-neutral-400 truncate">
-                  {contact.location}
+      {/* Remove the wrapper div, move content directly into aside */}
+      <h3 className="text-sm font-semibold text-gray-900 dark:text-neutral-100 mb-3 px-4 border-t border-gray-100 dark:border-neutral-800 pt-4">
+        My Contacts
+      </h3>
+      <div className="space-y-3 max-h-80 overflow-y-auto pr-2 px-4">
+        {allContacts.map((contact, index) => (
+          <div
+            key={index}
+            className="flex items-center space-x-3 p-2 hover:bg-gray-50 dark:hover:bg-neutral-900 rounded-lg cursor-pointer transition-colors duration-200"
+            onClick={() => {
+              openContactProfile(contact);
+              if (isMobile) closeMobileNav();
+            }}
+          >
+            <Avatar className="w-10 h-10">
+              <AvatarImage
+                src={contact.avatar || "/placeholder.svg"}
+                className="object-cover"
+              />
+              <AvatarFallback>
+                {contact.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium text-gray-900 dark:text-neutral-100 truncate">
+                  {contact.name}
                 </p>
+                {contact.status === "online" && (
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                )}
               </div>
+              <p className="text-xs text-gray-500 dark:text-neutral-400 truncate">
+                {contact.location}
+              </p>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </aside>
   );
@@ -2208,7 +2209,9 @@ function RightBar({ isMobile = false }: { isMobile?: boolean }) {
 
   const baseClasses =
     "w-80 bg-white dark:bg-neutral-800 border-l border-gray-200 dark:border-neutral-800 overflow-y-auto";
-  const desktopClasses = "h-screen sticky top-16 hidden xl:block";
+  // Use fixed positioning for desktop right bar, matching Sidebar's pattern
+  const desktopClasses =
+    "w-80 h-[calc(100vh-4rem)] fixed top-16 right-0 z-40 hidden xl:block";
   const mobileClasses =
     "fixed top-0 right-0 h-full z-[60] shadow-2xl transform transition-transform duration-300 ease-in-out";
 
@@ -2337,7 +2340,7 @@ function RightBar({ isMobile = false }: { isMobile?: boolean }) {
 // Main Feed Component
 function Feed() {
   return (
-    <main className="flex-1 max-w-6xl mx-auto p-6">
+    <main className="px-4 xl:ml-64 xl:mr-80 py-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <WhatsHappening />
