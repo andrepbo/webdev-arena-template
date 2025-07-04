@@ -2341,13 +2341,12 @@ function RightBar({ isMobile = false }: { isMobile?: boolean }) {
 function Feed() {
   return (
     <main className="px-4 xl:ml-64 xl:mr-80 py-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
+        <div className="space-y-6">
           <WhatsHappening />
           <PostList />
         </div>
-
-        <div className="space-y-6 lg:col-start-3 lg:row-start-1 lg:row-span-2">
+        <div className="space-y-6 hidden lg:block">
           <YouMightLike />
           <UpcomingEvents />
           <SuggestedGroups />
