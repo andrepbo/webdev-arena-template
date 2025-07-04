@@ -1215,6 +1215,10 @@ function PostList() {
   const [commentInputs, setCommentInputs] = useState<Record<number, string>>(
     {}
   );
+  // Track which posts have expanded comments
+  const [expandedComments, setExpandedComments] = useState<
+    Record<number, boolean>
+  >({});
 
   const filteredPosts = posts.filter((post) => {
     if (!globalSearchQuery.trim()) return true;
@@ -1471,6 +1475,12 @@ function PostList() {
                 variant="ghost"
                 size="sm"
                 className="flex-1 text-gray-500 dark:text-neutral-400"
+                onClick={() =>
+                  setExpandedComments((prev) => ({
+                    ...prev,
+                    [post.id]: !prev[post.id],
+                  }))
+                }
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
                 Comments ({postComments[post.id]?.length || 0})
@@ -1486,7 +1496,7 @@ function PostList() {
               </Button>
             </div>
 
-            <CommentsList postId={post.id} />
+            {expandedComments[post.id] && <CommentsList postId={post.id} />}
 
             <div className="flex items-center space-x-3 mt-3 pt-3 border-t border-gray-100 dark:border-neutral-800">
               <Avatar className="w-8 h-8">
