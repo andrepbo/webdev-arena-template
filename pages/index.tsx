@@ -63,6 +63,11 @@ interface Post {
   likes: number;
   comments: number;
   reactions?: string[];
+  likedBy?: {
+    id: string;
+    avatar: string;
+    name: string;
+  }[];
 }
 
 interface Contact {
@@ -485,6 +490,32 @@ function AppProvider({ children }: { children: React.ReactNode }) {
         "https://placehold.co/24x24/F59E0B/FFFFFF?text=👍",
         "https://placehold.co/24x24/10B981/FFFFFF?text=😊",
       ],
+      likedBy: [
+        {
+          id: "1",
+          avatar:
+            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=464&auto=format&fit=crop",
+          name: "Anna Konjufca",
+        },
+        {
+          id: "2",
+          avatar:
+            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=387&auto=format&fit=crop",
+          name: "Mike Finavskie",
+        },
+        {
+          id: "3",
+          avatar:
+            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=464&auto=format&fit=crop",
+          name: "Amy Ruth",
+        },
+        {
+          id: "4",
+          avatar:
+            "https://plus.unsplash.com/premium_photo-1664536392779-049ba8fde933?q=80&w=387&auto=format&fit=crop",
+          name: "Mark Stefine",
+        },
+      ],
     },
     {
       id: 2,
@@ -499,6 +530,14 @@ function AppProvider({ children }: { children: React.ReactNode }) {
       timestamp: new Date(Date.now() - 7200000),
       likes: 0,
       comments: 0,
+      likedBy: [
+        {
+          id: "2",
+          avatar:
+            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=387&auto=format&fit=crop",
+          name: "Mike Finavskie",
+        },
+      ],
     },
   ]);
 
@@ -1412,41 +1451,27 @@ function PostList() {
               />
             )}
 
-            {post.reactions && (
-              <div className="flex items-center space-x-2 mb-3">
-                <div className="flex -space-x-1">
-                  {post.reactions.map((reaction, index) => (
-                    <div
-                      key={index}
-                      className="w-6 h-6 rounded-full bg-gray-200 dark:bg-neutral-700 border-2 border-white dark:border-neutral-800"
-                    ></div>
+            {/* Post footer with avatars and stats */}
+            <div className="flex items-center justify-between mt-3">
+              <div className="flex items-center space-x-3">
+                <div className="flex -space-x-2">
+                  {(post.likedBy || []).slice(0, 3).map((user) => (
+                    <img
+                      key={user.id}
+                      src={user.avatar}
+                      alt={user.name}
+                      className="w-6 h-6 rounded-full border-2 border-white dark:border-gray-900"
+                    />
                   ))}
                 </div>
-                <span className="text-sm text-gray-500 dark:text-neutral-400">
+                <span className="text-sm text-gray-500">
                   {postComments[post.id]?.length || 0} Comments
                 </span>
-                <span className="text-sm text-gray-500 dark:text-neutral-400">
+                <span className="text-sm text-gray-500">
                   {getLikeCount(post.id, post.likes)} Likes
                 </span>
               </div>
-            )}
-
-            {!post.reactions &&
-              (getLikeCount(post.id, post.likes) > 0 ||
-                (postComments[post.id]?.length || 0) > 0) && (
-                <div className="flex items-center space-x-2 mb-3">
-                  {getLikeCount(post.id, post.likes) > 0 && (
-                    <span className="text-sm text-gray-500 dark:text-neutral-400">
-                      {getLikeCount(post.id, post.likes)} Likes
-                    </span>
-                  )}
-                  {(postComments[post.id]?.length || 0) > 0 && (
-                    <span className="text-sm text-gray-500 dark:text-neutral-400">
-                      {postComments[post.id]?.length || 0} Comments
-                    </span>
-                  )}
-                </div>
-              )}
+            </div>
 
             <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-neutral-800">
               <Button
