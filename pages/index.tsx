@@ -301,11 +301,9 @@ export default function BlogHighlightPage() {
   return (
     <div className="min-h-screen bg-black text-black font-inter py-8 px-8">
       <div className="w-full max-w-7xl mx-auto bg-white px-4 sm:px-6 lg:px-8 py-4 sm:py-6 rounded-xl shadow-xl overflow-x-hidden">
-        <header className="flex flex-col md:flex-row items-center justify-between mb-6 md:mb-10">
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-10 w-full md:w-auto">
-            <h1 className="text-2xl md:text-3xl font-bold">
-              Blog<span className="text-gray-600">Spot.</span>
-            </h1>
+        <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 flex-wrap mb-6 lg:mb-10 w-full">
+          <div className="flex flex-wrap items-center gap-4 md:gap-10">
+            <h1 className="text-2xl md:text-3xl font-bold">Blog Spot</h1>
             <nav className="flex overflow-x-auto py-2 gap-4 md:gap-6 text-sm font-medium text-gray-700 w-full md:w-auto">
               <a
                 href="#"
@@ -356,8 +354,8 @@ export default function BlogHighlightPage() {
               </a>
             </nav>
           </div>
-          <div className="flex items-center gap-4 mt-4 md:mt-0 w-full justify-between md:w-auto">
-            <div className="relative flex-grow md:flex-grow-0 w-full md:w-64">
+          <div className="w-full lg:w-full">
+            <div className="relative w-full">
               <FiSearch className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
@@ -376,12 +374,6 @@ export default function BlogHighlightPage() {
                 </button>
               )}
             </div>
-            <button
-              className="border px-4 py-2 rounded-full text-sm md:text-base"
-              onClick={() => setView("home")}
-            >
-              Menu
-            </button>
           </div>
         </header>
 
