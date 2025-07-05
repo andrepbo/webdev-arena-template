@@ -274,7 +274,7 @@ export default function BlogHighlightPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-black font-inter">
+    <div className="min-h-screen bg-black text-black font-inter py-8">
       <div className="max-w-7xl mx-auto bg-white px-4 sm:px-6 lg:px-8 py-4 sm:py-6 rounded-xl shadow-xl">
         <header className="flex flex-col md:flex-row items-center justify-between mb-6 md:mb-10">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-10 w-full md:w-auto">
