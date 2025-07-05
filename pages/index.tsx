@@ -368,9 +368,6 @@ export default function BlogHighlightPage() {
               >
                 Be a writer ({getCategoryCount("Be a writer")})
               </a>
-              <a href="#" className="whitespace-nowrap">
-                Talkouts
-              </a>
             </nav>
           </div>
           <div className="w-full lg:w-1/3 lg:ml-auto mt-4 lg:mt-0">
