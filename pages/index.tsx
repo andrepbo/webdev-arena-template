@@ -149,7 +149,8 @@ export default function BlogHighlightPage() {
               <div className="absolute top-4 left-4 bg-white rounded-full px-3 py-1 text-xs">
                 {filteredArticles[0].date}
               </div>
-              <div className="absolute bottom-4 left-4 bg-white rounded-xl p-4 w-11/12 md:w-3/4">
+              {/* Conteúdo branco sobreposto na imagem principal */}
+              <div className="absolute bottom-10 left-4 bg-white rounded-xl p-4 w-11/12 md:w-3/4">
                 <p className="text-xs mb-1">• {filteredArticles[0].tag}</p>
                 <h3 className="text-lg font-semibold leading-snug">
                   {filteredArticles[0].title}
@@ -298,7 +299,7 @@ export default function BlogHighlightPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-black font-inter py-8">
+    <div className="min-h-screen bg-black text-black font-inter py-20">
       <div className="max-w-7xl mx-auto bg-white px-4 sm:px-6 lg:px-8 py-4 sm:py-6 rounded-xl shadow-xl">
         <header className="flex flex-col md:flex-row items-center justify-between mb-6 md:mb-10">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-10 w-full md:w-auto">
