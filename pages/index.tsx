@@ -87,6 +87,7 @@ export default function BlogHighlightPage() {
   const [view, setView] = useState<"home" | "list" | "detail">("home");
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const getCategoryCount = (category: string): number => {
     if (category === "All") return articles.length;
@@ -98,14 +99,21 @@ export default function BlogHighlightPage() {
     return articles.filter((article) => article.tag === category).length;
   };
 
-  const filteredArticles =
-    activeCategory === "All"
-      ? articles
-      : activeCategory === "Articles"
-      ? articles.filter(
-          (article) => article.tag === "Travel" || article.tag === "ADS"
-        )
-      : articles.filter((article) => article.tag === activeCategory);
+  const normalizedSearch = searchQuery.toLowerCase().trim();
+  const filteredArticles = articles.filter((article) => {
+    const matchesCategory =
+      activeCategory === "All"
+        ? true
+        : activeCategory === "Articles"
+        ? article.tag === "Travel" || article.tag === "ADS"
+        : article.tag === activeCategory;
+
+    const matchesSearch =
+      (article.title?.toLowerCase().includes(normalizedSearch) ?? false) ||
+      (article.content?.toLowerCase().includes(normalizedSearch) ?? false);
+
+    return matchesCategory && matchesSearch;
+  });
 
   const handleArticleClick = (article: Article) => {
     setSelectedArticle(article);
@@ -131,52 +139,68 @@ export default function BlogHighlightPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="col-span-1 md:col-span-2 relative">
-          <img
-            src={articles[0].image}
-            alt="travel"
-            className="rounded-xl w-full h-80 md:h-96 object-cover"
-          />
-          <div className="absolute top-4 left-4 bg-white rounded-full px-3 py-1 text-xs">
-            {articles[0].date}
-          </div>
-          <div className="absolute bottom-4 left-4 bg-white rounded-xl p-4 w-11/12 md:w-3/4">
-            <p className="text-xs mb-1">• {articles[0].tag}</p>
-            <h3 className="text-lg font-semibold leading-snug">
-              {articles[0].title}
-            </h3>
-            <p className="text-sm text-gray-600 mt-1">{articles[0].content}</p>
-          </div>
+          {filteredArticles[0] && (
+            <>
+              <img
+                src={filteredArticles[0].image}
+                alt="travel"
+                className="rounded-xl w-full h-80 md:h-96 object-cover"
+              />
+              <div className="absolute top-4 left-4 bg-white rounded-full px-3 py-1 text-xs">
+                {filteredArticles[0].date}
+              </div>
+              <div className="absolute bottom-4 left-4 bg-white rounded-xl p-4 w-11/12 md:w-3/4">
+                <p className="text-xs mb-1">• {filteredArticles[0].tag}</p>
+                <h3 className="text-lg font-semibold leading-snug">
+                  {filteredArticles[0].title}
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  {filteredArticles[0].content}
+                </p>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="flex flex-col gap-6">
-          <div
-            className={`rounded-xl p-6 ${articles[1].color || "bg-gray-100"}`}
-          >
-            <p className="text-xs mb-1">• {articles[1].tag}</p>
-            <h4 className="font-semibold mb-1 leading-tight">
-              {articles[1].title}
-            </h4>
-            <p className="text-sm text-gray-600">{articles[1].description}</p>
-            <p className="text-xs text-gray-600 mt-2">{articles[1].content}</p>
-            <a href="#" className="text-xs mt-2 inline-block text-gray-700">
-              Learn more
-            </a>
-          </div>
-          <div className="relative">
-            <img
-              src={articles[2].image}
-              alt="pick"
-              className="rounded-xl w-full h-48 object-cover"
-            />
-            <button className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-full text-sm font-semibold">
-              {articles[2].title} →
-            </button>
-          </div>
+          {filteredArticles[1] && (
+            <div
+              className={`rounded-xl p-6 ${
+                filteredArticles[1].color || "bg-gray-100"
+              }`}
+            >
+              <p className="text-xs mb-1">• {filteredArticles[1].tag}</p>
+              <h4 className="font-semibold mb-1 leading-tight">
+                {filteredArticles[1].title}
+              </h4>
+              <p className="text-sm text-gray-600">
+                {filteredArticles[1].description}
+              </p>
+              <p className="text-xs text-gray-600 mt-2">
+                {filteredArticles[1].content}
+              </p>
+              <a href="#" className="text-xs mt-2 inline-block text-gray-700">
+                Learn more
+              </a>
+            </div>
+          )}
+          {filteredArticles[2] && (
+            <div className="relative">
+              <img
+                src={filteredArticles[2].image}
+                alt="pick"
+                className="rounded-xl w-full h-48 object-cover"
+              />
+              <button className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-full text-sm font-semibold">
+                {filteredArticles[2].title} →
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       <section className="mt-12 grid gap-8 grid-cols-1 md:grid-cols-3">
-        {articles.slice(3).map((article) => (
+        {filteredArticles.slice(3).map((article) => (
           <div
             key={article.id}
             className="rounded-xl overflow-hidden shadow bg-white cursor-pointer hover:shadow-lg transition-shadow"
@@ -332,13 +356,24 @@ export default function BlogHighlightPage() {
             </nav>
           </div>
           <div className="flex items-center gap-4 mt-4 md:mt-0 w-full justify-between md:w-auto">
-            <div className="relative flex-grow md:flex-grow-0">
+            <div className="relative flex-grow md:flex-grow-0 w-full md:w-64">
               <FiSearch className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search..."
-                className="pl-10 pr-4 py-2 border rounded-full w-full md:w-64"
+                className="pl-10 pr-4 py-2 border rounded-full w-full"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  aria-label="Clear search"
+                >
+                  ×
+                </button>
+              )}
             </div>
             <button
               className="border px-4 py-2 rounded-full text-sm md:text-base"
