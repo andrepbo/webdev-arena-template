@@ -88,6 +88,7 @@ export default function BlogHighlightPage() {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const getCategoryCount = (category: string): number => {
     if (category === "All") return articles.length;
@@ -301,16 +302,31 @@ export default function BlogHighlightPage() {
   return (
     <div className="min-h-screen bg-black text-black font-inter py-8 px-8">
       <div className="w-full max-w-7xl mx-auto bg-white px-4 sm:px-6 lg:px-8 py-4 sm:py-6 rounded-xl shadow-xl overflow-x-hidden">
-        <header className="flex flex-col lg:grid lg:grid-cols-[1fr_auto] lg:items-center gap-4 mb-6 lg:mb-10 w-full">
-          <div className="flex flex-wrap items-center gap-4 md:gap-10">
-            <h1 className="text-2xl md:text-3xl font-bold">Blog Spot</h1>
-            <nav className="flex overflow-x-auto py-2 gap-4 md:gap-6 text-sm font-medium text-gray-700 w-full md:w-auto">
+        <header className="mb-6 lg:mb-10 w-full flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-center w-full lg:w-auto justify-between">
+            <div className="flex items-center justify-between w-full lg:w-auto">
+              <h1 className="text-2xl md:text-3xl font-bold whitespace-nowrap">
+                Blog<span className="text-gray-600">Spot.</span>
+              </h1>
+              <button
+                className="lg:hidden px-3 py-1 border rounded text-sm"
+                onClick={() => setMenuOpen(!menuOpen)}
+              >
+                Menu
+              </button>
+            </div>
+            <nav
+              className={`flex-col py-2 gap-4 text-sm font-medium text-gray-700 w-full lg:flex lg:flex-row lg:items-center lg:gap-6 lg:ml-6 ${
+                menuOpen ? "flex" : "hidden"
+              }`}
+            >
               <a
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
                   setView("list");
                   setActiveCategory("Articles");
+                  setMenuOpen(false);
                 }}
                 className="whitespace-nowrap"
               >
@@ -322,6 +338,7 @@ export default function BlogHighlightPage() {
                   e.preventDefault();
                   setView("list");
                   setActiveCategory("Radio");
+                  setMenuOpen(false);
                 }}
                 className="whitespace-nowrap"
               >
@@ -333,6 +350,7 @@ export default function BlogHighlightPage() {
                   e.preventDefault();
                   setView("list");
                   setActiveCategory("Podcast");
+                  setMenuOpen(false);
                 }}
                 className="whitespace-nowrap"
               >
@@ -344,6 +362,7 @@ export default function BlogHighlightPage() {
                   e.preventDefault();
                   setView("list");
                   setActiveCategory("Be a writer");
+                  setMenuOpen(false);
                 }}
                 className="whitespace-nowrap"
               >
@@ -354,7 +373,7 @@ export default function BlogHighlightPage() {
               </a>
             </nav>
           </div>
-          <div className="w-full lg:w-full">
+          <div className="w-full lg:w-1/3 lg:ml-auto mt-4 lg:mt-0">
             <div className="relative w-full">
               <FiSearch className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
