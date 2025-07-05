@@ -301,7 +301,7 @@ export default function BlogHighlightPage() {
   return (
     <div className="min-h-screen bg-black text-black font-inter py-8 px-8">
       <div className="w-full max-w-7xl mx-auto bg-white px-4 sm:px-6 lg:px-8 py-4 sm:py-6 rounded-xl shadow-xl overflow-x-hidden">
-        <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 flex-wrap mb-6 lg:mb-10 w-full">
+        <header className="flex flex-col lg:grid lg:grid-cols-[1fr_auto] lg:items-center gap-4 mb-6 lg:mb-10 w-full">
           <div className="flex flex-wrap items-center gap-4 md:gap-10">
             <h1 className="text-2xl md:text-3xl font-bold">Blog Spot</h1>
             <nav className="flex overflow-x-auto py-2 gap-4 md:gap-6 text-sm font-medium text-gray-700 w-full md:w-auto">
