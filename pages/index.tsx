@@ -41,6 +41,21 @@ import { Toaster, toast } from "sonner";
 
 const nunito = Nunito({ subsets: ["latin"] });
 
+interface FeedProps {
+  joinedEvents: Set<number>;
+  setJoinedEvents: React.Dispatch<React.SetStateAction<Set<number>>>;
+}
+
+interface UpcomingEventsProps {
+  joinedEvents: Set<number>;
+  setJoinedEvents?: React.Dispatch<React.SetStateAction<Set<number>>>;
+}
+
+interface EventsDialogProps {
+  joinedEvents: Set<number>;
+  setJoinedEvents: React.Dispatch<React.SetStateAction<Set<number>>>;
+}
+
 interface StoryData {
   id: number;
   user: {
@@ -1794,7 +1809,10 @@ const getCategoryColor = (category: Event["category"]) => {
   }
 };
 
-function UpcomingEvents() {
+function UpcomingEvents({
+  joinedEvents,
+  setJoinedEvents,
+}: UpcomingEventsProps) {
   const { openEventsDialog } = useAppContext();
 
   return (
@@ -1815,55 +1833,84 @@ function UpcomingEvents() {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="pt-0 dark:bg-neutral-800">
-          {events.slice(0, 1).map((event, index) => (
-            <div key={index} className="space-y-3">
-              <div className="flex items-start space-x-3">
-                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-950 rounded-lg flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 dark:text-neutral-100">
-                    {event.title}
-                  </h4>
-                  <p className="text-sm text-gray-500 dark:text-neutral-400 mb-2">
-                    {event.date}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-neutral-300 mb-3">
-                    {event.description}
-                  </p>
-                  <div className="flex items-center space-x-2">
-                    <div className="flex -space-x-2">
-                      <Avatar className="w-6 h-6 border-2 border-white dark:border-neutral-800">
-                        <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=464&auto=format&fit=crop" />
-                        <AvatarFallback>A</AvatarFallback>
-                      </Avatar>
-                      <Avatar className="w-6 h-6 border-2 border-white dark:border-neutral-800">
-                        <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=387&auto=format&fit=crop" />
-                        <AvatarFallback>M</AvatarFallback>
-                      </Avatar>
-                      <Avatar className="w-6 h-6 border-2 border-white dark:border-neutral-800">
-                        <AvatarImage src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=387&auto=format&fit=crop" />
-                        <AvatarFallback>J</AvatarFallback>
-                      </Avatar>
+        <CardContent className="pt-0 dark:bg-neutral-800 space-y-6">
+          {Array.from(joinedEvents)
+            .map((eventId) => events.find((event) => event.id === eventId))
+            .filter((event): event is Event => event !== undefined).length ===
+          0 ? (
+            <p className="text-sm text-gray-500 dark:text-neutral-400">
+              You haven’t joined any events yet.
+            </p>
+          ) : (
+            Array.from(joinedEvents)
+              .map((eventId) => events.find((event) => event.id === eventId))
+              .filter((event): event is Event => event !== undefined)
+              .map((event, index) => (
+                <div key={index} className="space-y-3">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 bg-purple-100 dark:bg-purple-950 rounded-lg flex items-center justify-center">
+                      <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                     </div>
-                    <span className="text-sm text-gray-500 dark:text-neutral-400">
-                      {event.attendees} Joined
-                    </span>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 dark:text-neutral-100">
+                        {event.title}
+                      </h4>
+                      <p className="text-sm text-gray-500 dark:text-neutral-400 mb-2">
+                        {event.date}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-neutral-300 mb-3">
+                        {event.description}
+                      </p>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex -space-x-2">
+                          <Avatar className="w-6 h-6 border-2 border-white dark:border-neutral-800">
+                            <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=464&auto=format&fit=crop" />
+                            <AvatarFallback>A</AvatarFallback>
+                          </Avatar>
+                          <Avatar className="w-6 h-6 border-2 border-white dark:border-neutral-800">
+                            <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=387&auto=format&fit=crop" />
+                            <AvatarFallback>M</AvatarFallback>
+                          </Avatar>
+                          <Avatar className="w-6 h-6 border-2 border-white dark:border-neutral-800">
+                            <AvatarImage src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=387&auto=format&fit=crop" />
+                            <AvatarFallback>J</AvatarFallback>
+                          </Avatar>
+                        </div>
+                        <span className="text-sm text-gray-500 dark:text-neutral-400">
+                          {event.attendees} Joined
+                        </span>
+                      </div>
+                      {setJoinedEvents && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-2 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                          onClick={() => {
+                            if (setJoinedEvents) {
+                              setJoinedEvents((prev) => {
+                                const newSet = new Set(prev);
+                                newSet.delete(event.id);
+                                return newSet;
+                              });
+                            }
+                          }}
+                        >
+                          Leave
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              ))
+          )}
         </CardContent>
       </Card>
     </>
   );
 }
 
-function EventsDialog() {
+function EventsDialog({ joinedEvents, setJoinedEvents }: EventsDialogProps) {
   const { isEventsDialogOpen, closeEventsDialog } = useAppContext();
-  const [joinedEvents, setJoinedEvents] = useState<Set<number>>(new Set([1]));
   // Local state for event list with attendee counts
   const [eventList, setEventList] = useState(events);
 
@@ -2365,7 +2412,7 @@ function RightBar({ isMobile = false }: { isMobile?: boolean }) {
 }
 
 // Main Feed Component
-function Feed() {
+function Feed({ joinedEvents, setJoinedEvents }: FeedProps) {
   return (
     <main className="px-4 xl:ml-64 xl:mr-80 py-6">
       <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
@@ -2375,7 +2422,10 @@ function Feed() {
         </div>
         <div className="space-y-6 hidden lg:block">
           <YouMightLike />
-          <UpcomingEvents />
+          <UpcomingEvents
+            joinedEvents={joinedEvents}
+            setJoinedEvents={setJoinedEvents}
+          />
           <SuggestedGroups />
         </div>
       </div>
@@ -3007,6 +3057,7 @@ function FollowersDialog() {
 
 // Main App Component
 function SocialMediaAppContent() {
+  const [joinedEvents, setJoinedEvents] = useState<Set<number>>(new Set([1]));
   const { isMobileChatOpen, isMobileNavOpen, closeMobileChat, closeMobileNav } =
     useAppContext();
 
@@ -3017,7 +3068,7 @@ function SocialMediaAppContent() {
       <Header />
       <div className="flex">
         <Sidebar />
-        <Feed />
+        <Feed joinedEvents={joinedEvents} setJoinedEvents={setJoinedEvents} />
         <RightBar />
 
         <FloatingChatButton />
@@ -3034,7 +3085,10 @@ function SocialMediaAppContent() {
         <ContactProfileDialog />
         <FollowersDialog />
         <ChatDialog />
-        <EventsDialog />
+        <EventsDialog
+          joinedEvents={joinedEvents}
+          setJoinedEvents={setJoinedEvents}
+        />
         <GroupsDialog />
       </div>
     </div>
