@@ -121,140 +121,163 @@ export default function BlogHighlightPage() {
     setView("detail");
   };
 
-  const renderHomeView = () => (
-    <>
-      <section className="mb-10 flex items-center gap-4">
-        <h2 className="text-4xl font-bold">Best of the week</h2>
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            setView("list");
-            setActiveCategory("All");
-          }}
-          className="text-sm text-gray-500 hover:underline"
-        >
-          See all posts →
-        </a>
-      </section>
-
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="col-span-1 lg:col-span-2 relative">
-          {filteredArticles[0] && (
-            <div
-              onClick={() => handleArticleClick(filteredArticles[0])}
-              className="cursor-pointer"
-            >
-              <img
-                src={filteredArticles[0].image}
-                alt="travel"
-                className="rounded-xl w-full object-cover"
-              />
-              <div className="absolute top-4 left-4 bg-white rounded-full px-3 py-1 text-xs">
-                {filteredArticles[0].date}
-              </div>
-              <div className="absolute bottom-10 left-4 bg-white rounded-xl p-4 w-11/12">
-                <p className="text-xs mb-1">• {filteredArticles[0].tag}</p>
-                <h3 className="text-lg font-semibold leading-snug">
-                  {filteredArticles[0].title}
-                </h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  {filteredArticles[0].content}
-                </p>
-              </div>
-            </div>
-          )}
+  const renderHomeView = () => {
+    if (filteredArticles.length === 0) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-lg text-gray-500">No matches for your search.</p>
+          <p className="text-sm text-gray-400">
+            We couldn’t find anything that matches your query. Try a different
+            keyword or remove some filters.
+          </p>
         </div>
-
-        <div className="flex flex-col gap-6">
-          {filteredArticles[1] && (
-            <div
-              className={`rounded-xl p-6 ${
-                filteredArticles[1].color || "bg-gray-100"
-              }`}
-            >
-              <p className="text-xs mb-1">• {filteredArticles[1].tag}</p>
-              <h4 className="font-semibold mb-1 leading-tight">
-                {filteredArticles[1].title}
-              </h4>
-              <p className="text-sm text-gray-600">
-                {filteredArticles[1].description}
-              </p>
-              <p className="text-xs text-gray-600 mt-2">
-                {filteredArticles[1].content}
-              </p>
-              <a href="#" className="text-xs mt-2 inline-block text-gray-700">
-                Learn more
-              </a>
-            </div>
-          )}
-          {filteredArticles[2] && (
-            <div className="relative">
-              <img
-                src={filteredArticles[2].image}
-                alt="pick"
-                className="rounded-xl w-full h-48 object-cover"
-              />
-              <button className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-full text-sm font-semibold">
-                {filteredArticles[2].title} →
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="mt-6 grid gap-8 grid-cols-1 md:grid-cols-3">
-        {filteredArticles.slice(3).map((article) => (
-          <div
-            key={article.id}
-            className="rounded-xl overflow-hidden shadow bg-white cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => handleArticleClick(article)}
+      );
+    }
+    return (
+      <>
+        <section className="mb-10 flex items-center gap-4">
+          <h2 className="text-4xl font-bold">Best of the week</h2>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setView("list");
+              setActiveCategory("All");
+            }}
+            className="text-sm text-gray-500 hover:underline"
           >
-            <img
-              src={article.image}
-              alt={article.title}
-              className="h-48 w-full object-cover"
-            />
-            <div className="p-4">
-              <p className="text-xs text-gray-500">• {article.tag}</p>
-              <h3 className="font-semibold text-lg mb-1">{article.title}</h3>
-              <p className="text-sm text-gray-600">{article.content}</p>
-            </div>
+            See all posts →
+          </a>
+        </section>
+
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="col-span-1 lg:col-span-2 relative">
+            {filteredArticles[0] && (
+              <div
+                onClick={() => handleArticleClick(filteredArticles[0])}
+                className="cursor-pointer"
+              >
+                <img
+                  src={filteredArticles[0].image}
+                  alt="travel"
+                  className="rounded-xl w-full object-cover"
+                />
+                <div className="absolute top-4 left-4 bg-white rounded-full px-3 py-1 text-xs">
+                  {filteredArticles[0].date}
+                </div>
+                <div className="absolute bottom-10 left-4 bg-white rounded-xl p-4 w-11/12">
+                  <p className="text-xs mb-1">• {filteredArticles[0].tag}</p>
+                  <h3 className="text-lg font-semibold leading-snug">
+                    {filteredArticles[0].title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {filteredArticles[0].content}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
-        ))}
-      </section>
-    </>
-  );
 
-  const renderListView = () => (
-    <div className="mt-8">
-      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {filteredArticles.map((article) => (
-          <div
-            key={article.id}
-            className="rounded-xl overflow-hidden shadow bg-white cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => handleArticleClick(article)}
-          >
-            {article.image && (
+          <div className="flex flex-col gap-6">
+            {filteredArticles[1] && (
+              <div
+                className={`rounded-xl p-6 ${
+                  filteredArticles[1].color || "bg-gray-100"
+                }`}
+              >
+                <p className="text-xs mb-1">• {filteredArticles[1].tag}</p>
+                <h4 className="font-semibold mb-1 leading-tight">
+                  {filteredArticles[1].title}
+                </h4>
+                <p className="text-sm text-gray-600">
+                  {filteredArticles[1].description}
+                </p>
+                <p className="text-xs text-gray-600 mt-2">
+                  {filteredArticles[1].content}
+                </p>
+                <a href="#" className="text-xs mt-2 inline-block text-gray-700">
+                  Learn more
+                </a>
+              </div>
+            )}
+            {filteredArticles[2] && (
+              <div className="relative">
+                <img
+                  src={filteredArticles[2].image}
+                  alt="pick"
+                  className="rounded-xl w-full h-48 object-cover"
+                />
+                <button className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-full text-sm font-semibold">
+                  {filteredArticles[2].title} →
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="mt-6 grid gap-8 grid-cols-1 md:grid-cols-3">
+          {filteredArticles.slice(3).map((article) => (
+            <div
+              key={article.id}
+              className="rounded-xl overflow-hidden shadow bg-white cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => handleArticleClick(article)}
+            >
               <img
                 src={article.image}
                 alt={article.title}
                 className="h-48 w-full object-cover"
               />
-            )}
-            <div className="p-4">
-              {article.date && (
-                <p className="text-xs text-gray-500 mb-1">{article.date}</p>
-              )}
-              <p className="text-xs text-gray-500">• {article.tag}</p>
-              <h3 className="font-semibold text-lg mb-1">{article.title}</h3>
-              <p className="text-sm text-gray-600">{article.content}</p>
-              <button className="mt-2 text-sm text-black font-medium">
-                Read more →
-              </button>
+              <div className="p-4">
+                <p className="text-xs text-gray-500">• {article.tag}</p>
+                <h3 className="font-semibold text-lg mb-1">{article.title}</h3>
+                <p className="text-sm text-gray-600">{article.content}</p>
+              </div>
             </div>
+          ))}
+        </section>
+      </>
+    );
+  };
+
+  const renderListView = () => (
+    <div className="mt-8">
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        {filteredArticles.length === 0 ? (
+          <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-12">
+            <p className="text-lg text-gray-500">No matches for your search.</p>
+            <p className="text-sm text-gray-400">
+              We couldn’t find anything that matches your query. Try a different
+              keyword or remove some filters.
+            </p>
           </div>
-        ))}
+        ) : (
+          filteredArticles.map((article) => (
+            <div
+              key={article.id}
+              className="rounded-xl overflow-hidden shadow bg-white cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => handleArticleClick(article)}
+            >
+              {article.image && (
+                <img
+                  src={article.image}
+                  alt={article.title}
+                  className="h-48 w-full object-cover"
+                />
+              )}
+              <div className="p-4">
+                {article.date && (
+                  <p className="text-xs text-gray-500 mb-1">{article.date}</p>
+                )}
+                <p className="text-xs text-gray-500">• {article.tag}</p>
+                <h3 className="font-semibold text-lg mb-1">{article.title}</h3>
+                <p className="text-sm text-gray-600">{article.content}</p>
+                <button className="mt-2 text-sm text-black font-medium">
+                  Read more →
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
