@@ -422,7 +422,7 @@ export default function BlogHighlightPage() {
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="pl-10 pr-4 py-2 border rounded-full w-full"
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-full w-full bg-white text-black"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
