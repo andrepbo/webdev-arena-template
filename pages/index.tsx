@@ -138,8 +138,8 @@ export default function BlogHighlightPage() {
         </a>
       </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="col-span-1 md:col-span-2 relative">
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="col-span-1 lg:col-span-2 relative">
           {filteredArticles[0] && (
             <div
               onClick={() => handleArticleClick(filteredArticles[0])}
@@ -148,13 +148,12 @@ export default function BlogHighlightPage() {
               <img
                 src={filteredArticles[0].image}
                 alt="travel"
-                className="rounded-xl w-full h-80 md:h-96 object-cover"
+                className="rounded-xl w-full object-cover"
               />
               <div className="absolute top-4 left-4 bg-white rounded-full px-3 py-1 text-xs">
                 {filteredArticles[0].date}
               </div>
-              {/* Conteúdo branco sobreposto na imagem principal */}
-              <div className="absolute bottom-10 left-4 bg-white rounded-xl p-4 w-11/12 md:w-3/4">
+              <div className="absolute bottom-10 left-4 bg-white rounded-xl p-4 w-11/12">
                 <p className="text-xs mb-1">• {filteredArticles[0].tag}</p>
                 <h3 className="text-lg font-semibold leading-snug">
                   {filteredArticles[0].title}
@@ -202,9 +201,9 @@ export default function BlogHighlightPage() {
             </div>
           )}
         </div>
-      </div>
+      </section>
 
-      <section className="mt-12 grid gap-8 grid-cols-1 md:grid-cols-3">
+      <section className="mt-6 grid gap-8 grid-cols-1 md:grid-cols-3">
         {filteredArticles.slice(3).map((article) => (
           <div
             key={article.id}
