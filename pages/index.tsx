@@ -717,29 +717,40 @@ const MainFeed = ({
         </button>
       </div>
       {/* Post Section */}
-      <div className="flex items-start px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-transparent">
-        <img
-          src={currentUser.avatar}
-          alt={currentUser.name}
-          className="w-10 h-10 rounded-full"
-        />
-        <div className="flex-1 flex items-center ml-4">
-          <textarea
-            className="bg-transparent text-md sm:text-2xl placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100 border-none focus:outline-none focus:ring-0 focus:border-transparent w-full resize-none"
-            placeholder="What's happening?"
-            value={newPost}
-            onChange={(e) => setNewPost(e.target.value)}
-            maxLength={280}
+      {feed === "foryou" ? (
+        <div className="flex items-start px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-transparent">
+          <img
+            src={currentUser.avatar}
+            alt={currentUser.name}
+            className="w-10 h-10 rounded-full"
           />
+          <div className="flex-1 flex items-center ml-4">
+            <textarea
+              className="bg-transparent text-md sm:text-2xl placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100 border-none focus:outline-none focus:ring-0 focus:border-transparent w-full resize-none"
+              placeholder="What's happening?"
+              value={newPost}
+              onChange={(e) => setNewPost(e.target.value)}
+              maxLength={280}
+            />
+          </div>
+          <button
+            className="ml-4 mt-6 sm:mt-10 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm sm:text-md px-6 sm:px-7 py-1 sm:py-2 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={handlePost}
+            disabled={!newPost.trim()}
+          >
+            Post
+          </button>
         </div>
-        <button
-          className="ml-4 mt-6 sm:mt-10 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm sm:text-md px-6 sm:px-7 py-1 sm:py-2 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={handlePost}
-          disabled={!newPost.trim()}
-        >
-          Post
-        </button>
-      </div>
+      ) : (
+        <div className="text-center px-6 py-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            You’re viewing your Following feed
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400">
+            Posts from people you follow will appear here.
+          </p>
+        </div>
+      )}
       {/* Posts */}
       <div className="flex-1 overflow-y-auto w-full pb-20 sm:pb-0 no-scrollbar">
         {feed === "foryou" &&
