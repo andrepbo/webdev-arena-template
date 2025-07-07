@@ -195,7 +195,14 @@ export default function BlogHighlightPage() {
                 <p className="text-xs text-gray-600 mt-2">
                   {filteredArticles[1].content}
                 </p>
-                <a href="#" className="text-xs mt-2 inline-block text-gray-700">
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleArticleClick(filteredArticles[1]);
+                  }}
+                  className="text-xs mt-2 inline-block text-gray-700 hover:underline"
+                >
                   Learn more
                 </a>
               </div>
@@ -207,7 +214,13 @@ export default function BlogHighlightPage() {
                   alt="pick"
                   className="rounded-xl w-full h-48 object-cover"
                 />
-                <button className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-full text-sm font-semibold">
+                <button
+                  onClick={() => {
+                    setView("list");
+                    setActiveCategory("All");
+                  }}
+                  className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-full text-sm font-semibold"
+                >
                   {filteredArticles[2].title} →
                 </button>
               </div>
