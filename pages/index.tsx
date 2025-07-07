@@ -330,9 +330,16 @@ export default function BlogHighlightPage() {
         <header className="mb-6 lg:mb-10 w-full flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div className="flex flex-col lg:flex-row lg:items-center w-full lg:w-auto justify-between">
             <div className="flex items-center justify-between w-full lg:w-auto">
-              <h1 className="text-2xl md:text-3xl font-bold whitespace-nowrap">
+              <button
+                onClick={() => {
+                  setView("home");
+                  setActiveCategory("All");
+                  setMenuOpen(false);
+                }}
+                className="text-2xl md:text-3xl font-bold whitespace-nowrap text-left focus:outline-none"
+              >
                 Blog<span className="text-gray-600">Spot.</span>
-              </h1>
+              </button>
               <button
                 className="lg:hidden px-3 py-1 border rounded text-sm"
                 onClick={() => setMenuOpen(!menuOpen)}
