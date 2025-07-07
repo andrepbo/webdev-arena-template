@@ -141,7 +141,10 @@ export default function BlogHighlightPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="col-span-1 md:col-span-2 relative">
           {filteredArticles[0] && (
-            <>
+            <div
+              onClick={() => handleArticleClick(filteredArticles[0])}
+              className="cursor-pointer"
+            >
               <img
                 src={filteredArticles[0].image}
                 alt="travel"
@@ -160,7 +163,7 @@ export default function BlogHighlightPage() {
                   {filteredArticles[0].content}
                 </p>
               </div>
-            </>
+            </div>
           )}
         </div>
 
