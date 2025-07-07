@@ -28,10 +28,13 @@ const articles: Article[] = [
   },
   {
     id: 2,
+    date: "Jan 10, 2023",
     tag: "ADS",
     title: "Real talk in a corporate world",
     description: "Become a BROADCAST MEMBER",
     color: "bg-sky-100",
+    image:
+      "https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?auto=format&fit=crop&w=800&q=80",
     content:
       "Join a network of professionals sharing real stories and insights from the corporate world. Become a member and get access to exclusive content.",
     fullContent:
@@ -161,6 +164,10 @@ export default function BlogHighlightPage() {
                   src={filteredArticles[0].image}
                   alt="travel"
                   className="rounded-xl w-full object-cover"
+                  onError={({ currentTarget: target }) => {
+                    target.onerror = null;
+                    target.src = "/fallback.jpg";
+                  }}
                 />
                 <div className="absolute top-4 left-4 bg-white rounded-full px-3 py-1 text-xs">
                   {filteredArticles[0].date}
@@ -213,6 +220,10 @@ export default function BlogHighlightPage() {
                   src={filteredArticles[2].image}
                   alt="pick"
                   className="rounded-xl w-full h-48 object-cover"
+                  onError={({ currentTarget: target }) => {
+                    target.onerror = null;
+                    target.src = "/fallback.jpg";
+                  }}
                 />
                 <button
                   onClick={() => {
@@ -239,6 +250,10 @@ export default function BlogHighlightPage() {
                 src={article.image}
                 alt={article.title}
                 className="h-48 w-full object-cover"
+                onError={({ currentTarget: target }) => {
+                  target.onerror = null;
+                  target.src = "/fallback.jpg";
+                }}
               />
               <div className="p-4">
                 <p className="text-xs text-gray-500">• {article.tag}</p>
@@ -275,6 +290,10 @@ export default function BlogHighlightPage() {
                   src={article.image}
                   alt={article.title}
                   className="h-48 w-full object-cover"
+                  onError={({ currentTarget: target }) => {
+                    target.onerror = null;
+                    target.src = "/fallback.jpg";
+                  }}
                 />
               )}
               <div className="p-4">
@@ -322,6 +341,10 @@ export default function BlogHighlightPage() {
             src={selectedArticle.image}
             alt={selectedArticle.title}
             className="w-full h-48 md:h-96 object-cover rounded-xl mb-6 md:mb-8"
+            onError={({ currentTarget: target }) => {
+              target.onerror = null;
+              target.src = "/fallback.jpg";
+            }}
           />
         )}
 
