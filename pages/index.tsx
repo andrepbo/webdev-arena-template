@@ -8,17 +8,35 @@ import {
   useRef,
   useState,
 } from "react";
-import { Toaster } from "../components/ui/toaster";
+import {
+  Toast,
+  ToastClose,
+  ToastDescription,
+  ToastProvider,
+  ToastTitle,
+  ToastViewport,
+} from "../components/ui/toast";
 import { useToast } from "../hooks/use-toast";
-import { anton, inter } from "../lib/fonts";
+import { Anton, Inter } from "next/font/google";
+
+const anton = Anton({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-anton",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 const createColorSystem = (isDark: boolean) => ({
   primary: "#CCFF00",
   primaryHover: "#B8E600",
   secondary: "#FFFF00",
 
-  black: isDark ? "#E5E7EB" : "#000000",
-  white: isDark ? "#0A0A0A" : "#FFFFFF",
+  black: "#000000",
+  white: "#FFFFFF",
   gray: isDark
     ? {
         50: "#0A0A0A",
@@ -76,8 +94,6 @@ const createColorSystem = (isDark: boolean) => ({
     primary: isDark ? "#A3A3A3" : "#000000",
   },
 });
-
-const colors = createColorSystem(false);
 
 const applyColorVariables = (isDark: boolean) => {
   if (typeof window !== "undefined") {
@@ -721,29 +737,36 @@ interface CartItemProps {
 }
 const CartItem = ({ product, quantity }: CartItemProps) => {
   const { handleCartItemQuantityChange, removeFromCart } = useProducts();
+  const themeColors = useThemeColors();
+
   return (
     <div
       key={product.id}
-      className="flex items-center gap-6 border-b-2 border-gray-200 pb-6"
+      className="flex items-center gap-6 border-b-2 border-gray-200 dark:border-gray-600 pb-6"
     >
-      <div className="w-20 h-24 bg-gray-100 overflow-hidden relative">
+      <div className="w-20 h-24 bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
         <img
           src={product.image}
           alt={product.name}
           className="w-full h-full object-cover"
         />
         <div
-          className={`absolute top-1 right-1 text-black px-2 py-1 text-xs font-black ${anton.className}`}
-          style={{ backgroundColor: colors.primary }}
+          className={`absolute top-1 right-1 px-2 py-1 text-xs font-black ${anton.className}`}
+          style={{
+            backgroundColor: themeColors.primary,
+            color: themeColors.black,
+          }}
         >
           ${product.price.toFixed(0)}
         </div>
       </div>
       <div className="flex-1">
-        <h3 className="font-black text-base text-black mb-2">
+        <h3 className="font-black text-base text-black dark:text-white mb-2">
           {product.name.toUpperCase()}
         </h3>
-        <p className={`text-sm text-gray-60 mb-4 ${inter.className}`}>
+        <p
+          className={`text-sm text-gray-600 dark:text-gray-400 mb-4 ${inter.className}`}
+        >
           {product.category}
         </p>
         <div className="flex items-center gap-3">
@@ -751,32 +774,44 @@ const CartItem = ({ product, quantity }: CartItemProps) => {
             onClick={() =>
               handleCartItemQuantityChange(product.id, quantity - 1)
             }
-            className="p-2 bg-black text-white hover:text-black transition-colors"
+            className="p-2 transition-colors"
+            style={{
+              background: themeColors.white,
+              color: themeColors.black,
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colors.primary;
+              e.currentTarget.style.background = themeColors.primary;
+              e.currentTarget.style.color = themeColors.black;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = colors.black;
+              e.currentTarget.style.background = themeColors.white;
+              e.currentTarget.style.color = themeColors.black;
             }}
           >
-            <Minus size={18} />
+            <Minus size={18} color={themeColors.black} />
           </button>
-          <span className="w-12 text-center font-black text-base">
+          <span className="w-12 text-center font-black text-base text-black dark:text-white">
             {quantity}
           </span>
           <button
             onClick={() =>
               handleCartItemQuantityChange(product.id, quantity + 1)
             }
-            className="p-2 bg-black text-white hover:text-black transition-colors"
+            className="p-2 transition-colors"
+            style={{
+              background: themeColors.white,
+              color: themeColors.black,
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colors.primary;
+              e.currentTarget.style.background = themeColors.primary;
+              e.currentTarget.style.color = themeColors.black;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = colors.black;
+              e.currentTarget.style.background = themeColors.white;
+              e.currentTarget.style.color = themeColors.black;
             }}
           >
-            <Plus size={18} />
+            <Plus size={18} color={themeColors.black} />
           </button>
         </div>
       </div>
@@ -792,12 +827,16 @@ const CartItem = ({ product, quantity }: CartItemProps) => {
 const Cart = () => {
   const { cart, setShowCart, totalPriceInCart } = useProducts();
   const { toast } = useToast();
+  const themeColors = useThemeColors();
+  const { theme } = useTheme();
 
   return (
     <>
       <div className="space-y-6 mb-10 pt-4">
         {cart.length === 0 ? (
-          <div className={`text-center py-8 text-gray-500 ${inter.className}`}>
+          <div
+            className={`text-center py-8 text-gray-500 dark:text-gray-400 ${inter.className}`}
+          >
             Loading cart...
           </div>
         ) : (
@@ -809,16 +848,18 @@ const Cart = () => {
       {cart.length > 0 && (
         <div
           className="border-t-2 pt-8"
-          style={{ borderTopColor: colors.primary }}
+          style={{ borderTopColor: themeColors.primary }}
         >
           <div className="flex justify-between items-center mb-8">
             <span
-              className={`font-black text-xl text-black tracking-wide ${anton.className}`}
+              className={`font-black text-xl tracking-wide ${anton.className}`}
+              style={{ color: themeColors.text.primary }}
             >
               TOTAL:
             </span>
             <span
-              className={`font-black text-2xl text-black ${anton.className}`}
+              className={`font-black text-2xl ${anton.className}`}
+              style={{ color: themeColors.text.primary }}
             >
               ${totalPriceInCart.toFixed(2)}
             </span>
@@ -832,13 +873,23 @@ const Cart = () => {
               });
               setShowCart(false);
             }}
-            className={`w-full py-5 text-black font-black text-lg transition-all transform hover:scale-105 tracking-wide ${anton.className}`}
-            style={{ backgroundColor: colors.primary }}
+            className={`w-full py-5 font-black text-lg transition-all transform hover:scale-105 tracking-wide ${anton.className}`}
+            style={{
+              background:
+                theme === "dark" ? themeColors.black : themeColors.primary,
+              color: theme === "dark" ? themeColors.primary : themeColors.black,
+              border: "none",
+              boxShadow: "none",
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colors.secondary;
+              e.currentTarget.style.background = themeColors.primary;
+              e.currentTarget.style.color = themeColors.black;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = colors.primary;
+              e.currentTarget.style.background =
+                theme === "dark" ? themeColors.black : themeColors.primary;
+              e.currentTarget.style.color =
+                theme === "dark" ? themeColors.primary : themeColors.black;
             }}
           >
             CHECKOUT
@@ -1521,6 +1572,7 @@ const ProductsSection = () => {
   const { selectedCategory, setSelectedCategory } = useProducts();
   const { productsRef } = useLayout();
   const themeColors = useThemeColors();
+  const { theme } = useTheme();
 
   const filteredProducts =
     selectedCategory === "All"
@@ -1544,25 +1596,33 @@ const ProductsSection = () => {
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-4 mb-20 px-4">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-8 py-4 font-black text-base md:text-lg transition-all transform hover:scale-105 tracking-wide ${
-                selectedCategory === category
-                  ? "text-black shadow-lg"
-                  : "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
-              }`}
-              style={{
-                backgroundColor:
-                  selectedCategory === category
+          {categories.map((category) => {
+            const isActive = selectedCategory === category;
+            return (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-8 py-4 font-black text-base md:text-lg transition-all transform hover:scale-105 tracking-wide`}
+                style={{
+                  backgroundColor: isActive
                     ? themeColors.primary
+                    : theme === "dark"
+                    ? themeColors.background.elevated
                     : themeColors.black,
-              }}
-            >
-              {category.toUpperCase()}
-            </button>
-          ))}
+                  color: isActive
+                    ? themeColors.black
+                    : theme === "dark"
+                    ? themeColors.text.primary
+                    : themeColors.white,
+                  boxShadow: isActive
+                    ? "0 2px 8px 0 rgba(0,0,0,0.10)"
+                    : undefined,
+                }}
+              >
+                {category.toUpperCase()}
+              </button>
+            );
+          })}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0 w-full">
           {filteredProducts.map((product) => (
@@ -1644,10 +1704,16 @@ const AboutSection = () => {
         style={{ backgroundColor: themeColors.primary }}
       >
         <div className="flex items-center justify-between px-8 h-full">
-          <span className="text-black font-black text-sm tracking-wider">
+          <span
+            className="font-black text-sm tracking-wider"
+            style={{ color: themeColors.black }}
+          >
             SCROLL DOWN
           </span>
-          <span className="text-black font-black text-sm tracking-wider">
+          <span
+            className="font-black text-sm tracking-wider"
+            style={{ color: themeColors.black }}
+          >
             <ArrowDown size={24} />
           </span>
         </div>
@@ -1743,11 +1809,12 @@ interface FooterSectionProps {
   }[];
 }
 const FooterSection = ({ title, items }: FooterSectionProps) => {
+  const themeColors = useThemeColors();
   return (
     <div>
       <h3
         className="text-xl font-black mb-8 tracking-wide"
-        style={{ color: colors.primary }}
+        style={{ color: themeColors.primary }}
       >
         {title}
       </h3>
@@ -1758,10 +1825,10 @@ const FooterSection = ({ title, items }: FooterSectionProps) => {
               onClick={item.onClick}
               className={`text-gray-400 transition-colors text-base ${inter.className}`}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = colors.primary;
+                e.currentTarget.style.color = themeColors.primary;
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = colors.gray[400];
+                e.currentTarget.style.color = themeColors.text.secondary;
               }}
             >
               {item.label}
@@ -1782,11 +1849,21 @@ const Footer = () => {
     blogSection,
   } = useLayout();
   const { setSelectedCategory } = useProducts();
+  const { toast } = useToast();
+  const themeColors = useThemeColors();
+
+  const handleSocialMediaClick = (platform: string) => {
+    toast({
+      title: "Coming Soon",
+      description: `${platform} integration is being developed!`,
+      duration: 3000,
+    });
+  };
 
   return (
     <footer
       className="py-20 bg-black text-white border-t-4"
-      style={{ borderTopColor: colors.primary }}
+      style={{ borderTopColor: themeColors.primary }}
     >
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
@@ -1835,15 +1912,15 @@ const Footer = () => {
             items={[
               {
                 label: "INSTAGRAM",
-                onClick: () => {},
+                onClick: () => handleSocialMediaClick("Instagram"),
               },
               {
                 label: "TIKTOK",
-                onClick: () => {},
+                onClick: () => handleSocialMediaClick("TikTok"),
               },
               {
                 label: "TWITTER",
-                onClick: () => {},
+                onClick: () => handleSocialMediaClick("Twitter"),
               },
             ]}
           />
@@ -1860,9 +1937,14 @@ const Footer = () => {
 const ContactSection = () => {
   const { contactRef } = useLayout();
   const themeColors = useThemeColors();
+  const { toast } = useToast();
 
   const showToast = () => {
-    alert("Esta funcionalidade está sendo desenvolvida!");
+    toast({
+      title: "Coming Soon",
+      description: "This functionality is being developed!",
+      duration: 3000,
+    });
   };
 
   return (
@@ -2039,6 +2121,58 @@ const StoreContent = () => {
     </>
   );
 };
+const CustomToaster = () => {
+  const { toasts } = useToast();
+  const themeColors = useThemeColors();
+
+  return (
+    <ToastProvider>
+      {toasts.map(function ({ id, title, description, action, ...props }) {
+        return (
+          <Toast
+            key={id}
+            {...props}
+            style={{
+              backgroundColor: themeColors.background.card,
+              borderColor: themeColors.border.medium,
+              color: themeColors.text.primary,
+            }}
+            className="border-2 shadow-xl"
+          >
+            <div className="grid gap-1">
+              {title && (
+                <ToastTitle
+                  style={{ color: themeColors.text.primary }}
+                  className="font-black"
+                >
+                  {title}
+                </ToastTitle>
+              )}
+              {description && (
+                <ToastDescription
+                  style={{ color: themeColors.text.secondary }}
+                  className={`${inter.className}`}
+                >
+                  {description}
+                </ToastDescription>
+              )}
+            </div>
+            {action}
+            <ToastClose
+              style={{
+                color: themeColors.text.muted,
+                backgroundColor: themeColors.background.elevated,
+                borderColor: themeColors.border.light,
+              }}
+              className="border rounded-md hover:bg-opacity-80"
+            />
+          </Toast>
+        );
+      })}
+      <ToastViewport />
+    </ToastProvider>
+  );
+};
 const MainApp = () => {
   const { topRef } = useLayout();
   const [isHydrated, setIsHydrated] = useState(false);
@@ -2072,7 +2206,7 @@ const MainApp = () => {
       <Header />
       <StoreContent />
       <Footer />
-      <Toaster />
+      <CustomToaster />
     </div>
   );
 };
