@@ -29,6 +29,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogOverlay,
   DialogPortal,
@@ -211,7 +212,7 @@ const PetSocialNetwork = () => {
   const [newReplyText, setNewReplyText] = useState<{ [key: number]: string }>(
     {}
   );
-  const [notifications] = useState([
+  const [notifications, setNotifications] = useState([
     { id: 1, text: "Jane liked your post", time: "5 min ago", read: false },
     {
       id: 2,
@@ -232,9 +233,14 @@ const PetSocialNetwork = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
+  const [hiddenComments, setHiddenComments] = useState<Set<number>>(new Set());
+  const [sharedPosts, setSharedPosts] = useState<Set<number>>(new Set());
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const loggedInUser = mockUsers[0];
 
   const filteredPosts = posts.filter((post) => {
     const user = users.find((u) => u.id === post.userId);
@@ -263,6 +269,18 @@ const PetSocialNetwork = () => {
     }
   };
 
+  const toggleComments = (postId: number) => {
+    setHiddenComments((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(postId)) {
+        newSet.delete(postId);
+      } else {
+        newSet.add(postId);
+      }
+      return newSet;
+    });
+  };
+
   const handleAddAttachment = (type: "image" | "video") => {
     const mockAttachments = [
       {
@@ -279,10 +297,31 @@ const PetSocialNetwork = () => {
 
   const handleLike = (postId: number) => {
     setPosts(
-      posts.map((post) =>
-        post.id === postId ? { ...post, likes: post.likes + 1 } : post
-      )
+      posts.map((post) => {
+        if (post.id === postId) {
+          // Check if user has already liked this post
+          if (likedPosts.has(postId)) {
+            // Remove like
+            return { ...post, likes: post.likes - 1 };
+          } else {
+            // Add like
+            return { ...post, likes: post.likes + 1 };
+          }
+        }
+        return post;
+      })
     );
+
+    // Update likedPosts set
+    setLikedPosts((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(postId)) {
+        newSet.delete(postId);
+      } else {
+        newSet.add(postId);
+      }
+      return newSet;
+    });
   };
 
   const handleAddComment = (postId: number, parentCommentId?: number) => {
@@ -331,10 +370,46 @@ const PetSocialNetwork = () => {
   };
 
   const handleShare = (postId: number) => {
+    // Check if user already shared this post
+    if (sharedPosts.has(postId)) {
+      toast.info("You've already shared this post!");
+      return;
+    }
+
+    // Update share count
     setPosts(
       posts.map((post) =>
         post.id === postId ? { ...post, shares: post.shares + 1 } : post
       )
+    );
+
+    // Add to shared posts
+    setSharedPosts((prev) => new Set(prev).add(postId));
+
+    // Copy post URL to clipboard
+    const postUrl = `${window.location.origin}/post/${postId}`;
+    navigator.clipboard.writeText(postUrl);
+
+    // Show success toast
+    toast.success(
+      <div className="flex flex-col">
+        <span>Post link copied to clipboard!</span>
+        <span className="text-xs mt-1 opacity-80 truncate max-w-xs">
+          {postUrl}
+        </span>
+      </div>,
+      {
+        icon: <Share2Icon className="text-[#217EFF]" />,
+        duration: 3000,
+      }
+    );
+  };
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const markAsRead = (id: number) => {
+    setNotifications(
+      notifications.map((n) => (n.id === +id ? { ...n, read: true } : n))
     );
   };
 
@@ -357,11 +432,30 @@ const PetSocialNetwork = () => {
           <div className="relative w-full md:w-1/2 text-white">
             <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white" />
             <Input
-              placeholder="Search "
+              placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-[#FF5C20] text-white rounded-[15px] border-0 pl-10 py-7 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-white"
+              className="bg-[#FF5C20] text-white rounded-[15px] border-0 pl-10 pr-10 py-7 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-white"
+              aria-label="Search posts, pets, and users"
+              aria-describedby="search-description"
             />
+
+            {/* Clear button */}
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-[#FF7543] transition-colors"
+                aria-label="Clear search"
+              >
+                <XIcon className="h-5 w-5 text-white" />
+              </button>
+            )}
+
+            {/* Hidden accessibility description */}
+            <span id="search-description" className="sr-only">
+              Search through posts, pet profiles, and user accounts
+            </span>
           </div>
         </div>
         {/* Empty State for Search */}
@@ -403,7 +497,7 @@ const PetSocialNetwork = () => {
                       className={`text-[18px] font-bold text-[#FF5C20] ${ranchers.className}`}
                     >
                       {user?.name}{" "}
-                      <span className="text-[#217EFF] text-[14px] font-sans font-medium">
+                      <span className="text-[#217EFF] text-[14px] font-sans font-medium ml-1">
                         @{user?.name.toLowerCase().replace(/\s+/g, "")}
                       </span>
                     </CardTitle>
@@ -413,7 +507,13 @@ const PetSocialNetwork = () => {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="pt-4 bg-[#FFF0EB]">
+              <CardContent
+                className={`pt-4 bg-[#FFF0EB] ${
+                  hiddenComments.has(post.id) || post.comments.length === 0
+                    ? "rounded-b-[15px]"
+                    : "rounded-b-none"
+                } `}
+              >
                 <p className="text-[#707070] mb-4 cursor-pointer">
                   {post.text}
                 </p>
@@ -430,32 +530,53 @@ const PetSocialNetwork = () => {
                 <div className={`py-1 ${ranchers.className} w-full  lg:block`}>
                   <Button
                     variant="ghost"
-                    className="md:flex-1 text-[#217EFF] rounded-xl font-bold text-[18px] hover:bg-[#217EFF] pl-0 md:pl-1"
+                    className={`flex-1 rounded-xl font-bold text-[18px] hover:bg-[none] hover:text-[#217EFF] ${
+                      likedPosts.has(post.id)
+                        ? "text-[#217EFF]"
+                        : "text-[#217EFF]"
+                    }`}
                     onClick={() => handleLike(post.id)}
                   >
-                    <HeartIcon className="w-5 h-5" /> {post.likes}
+                    <HeartIcon
+                      fill={likedPosts.has(post.id) ? "white" : "#217EFF"}
+                      className="w-5 h-5 mr-2"
+                    />
+                    {post.likes}
                   </Button>
                   <Button
                     variant="ghost"
-                    className="md:flex-1 text-[#217EFF] rounded-xl font-bold text-[18px] hover:bg-[#217EFF]"
-                    onClick={() =>
-                      toast("📬  Messages: This feature is coming soon!")
-                    }
+                    className={`flex-1 rounded-xl font-bold text-[18px] hover:bg-[none] hover:text-[#217EFF] ${
+                      hiddenComments.has(post.id)
+                        ? "text-[#217EFF]"
+                        : "text-[#217EFF]"
+                    }`}
+                    onClick={() => toggleComments(post.id)}
                   >
-                    <MessageSquareIcon className="w-5 h-5" />{" "}
+                    <MessageSquareIcon
+                      fill={hiddenComments.has(post.id) ? "white" : "#217EFF"}
+                      className="w-5 h-5 mr-2"
+                    />
                     {post.comments.length}
                   </Button>
                   <Button
                     variant="ghost"
-                    className="md:flex-1 text-[#217EFF] rounded-xl font-bold text-[18px] hover:bg-[#217EFF]"
+                    className={`flex-1 rounded-xl font-bold text-[18px] hover:bg-[none] hover:text-[#217EFF] ${
+                      sharedPosts.has(post.id)
+                        ? "text-[#217EFF]"
+                        : "text-[#217EFF]"
+                    }`}
                     onClick={() => handleShare(post.id)}
                   >
-                    <Share2Icon className="w-5 h-5 " /> {post.shares} Share
+                    <Share2Icon
+                      fill={sharedPosts.has(post.id) ? "white" : "#217EFF"}
+                      className="w-5 h-5 mr-2"
+                    />
+                    {post.shares} Share
                   </Button>
                 </div>
               </CardContent>
 
-              {
+              {!hiddenComments.has(post.id) && (
                 <CardFooter className="pt-0 bg-[#FFDFD3] py-4 rounded-b-[15px]">
                   <div className="w-full space-y-4">
                     {post.comments.map((comment) => {
@@ -572,7 +693,7 @@ const PetSocialNetwork = () => {
                     </div>
                   </div>
                 </CardFooter>
-              }
+              )}
             </Card>
           );
         })}
@@ -758,9 +879,7 @@ const PetSocialNetwork = () => {
               className={`rounded-xl px-4 hover:bg-transparent ${
                 isSidebarCollapsed ? "justify-center" : "justify-start"
               }`}
-              onClick={() => {
-                toast("📬  Messages: This feature is coming soon!");
-              }}
+              onClick={() => setIsOpen(!isOpen)}
             >
               <div className="flex items-center">
                 <BellIcon className="w-5 h-5 mr-2" />
@@ -783,7 +902,10 @@ const PetSocialNetwork = () => {
           </div>
 
           {/* User Profile */}
-          <div className="p-3">
+          <div
+            className="p-3 cursor-pointer"
+            onClick={() => setIsUserModalOpen(true)}
+          >
             <div
               className={`flex items-center p-3 bg-[#FF5C20] rounded-[15px] ${
                 isSidebarCollapsed ? "justify-center" : ""
@@ -832,7 +954,10 @@ const PetSocialNetwork = () => {
                 PetConnect
               </h1>
             </div>
-            <Avatar className="h-8 w-8">
+            <Avatar
+              className="h-8 w-8"
+              onClick={() => setIsUserModalOpen(true)}
+            >
               <AvatarImage src={mockUsers[0].avatar} alt={mockUsers[0].name} />
             </Avatar>
           </div>
@@ -867,7 +992,7 @@ const PetSocialNetwork = () => {
             variant="ghost"
             className={` hover:bg-[#217EFF] flex flex-col items-center justify-center w-full py-3 relative`}
             onClick={() => {
-              toast("📬  Messages: This feature is coming soon!");
+              setIsOpen(true);
             }}
           >
             <BellIcon className="!h-5 !w-5" />
@@ -884,6 +1009,148 @@ const PetSocialNetwork = () => {
         </Button>
       </div>
       <Toaster />
+
+      {/* User Profile Modal */}
+      <Dialog open={isUserModalOpen} onOpenChange={setIsUserModalOpen}>
+        <DialogPortal>
+          <DialogOverlay className="fixed inset-0 bg-[#217EFF]/90 backdrop-blur-sm" />
+          <DialogContent className="bg-[#FF5C20] rounded-2xl border-0 max-w-md p-0 overflow-hidden w-4/5 md:w-full">
+            <div className="relative">
+              {/* Profile Banner */}
+              <div className="h-32 bg-gradient-to-r from-[#FF7543] to-[#FF9771]"></div>
+
+              {/* Profile Picture */}
+              <div className="absolute -bottom-12 left-6">
+                <Avatar className="h-24 w-24 border-4 border-white">
+                  <AvatarImage
+                    src={loggedInUser.avatar}
+                    alt={loggedInUser.name}
+                  />
+                  <AvatarFallback className="text-xl">
+                    {loggedInUser.name.slice(0, 2)}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+            </div>
+
+            <div className="pt-16 pb-6 px-6">
+              <DialogHeader>
+                <DialogTitle
+                  className={`text-2xl font-bold text-white ${ranchers.className}`}
+                >
+                  {loggedInUser.name}
+                </DialogTitle>
+                <DialogDescription className="text-white/80">
+                  {loggedInUser.bio}
+                </DialogDescription>
+              </DialogHeader>
+
+              {/* Pets Section */}
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-white mb-3">
+                  My Pets
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {loggedInUser.pets.map((pet, index) => (
+                    <div
+                      key={index}
+                      className="bg-[#FF9771] px-3 py-2 rounded-full text-white"
+                    >
+                      {pet}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Stats Section */}
+              <div className="mt-8 grid grid-cols-3 gap-4 text-center">
+                <div className="bg-[#FF9771]/50 p-3 rounded-xl">
+                  <div className="text-2xl font-bold text-white">120</div>
+                  <div className="text-white/80 text-sm">Friends</div>
+                </div>
+                <div className="bg-[#FF9771]/50 p-3 rounded-xl">
+                  <div className="text-2xl font-bold text-white">35</div>
+                  <div className="text-white/80 text-sm">Photos</div>
+                </div>
+                <div className="bg-[#FF9771]/50 p-3 rounded-xl">
+                  <div className="text-2xl font-bold text-white">28</div>
+                  <div className="text-white/80 text-sm">Posts</div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="mt-8 flex gap-3">
+                <Button
+                  className="flex-1 bg-[#217EFF] hover:bg-[#217EFF]/90 rounded-xl py-6"
+                  onClick={() => setIsUserModalOpen(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </DialogPortal>
+      </Dialog>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogPortal>
+          <DialogOverlay className="fixed inset-0 bg-[#217EFF]/90 backdrop-blur-sm" />
+          <DialogContent className="bg-[#FF7543] rounded-2xl border-0  p-0 overflow-hidden w-4/5 md:w-full">
+            <div className="pt-16 pb-6 px-6">
+              <DialogHeader>
+                <DialogTitle
+                  className={`text-2xl font-bold text-white ${ranchers.className}`}
+                >
+                  Notifications
+                </DialogTitle>
+              </DialogHeader>
+              <div className="max-h-96 overflow-y-auto">
+                {notifications.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500">
+                    No notifications
+                  </div>
+                ) : (
+                  notifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className={`py-4 cursor-pointer 
+                                    }`}
+                      onClick={() => markAsRead(notification.id)}
+                    >
+                      <div className="flex items-start justify-center">
+                        <div
+                          className={`flex-shrink-0 h-3 w-3 mt-1 rounded-full ${
+                            !notification.read
+                              ? "bg-blue-500"
+                              : "bg-transparent"
+                          }`}
+                        ></div>
+                        <div className="ml-3 flex-1">
+                          <div className="flex justify-between items-center">
+                            <p className="font-medium">{notification.text}</p>
+                            <span className="text-xs text-white">
+                              {notification.time}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="mt-8 flex gap-3">
+                <Button
+                  className="flex-1 bg-[#217EFF] hover:bg-[#217EFF]/90 rounded-xl py-6"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </DialogPortal>
+      </Dialog>
     </div>
   );
 };
