@@ -1534,7 +1534,7 @@ const MusicJamApp = () => {
                                 className={`w-3 h-3 ${
                                   star < Math.floor(selectedMusician.rating)
                                     ? "text-amber-500 fill-amber-500"
-                                    : "text-gray-300 dark:text-gray-600"
+                                    : "text-gray-300"
                                 }`}
                               />
                             ))}
