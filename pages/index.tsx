@@ -588,23 +588,17 @@ export default function OrderSystem() {
                           const idx = current.addOns.findIndex(
                             (a) => a.name === name
                           );
-                          const updatedAddOns =
-                            idx >= 0
-                              ? current.addOns.map((a, i) =>
-                                  i === idx
-                                    ? {
-                                        ...a,
-                                        value: e.target.checked ? price : "",
-                                      }
-                                    : a
-                                )
+                          const updatedAddOns = e.target.checked
+                            ? idx >= 0
+                              ? current.addOns
                               : [
                                   ...current.addOns,
                                   {
                                     name,
-                                    value: e.target.checked ? price : "",
+                                    value: price,
                                   },
-                                ];
+                                ]
+                            : current.addOns.filter((_, i) => i !== idx);
                           setTempCustomization({
                             ...current,
                             addOns: updatedAddOns,
