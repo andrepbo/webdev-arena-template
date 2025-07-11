@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Notable, Rethink_Sans } from "next/font/google";
 import { useState } from "react";
+import { toast, Toaster } from "sonner";
 
 const notable = Notable({
   subsets: ["latin"],
@@ -732,7 +733,10 @@ const MusicJamApp = () => {
 
             <div className="flex items-center space-x-4">
               {currentUserId && (
-                <div className="w-8 h-8 rounded-full overflow-hidden ">
+                <div
+                  className="w-8 h-8 rounded-full overflow-hidden cursor-pointer"
+                  onClick={() => toast.info("This feature is coming soon!")}
+                >
                   <img
                     src="https://randomuser.me/api/portraits/men/1.jpg"
                     alt="Profile"
@@ -1598,6 +1602,8 @@ const MusicJamApp = () => {
           animation: fadeIn 0.3s ease-out forwards;
         }
       `}</style>
+
+      <Toaster richColors />
     </div>
   );
 };
