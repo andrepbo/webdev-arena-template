@@ -529,17 +529,15 @@ const MusicJamApp = () => {
   });
 
   const handleCreateSession = () => {
-    if (
-      !newSession.title ||
-      !newSession.genre ||
-      !newSession.date ||
-      !newSession.time ||
-      !newSession.location
-    ) {
-      alert("Please fill in all required fields");
+    const requiredFields = ["title", "genre", "date", "time", "location"];
+    const missingFields = requiredFields.filter(
+      (field) => !newSession[field as keyof typeof newSession]
+    );
+
+    if (missingFields.length > 0) {
+      toast.error("Please fill in all required fields");
       return;
     }
-
     setIsLoading(true);
     setTimeout(() => {
       const createdSession: JamSession = {
