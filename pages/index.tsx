@@ -408,7 +408,7 @@ export default function OrderSystem() {
                           order.pickupTime === t.time
                             ? "bg-[#009246] text-white"
                             : t.available
-                            ? "bg-[#ffffff] text-[#009246] hover:bg-[#f2f2f2]"
+                            ? "bg-[#ffffff] text-[#009246] border border-[#009246] hover:bg-[#f2f2f2]"
                             : "bg-[#f2f2f2] text-[#ce2b37] cursor-not-allowed"
                         }`}
                       >
