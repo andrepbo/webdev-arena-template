@@ -1364,7 +1364,7 @@ const MusicJamApp = () => {
                         )?.name
                       }
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-gray-400">
                       {
                         musicians.find(
                           (m) => m.id === selectedSession.musicianId
@@ -1490,7 +1490,7 @@ const MusicJamApp = () => {
                                 <h4 className="font-medium text-left">
                                   {session.title}
                                 </h4>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                <p className="text-xs text-gray-400">
                                   {formatDate(session.date)} at{" "}
                                   {formatTime(session.time)}
                                 </p>
