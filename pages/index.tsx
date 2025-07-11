@@ -147,6 +147,7 @@ const emptyFeedback: Feedback = {
 };
 
 export default function OrderSystem() {
+  const [confirmedOrders, setConfirmedOrders] = useState<OrderState[]>([]);
   const [order, setOrder] = useState<OrderState>(initialOrderState);
   const [feedback, setFeedback] = useState<Feedback>(emptyFeedback);
   const [activeFilter, setActiveFilter] = useState<string>("All");
@@ -282,8 +283,8 @@ export default function OrderSystem() {
       `Order confirmed! Pickup at ${order.pickupTime}`,
       "success"
     );
+    setConfirmedOrders((prev) => [...prev, order]);
     setOrder(initialOrderState);
-    // remain on the order screen
   };
 
   return (
@@ -465,6 +466,42 @@ export default function OrderSystem() {
                 </button>
               </>
             )}
+            {confirmedOrders.length > 0 && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-[#009246]">
+                  Confirmed Orders
+                </h3>
+              </div>
+            )}
+            {confirmedOrders.map((order, idx) => (
+              <div
+                key={idx}
+                className="bg-white border border-[#009246] rounded-lg p-4 space-y-2 text-[#009246]"
+              >
+                <p>
+                  <strong>Pickup Time:</strong> {order.pickupTime}
+                </p>
+                <p>
+                  <strong>Name:</strong> {order.customerInfo.name}
+                </p>
+                <p>
+                  <strong>Phone:</strong> {order.customerInfo.phone}
+                </p>
+                <p>
+                  <strong>Email:</strong> {order.customerInfo.email}
+                </p>
+                <div>
+                  <strong>Items:</strong>
+                  <ul className="list-disc list-inside">
+                    {order.items.map((item) => (
+                      <li key={item.id}>
+                        {item.name} × {item.quantity}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <div className="p-6 space-y-6">
