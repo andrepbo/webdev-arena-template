@@ -265,12 +265,18 @@ export default function OrderSystem() {
       return showNotification("Add items first!", "error");
     if (!order.pickupTime)
       return showNotification("Select pickup time", "error");
-    if (
-      !order.customerInfo.name ||
-      !order.customerInfo.phone ||
-      !order.customerInfo.email
-    )
-      return showNotification("Enter contact info", "error");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[0-9]{10,}$/;
+
+    if (!order.customerInfo.name.trim()) {
+      return showNotification("Name is required", "error");
+    }
+    if (!phoneRegex.test(order.customerInfo.phone.trim())) {
+      return showNotification("Enter a valid phone number", "error");
+    }
+    if (!emailRegex.test(order.customerInfo.email.trim())) {
+      return showNotification("Enter a valid email address", "error");
+    }
 
     showNotification(
       `Order confirmed! Pickup at ${order.pickupTime}`,
