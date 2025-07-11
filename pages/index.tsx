@@ -1403,7 +1403,7 @@ const MusicJamApp = () => {
                     </button>
                   )}
                 <button
-                  className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                  className="px-4 py-2 text-gray-300 hover:text-gray-800 dark:hover:text-gray-200"
                   onClick={handleCloseSessionModal}
                 >
                   Close
