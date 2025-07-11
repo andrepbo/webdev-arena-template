@@ -343,7 +343,7 @@ const SessionCard = ({
 
   return (
     <div
-      className={`bg-[#6E1F3E] min-w-[280px] max-w-[280px] overflow-hidden transition-all duration-300 h-full cursor-pointer
+      className={`bg-[#6E1F3E] w-full overflow-hidden transition-all duration-300 h-full cursor-pointer
         ${isHovered ? "shadow-xl transform translate-y-[-4px]" : "shadow-sm"}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -920,7 +920,7 @@ const MusicJamApp = () => {
               </section>
             ) : (
               <section className="mb-8">
-                <div className="flex gap-4 flex-wrap justify-center sm:justify-start overflow-hidden max-h-[330px]">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {sortedSessions.slice(0, 5).map((session) => (
                     <SessionCard
                       key={session.id}
@@ -956,8 +956,7 @@ const MusicJamApp = () => {
                   </button>
                 </div>
               ) : (
-                // <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                <div className="flex flex-wrap justify-center sm:justify-start gap-4">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {sortedSessions.map((session) => (
                     <SessionCard
                       key={session.id}
