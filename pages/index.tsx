@@ -1364,7 +1364,7 @@ const MusicJamApp = () => {
                         )?.name
                       }
                     </p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-gray-300">
                       {
                         musicians.find(
                           (m) => m.id === selectedSession.musicianId
