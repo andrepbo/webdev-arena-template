@@ -476,7 +476,7 @@ export default function WaterTracker() {
               whileTap={{ scale: 0.98 }}
               onClick={() => setActiveTab("today")}
             >
-              <h1 className="text-4xl tracking-tight text-[#62B1FF]">
+              <h1 className="text-2xl sm:text-4xl tracking-tight text-[#62B1FF]">
                 💧<b className="text-[#0466C8]">Water</b>Tracker
               </h1>
             </motion.div>
@@ -683,7 +683,7 @@ export default function WaterTracker() {
                     animate="visible"
                     exit="exit"
                   >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
                       <div>
                         <div className="mb-4">
                           <div className="flex justify-between items-center mb-4">
@@ -751,84 +751,88 @@ export default function WaterTracker() {
                           transition={{ delay: 0.3 }}
                         >
                           <label className="block mb-2 text-sm font-medium uppercase dark:text-[#BFDFFF]">
-                            Quick Add
+                            Recent Logs
                           </label>
-                          <div className="flex gap-2 mb-4">
-                            <motion.button
-                              onClick={() => addLog(250)}
-                              className={`flex-1 px-3 py-2 rounded-sm ${accentColor} dark:text-[#000B33] text-white ${accentHover} ${accentActive} transition-all duration-300 shadow-md text-sm`}
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              250ml
-                            </motion.button>
-                            <motion.button
-                              onClick={() => addLog(500)}
-                              className={`flex-1 px-3 py-2 rounded-sm ${accentColor} dark:text-[#000B33] text-white ${accentHover} ${accentActive} transition-all duration-300 shadow-md text-sm`}
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              500ml
-                            </motion.button>
-                            <motion.button
-                              onClick={() => addLog(1000)}
-                              className={`flex-1 px-3 py-2 rounded-sm ${accentColor} dark:text-[#000B33] text-white ${accentHover} ${accentActive} transition-all duration-300 shadow-md text-sm`}
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              1L
-                            </motion.button>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <motion.button
-                              onClick={() =>
-                                setCurrentAmount(
-                                  Math.max(100, currentAmount - 100)
-                                )
-                              }
-                              className={`p-3 rounded-sm ${buttonSecondary} ${buttonSecondaryText} transition-all duration-300 shadow-md`}
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              aria-label="Decrease amount"
-                            >
-                              <Minus className="h-3 w-3" />
-                            </motion.button>
-                            <input
-                              type="number"
-                              min="100"
-                              max="1000"
-                              step="100"
-                              value={currentAmount === 0 ? "" : currentAmount}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                setCurrentAmount(
-                                  val === "" ? 0 : parseInt(val)
-                                );
-                              }}
-                              className={`flex-1 p-2 rounded-sm text-center ${inputBg} dark:text-[#BFDFFF]  focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-300`}
-                            />
-                            <motion.button
-                              onClick={() =>
-                                setCurrentAmount(
-                                  Math.min(1000, currentAmount + 100)
-                                )
-                              }
-                              className={`p-3 rounded-sm ${buttonSecondary} ${buttonSecondaryText} transition-all duration-300 shadow-md`}
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              aria-label="Increase amount"
-                            >
-                              <Plus className="h-3 w-3" />
-                            </motion.button>
-                          </div>
-                          <motion.button
-                            onClick={() => addLog(currentAmount)}
-                            className={`w-full mt-4 px-4 py-2 font-extrabold rounded-sm ${accentColor} text-white dark:text-[#000B33] ${accentHover} ${accentActive} transition-all duration-300 shadow-md`}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                          <div
+                            className={`rounded-lg border ${cardBorder} overflow-hidden max-h-64 overflow-y-auto`}
                           >
-                            Add Water
-                          </motion.button>
+                            <table className="w-full">
+                              <thead
+                                className={`sticky top-0 text-sm dark:bg-[#023E7D] bg-[#62B1FF] ${cardBorder} border-b`}
+                              >
+                                <tr>
+                                  <th className="p-3 text-left font-semibold">
+                                    Time
+                                  </th>
+                                  <th className="p-3 text-right font-semibold">
+                                    Amount
+                                  </th>
+                                  <th className="p-3 text-right font-semibold">
+                                    Actions
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {logs.length === 0 ? (
+                                  <tr>
+                                    <td
+                                      colSpan={4}
+                                      className="p-4 text-center text-slate-500 dark:text-slate-400"
+                                    >
+                                      No water logs yet
+                                    </td>
+                                  </tr>
+                                ) : (
+                                  [...logs]
+                                    .sort((a, b) => b.timestamp - a.timestamp)
+                                    .slice(0, 3)
+                                    .map((log, index) => {
+                                      const date = new Date(log.timestamp);
+                                      const isToday =
+                                        date.toISOString().split("T")[0] ===
+                                        today;
+                                      return (
+                                        <motion.tr
+                                          key={log.id}
+                                          initial={{ opacity: 0, y: 10 }}
+                                          animate={{ opacity: 1, y: 0 }}
+                                          transition={{ delay: index * 0.05 }}
+                                          className={`hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-colors duration-200 ${
+                                            isToday
+                                              ? "bg-sky-50 dark:bg-sky-900/20"
+                                              : ""
+                                          }`}
+                                        >
+                                          <td className="p-3 text-sm">
+                                            {formatDate(log.timestamp)}
+                                          </td>
+                                          <td className="p-3 text-right text-sm">
+                                            {log.amount}ml
+                                          </td>
+                                          <td className="p-3 text-right">
+                                            <motion.button
+                                              onClick={() => addLog(log.amount)}
+                                              className={`p-1 rounded-full ${buttonSecondary} ${buttonSecondaryText} transition-all duration-300`}
+                                              whileHover={{
+                                                scale: 1.1,
+                                                backgroundColor:
+                                                  settings.darkMode
+                                                    ? "rgba(239, 68, 68, 0.1)"
+                                                    : "rgba(239, 68, 68, 0.05)",
+                                              }}
+                                              whileTap={{ scale: 0.9 }}
+                                              aria-label="Add log"
+                                            >
+                                              <Plus size={16} />
+                                            </motion.button>
+                                          </td>
+                                        </motion.tr>
+                                      );
+                                    })
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
                         </motion.div>
                       </div>
 
@@ -1026,7 +1030,7 @@ export default function WaterTracker() {
                     <div>
                       <h3 className="text-lg font-bold mb-4">All Logs</h3>
                       <div
-                        className={`rounded-lg border ${cardBorder} overflow-hidden max-h-64 overflow-y-auto`}
+                        className={`rounded-lg border ${cardBorder} max-h-64 overflow-auto`}
                       >
                         <table className="w-full">
                           <thead
