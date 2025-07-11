@@ -615,7 +615,7 @@ export default function OrderSystem() {
             <div className="flex justify-end space-x-2 mt-6">
               <button
                 onClick={cancelCustomization}
-                className="px-4 py-2 border border-[#009246] rounded hover:bg-[#f2f2f2]"
+                className="px-4 py-2 border border-[#009246] rounded hover:bg-[#f2f2f2] text-[#009246]"
               >
                 Cancel
               </button>
