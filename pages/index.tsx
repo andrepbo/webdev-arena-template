@@ -12,10 +12,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import {
   BellIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   HeartIcon,
   HomeIcon,
+  MenuIcon,
   MessageSquareIcon,
   PawPrintIcon,
   PlayIcon,
@@ -53,6 +52,9 @@ interface User {
   avatar: string;
   bio: string;
   pets: string[];
+  friends: number;
+  photos?: number;
+  posts?: number;
 }
 
 interface Comment {
@@ -81,6 +83,9 @@ const mockUsers: User[] = [
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
     bio: "Dog lover | Golden Retriever dad",
     pets: ["Golden Retriever"],
+    friends: 1,
+    photos: 5,
+    posts: 10,
   },
   {
     id: 2,
@@ -88,6 +93,9 @@ const mockUsers: User[] = [
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
     bio: "Cat enthusiast | Traveler",
     pets: ["Siamese Cat"],
+    friends: 1,
+    photos: 5,
+    posts: 10,
   },
   {
     id: 3,
@@ -95,6 +103,9 @@ const mockUsers: User[] = [
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb",
     bio: "Small animal rescuer",
     pets: ["Rabbit", "Guinea Pig"],
+    friends: 1,
+    photos: 5,
+    posts: 10,
   },
   {
     id: 4,
@@ -102,6 +113,9 @@ const mockUsers: User[] = [
     avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7",
     bio: "Professional dog trainer",
     pets: ["Border Collie", "Poodle"],
+    friends: 1,
+    photos: 5,
+    posts: 10,
   },
   {
     id: 5,
@@ -109,6 +123,9 @@ const mockUsers: User[] = [
     avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a",
     bio: "Bird watcher | Photographer",
     pets: ["Parrot", "Cockatiel"],
+    friends: 1,
+    photos: 5,
+    posts: 10,
   },
 ];
 
@@ -234,9 +251,6 @@ const PetSocialNetwork = () => {
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
-  const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
-  };
   const [hiddenComments, setHiddenComments] = useState<Set<number>>(new Set());
   const [sharedPosts, setSharedPosts] = useState<Set<number>>(new Set());
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
@@ -251,6 +265,8 @@ const PetSocialNetwork = () => {
   });
 
   const handleCreatePost = () => {
+    if (newPostText.length < 1) return;
+
     if (newPostText.trim() || attachments.length > 0) {
       const newPost: Post = {
         id: posts.length + 1,
@@ -266,6 +282,7 @@ const PetSocialNetwork = () => {
       setPosts([newPost, ...posts]);
       setNewPostText("");
       setAttachments([]);
+      setIsPostModalOpen(false);
     }
   };
 
@@ -416,7 +433,7 @@ const PetSocialNetwork = () => {
   const renderHome = () => (
     <div className="space-y-6 h-screen mb-6 lg:pr-4">
       <div className="space-y-6 h-min">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-b-[#FF9771] pb-6 ">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-b-[#FF9771] pb-6 ">
           <div>
             <h2
               className={`${ranchers.className} text-[32px] font-bold text-white pb-0`}
@@ -429,15 +446,13 @@ const PetSocialNetwork = () => {
           </div>
 
           {/* Search Bar */}
-          <div className="relative w-full md:w-1/2 text-white">
+          <div className="relative w-full lg:w-1/2 text-white">
             <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white" />
             <Input
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-[#FF5C20] text-white rounded-[15px] border-0 pl-10 pr-10 py-7 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-white"
-              aria-label="Search posts, pets, and users"
-              aria-describedby="search-description"
             />
 
             {/* Clear button */}
@@ -446,7 +461,6 @@ const PetSocialNetwork = () => {
                 type="button"
                 onClick={() => setSearchQuery("")}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-[#FF7543] transition-colors"
-                aria-label="Clear search"
               >
                 <XIcon className="h-5 w-5 text-white" />
               </button>
@@ -538,7 +552,7 @@ const PetSocialNetwork = () => {
                     onClick={() => handleLike(post.id)}
                   >
                     <HeartIcon
-                      fill={likedPosts.has(post.id) ? "white" : "#217EFF"}
+                      fill={likedPosts.has(post.id) ? "#217EFF" : "white"}
                       className="w-5 h-5 mr-2"
                     />
                     {post.likes}
@@ -681,7 +695,12 @@ const PetSocialNetwork = () => {
                               [post.id]: e.target.value,
                             })
                           }
-                          className="bg-[#FFC0A9] border-0  text-[#CE4513] placeholder-[#CE4513] focus:ring-0 focus:border-[#217EFF] rounded-full placeholder:text-[#CE4513]"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              handleAddComment(post.id);
+                            }
+                          }}
+                          className="bg-[#FFC0A9] border-0 text-[#CE4513] placeholder-[#CE4513] focus:ring-0 focus:border-[#217EFF] rounded-full placeholder:text-[#CE4513]"
                         />
                         <Button
                           className="hover:text-[#CE4513]/70 rounded-full absolute right-0 top-0 bg-transparent hover:bg-transparent shadow-none"
@@ -711,7 +730,8 @@ const PetSocialNetwork = () => {
       <Dialog open={isPostModalOpen} onOpenChange={setIsPostModalOpen}>
         <DialogPortal>
           <DialogOverlay className="fixed inset-0 bg-[#217EFF]/90 backdrop-blur-sm" />
-          <DialogContent className="!opacity-1  bg-[#FF7543] rounded-[15px] p-0 overflow-hidden border border-white mr-[20px] ml-[0px] max-w-[calc(100%-40px)] md:max-w-2xl md:mx-auto">
+          <DialogContent className="!opacity-1  bg-[#FF7543] rounded-[15px] p-0 overflow-hidden border border-white mr-[20px] ml-[0px] max-w-[calc(100%-40px)] lg:max-w-2xl lg:mx-auto">
+            <DialogDescription></DialogDescription>
             <DialogHeader className="px-6 pt-6 ">
               <DialogTitle
                 className={`${ranchers.className} text-white text-[42px]`}
@@ -791,7 +811,6 @@ const PetSocialNetwork = () => {
                     <Button
                       onClick={() => {
                         handleCreatePost();
-                        setIsPostModalOpen(false);
                       }}
                       className={`text-[18px] bg-[#217EFF] hover:bg-[#217EFF]/90 text-white rounded-[15px] px-8 py-6 shadow-md ${ranchers.className} border-2 border-[#71ACFF]`}
                     >
@@ -810,11 +829,11 @@ const PetSocialNetwork = () => {
 
   return (
     <div
-      className={`"h-full md:h-screen flex flex-col md:overflow-hidden md:flex-row bg-[#FF7543] w-full" ${reddit.className}`}
+      className={`"h-full xl:h-screen flex flex-col xl:overflow-hidden xl:flex-row bg-[#FF7543] w-full" ${reddit.className}`}
     >
       {/* Desktop Sidebar */}
       <div
-        className={` p-10 hidden md:flex md:pl-[100px] flex-col transition-all gap-4 duration-300 ${
+        className={` p-10 hidden xl:flex lg:pl-[100px] flex-col transition-all gap-4 duration-300 ${
           isSidebarCollapsed ? "w-30" : "w-1/4"
         }`}
       >
@@ -823,25 +842,10 @@ const PetSocialNetwork = () => {
         >
           {/* Sidebar Header */}
           <div
-            className={`flex items-center gap-2 p-3 border-b border-b-[#FF5C20] ${
-              isSidebarCollapsed ? "justify-center" : "justify-between"
-            }`}
+            className={`flex items-center gap-2 p-3 border-b border-b-[#FF5C20]`}
           >
-            <div className="flex gap-3">
+            <div className="flex gap-3 p-3">
               {!isSidebarCollapsed && <>{svgLogo}</>}
-            </div>
-            <div className="mt-auto p-3">
-              <Button
-                variant="ghost"
-                className="w-full rounded-xl text-white hover:bg-[#FF5C20]/20 justify-center"
-                onClick={toggleSidebar}
-              >
-                {isSidebarCollapsed ? (
-                  <ChevronRightIcon className="h-5 w-5" />
-                ) : (
-                  <ChevronLeftIcon className="h-5 w-5" />
-                )}
-              </Button>
             </div>
           </div>
 
@@ -941,9 +945,19 @@ const PetSocialNetwork = () => {
       </div>
 
       {/* Mobile Header */}
-      <header className="sticky top-0 z-1 bg-[#FF7543]  shadow-sm md:hidden">
+      <header className="sticky top-0 z-50 bg-[#FF7543]  shadow-sm xl:hidden">
         <div className="px-4 py-3">
           <div className="flex justify-between items-center">
+            {/* Mobile Menu Toggle Button (only visible on mobile) */}
+            <div className="xl:hidden top-4 left-4 z-20">
+              <Button
+                variant="ghost"
+                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                className="p-2 bg-[transparent] hover:bg-[transparent] rounded-[15px]"
+              >
+                <MenuIcon className="h-6 w-6" />
+              </Button>
+            </div>
             <div className="flex items-center gap-2">
               <div className="bg-gradient-to-r from-[#217EFF] to-[#FAD0C4] p-2 rounded-xl">
                 <PawPrintIcon className="h-6 w-6 text-white" />
@@ -964,75 +978,155 @@ const PetSocialNetwork = () => {
         </div>
       </header>
 
-      <main className="bg-[#FF7543] flex-grow mb-6 p-[15px] md:pr-[100px] md:py-10 md:pb-1 overflow-y-auto ">
+      {/* Sidebar Content */}
+      {isSidebarCollapsed && (
+        <div
+          className={`fixed left-0 w-full h-screen xl:p-10 xl:pl-[100px] flex flex-col gap-4 z-50 overflow-hidden`}
+        >
+          <div
+            className={`bg-[#FF9771] flex flex-col  h-min flex-grow xl:flex-grow-0`}
+          >
+            {/* Sidebar Header - Only show when expanded */}
+
+            <div
+              className={`flex items-center gap-2 p-2 border-b border-b-[#FF5C20]`}
+            >
+              <div className="xl:hidden top-4 left-4 z-20">
+                <Button
+                  variant="ghost"
+                  onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                  className="p-2 bg-[#FF9771] hover:bg-[#FF9771]/90 rounded-[15px]"
+                >
+                  <XIcon className="h-6 w-6" />
+                </Button>
+              </div>
+              <div className="flex gap-3 p-3">{svgLogo}</div>
+            </div>
+
+            {/* Navigation Buttons */}
+            <div className="flex flex-col gap-2 p-3 border-b border-b-[#FF5C20] pb-7">
+              <Button
+                variant="ghost"
+                className={`rounded-xl px-4 hover:bg-transparent justify-start`}
+                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              >
+                <HomeIcon className="w-5 h-5" />
+                <span className="ml-2 text-[15px] font-semibold">Home</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                className={`rounded-xl px-4 hover:bg-transparent justify-start`}
+                onClick={() => {
+                  toast("📬 Messages: This feature is coming soon!");
+                }}
+              >
+                <MessageSquareIcon className="w-5 h-5" />
+                <span className="ml-2 text-[15px] font-semibold">Messages</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                className={`rounded-xl px-4 hover:bg-transparent justify-start`}
+                onClick={() => setIsOpen(!isOpen)}
+              >
+                <div className="flex items-center">
+                  <BellIcon className="w-5 h-5" />
+                  <span className="ml-2 text-[15px] font-semibold truncate">
+                    Notifications
+                  </span>
+                  {notifications.some((n) => !n.read) && (
+                    <span
+                      className={`ml-2 bg-[#217EFF] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center `}
+                    >
+                      {notifications.filter((n) => !n.read).length}
+                    </span>
+                  )}
+                </div>
+              </Button>
+            </div>
+
+            {/* User Profile */}
+
+            <div
+              className="p-3 cursor-pointer md:w-1/3"
+              onClick={() => setIsUserModalOpen(true)}
+            >
+              <div
+                className={`flex items-center p-3 bg-[#FF5C20] rounded-[15px] `}
+              >
+                <Avatar className="h-8 w-8">
+                  <AvatarImage
+                    src={mockUsers[0].avatar}
+                    alt={mockUsers[0].name}
+                  />
+                </Avatar>
+
+                <div className="flex flex-col gap-0 ml-2">
+                  <span
+                    className={`text-[14px] text-white ${ranchers.className}`}
+                  >
+                    John Doe
+                  </span>
+                  <span className="text-[12px] text-white">@johndoe</span>
+                </div>
+              </div>
+            </div>
+            {/* Create Post Button */}
+            <Button
+              className={`bg-[#217EFF] md:hidden m-3 hover:bg-[#217EFF]/90 text-[18px] text-white rounded-[15px] p-6 flex items-center ${ranchers.className} border-2 border-[#71ACFF]`}
+              onClick={() => {
+                setIsPostModalOpen(true);
+                setIsSidebarCollapsed(false);
+              }}
+            >
+              <PlusIcon className="h-6 w-6 xl:h-8 xl:w-8 text-[#71ACFF] mr-2" />
+              CREATE NEW POST
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <main className="bg-[#FF7543] flex-grow mb-6 p-[15px] xl:pr-[100px] lg:py-10 lg:pb-1 overflow-y-auto ">
         {renderHome()}
       </main>
 
-      {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-1 bg-[#217EFF] shadow-lg md:hidden">
-        <div className="flex justify-around p-4">
+      {!isSidebarCollapsed && (
+        <div className="fixed bottom-24 right-6 z-2 lg:hidden">
           <Button
-            variant="ghost"
-            className={`hover:bg-[#217EFF] flex flex-col items-center justify-center w-full  py-1 `}
+            className="bg-[#217EFF]  hover:bg-[#217EFF]/90 text-white rounded-full p-5 shadow-lg transition-transform hover:scale-105"
+            onClick={() => setIsPostModalOpen(true)}
           >
-            <HomeIcon className="!h-5 !w-5" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            className={` hover:bg-[#217EFF] flex flex-col items-center justify-center w-full  py-3 `}
-            onClick={() => {
-              toast("📬  Messages: This feature is coming soon!");
-            }}
-          >
-            <MessageSquareIcon className="!h-5 !w-5" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            className={` hover:bg-[#217EFF] flex flex-col items-center justify-center w-full py-3 relative`}
-            onClick={() => {
-              setIsOpen(true);
-            }}
-          >
-            <BellIcon className="!h-5 !w-5" />
+            <PlusIcon className="h-6 w-6" />
           </Button>
         </div>
-      </nav>
-
-      <div className="fixed bottom-24 right-6 z-2 md:hidden">
-        <Button
-          className="bg-[#217EFF]  hover:bg-[#217EFF]/90 text-white rounded-full p-5 shadow-lg transition-transform hover:scale-105"
-          onClick={() => setIsPostModalOpen(true)}
-        >
-          <PlusIcon className="h-6 w-6" />
-        </Button>
-      </div>
+      )}
       <Toaster />
 
       {/* User Profile Modal */}
       <Dialog open={isUserModalOpen} onOpenChange={setIsUserModalOpen}>
         <DialogPortal>
           <DialogOverlay className="fixed inset-0 bg-[#217EFF]/90 backdrop-blur-sm" />
-          <DialogContent className="bg-[#FF5C20] rounded-2xl border-0 max-w-md p-0 overflow-hidden w-4/5 md:w-full">
-            <div className="relative">
-              {/* Profile Banner */}
-              <div className="h-32 bg-gradient-to-r from-[#FF7543] to-[#FF9771]"></div>
+          <DialogContent className="bg-[#FF5C20] rounded-2xl border-0 max-w-md p-0 overflow-hidden w-4/5 lg:w-full">
+            <DialogDescription>
+              <div className="relative">
+                {/* Profile Banner */}
+                <div className="h-32 bg-gradient-to-r from-[#FF7543] to-[#FF9771]"></div>
 
-              {/* Profile Picture */}
-              <div className="absolute -bottom-12 left-6">
-                <Avatar className="h-24 w-24 border-4 border-white">
-                  <AvatarImage
-                    src={loggedInUser.avatar}
-                    alt={loggedInUser.name}
-                  />
-                  <AvatarFallback className="text-xl">
-                    {loggedInUser.name.slice(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
+                {/* Profile Picture */}
+                <div className="absolute -bottom-12 left-6">
+                  <Avatar className="h-24 w-24 border-4 border-white">
+                    <AvatarImage
+                      src={loggedInUser.avatar}
+                      alt={loggedInUser.name}
+                    />
+                    <AvatarFallback className="text-xl">
+                      {loggedInUser.name.slice(0, 2)}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
               </div>
-            </div>
-
+            </DialogDescription>
             <div className="pt-16 pb-6 px-6">
               <DialogHeader>
                 <DialogTitle
@@ -1065,23 +1159,29 @@ const PetSocialNetwork = () => {
               {/* Stats Section */}
               <div className="mt-8 grid grid-cols-3 gap-4 text-center">
                 <div className="bg-[#FF9771]/50 p-3 rounded-xl">
-                  <div className="text-2xl font-bold text-white">120</div>
+                  <div className="text-2xl font-bold text-white">
+                    {loggedInUser.friends}
+                  </div>
                   <div className="text-white/80 text-sm">Friends</div>
                 </div>
                 <div className="bg-[#FF9771]/50 p-3 rounded-xl">
-                  <div className="text-2xl font-bold text-white">35</div>
+                  <div className="text-2xl font-bold text-white">
+                    {loggedInUser.photos}
+                  </div>
                   <div className="text-white/80 text-sm">Photos</div>
                 </div>
                 <div className="bg-[#FF9771]/50 p-3 rounded-xl">
-                  <div className="text-2xl font-bold text-white">28</div>
+                  <div className="text-2xl font-bold text-white">
+                    {loggedInUser.posts}
+                  </div>
                   <div className="text-white/80 text-sm">Posts</div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="mt-8 flex gap-3">
+              <div className="mt-8 flex gap-3 items-center justify-center">
                 <Button
-                  className="flex-1 bg-[#217EFF] hover:bg-[#217EFF]/90 rounded-xl py-6"
+                  className={`bg-[#217EFF]  m-3 hover:bg-[#217EFF]/90 text-[18px] text-white rounded-[15px] p-6 flex items-center ${ranchers.className} border-2 border-[#71ACFF]`}
                   onClick={() => setIsUserModalOpen(false)}
                 >
                   Close
@@ -1095,8 +1195,9 @@ const PetSocialNetwork = () => {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogPortal>
           <DialogOverlay className="fixed inset-0 bg-[#217EFF]/90 backdrop-blur-sm" />
-          <DialogContent className="bg-[#FF7543] rounded-2xl border-0  p-0 overflow-hidden w-4/5 md:w-full">
-            <div className="pt-16 pb-6 px-6">
+          <DialogContent className="bg-[#FF7543] rounded-2xl border-0  p-0 overflow-hidden w-4/5 lg:w-full">
+            <DialogDescription></DialogDescription>
+            <div className="pt-16 pb-6 px-6 text-white">
               <DialogHeader>
                 <DialogTitle
                   className={`text-2xl font-bold text-white ${ranchers.className}`}
@@ -1139,10 +1240,13 @@ const PetSocialNetwork = () => {
                 )}
               </div>
 
-              <div className="mt-8 flex gap-3">
+              <div className="mt-8 flex gap-3 justify-center">
                 <Button
-                  className="flex-1 bg-[#217EFF] hover:bg-[#217EFF]/90 rounded-xl py-6"
-                  onClick={() => setIsOpen(false)}
+                  className={`bg-[#217EFF]  m-3 hover:bg-[#217EFF]/90 text-[18px] text-white rounded-[15px] p-6 flex items-center ${ranchers.className} border-2 border-[#71ACFF]`}
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsSidebarCollapsed(false);
+                  }}
                 >
                   Close
                 </Button>
