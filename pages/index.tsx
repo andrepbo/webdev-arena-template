@@ -812,7 +812,8 @@ const PetSocialNetwork = () => {
                       onClick={() => {
                         handleCreatePost();
                       }}
-                      className={`text-[18px] bg-[#217EFF] hover:bg-[#217EFF]/90 text-white rounded-[15px] px-8 py-6 shadow-md ${ranchers.className} border-2 border-[#71ACFF]`}
+                      disabled={newPostText.trim().length < 1}
+                      className={`text-[18px] bg-[#217EFF] hover:bg-[#217EFF]/90 text-white rounded-[15px] px-8 py-6 shadow-md ${ranchers.className} border-2 border-[#71ACFF] disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
                       <PlusIcon className="h-5 w-5 mr-1" />
                       POST NOW
