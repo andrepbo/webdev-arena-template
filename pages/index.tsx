@@ -1118,25 +1118,23 @@ const PetSocialNetwork = () => {
         <DialogPortal>
           <DialogOverlay className="fixed inset-0 bg-[#217EFF]/90 backdrop-blur-sm" />
           <DialogContent className="bg-[#FF5C20] rounded-2xl border-0 max-w-md p-0 overflow-hidden w-4/5 lg:w-full">
-            <DialogDescription>
-              <div className="relative">
-                {/* Profile Banner */}
-                <div className="h-32 bg-gradient-to-r from-[#FF7543] to-[#FF9771]"></div>
+            <div className="relative">
+              {/* Profile Banner */}
+              <div className="h-32 bg-gradient-to-r from-[#FF7543] to-[#FF9771]"></div>
 
-                {/* Profile Picture */}
-                <div className="absolute -bottom-12 left-6">
-                  <Avatar className="h-24 w-24 border-4 border-white">
-                    <AvatarImage
-                      src={loggedInUser.avatar}
-                      alt={loggedInUser.name}
-                    />
-                    <AvatarFallback className="text-xl">
-                      {loggedInUser.name.slice(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
+              {/* Profile Picture */}
+              <div className="absolute -bottom-12 left-6">
+                <Avatar className="h-24 w-24 border-4 border-white">
+                  <AvatarImage
+                    src={loggedInUser.avatar}
+                    alt={loggedInUser.name}
+                  />
+                  <AvatarFallback className="text-xl">
+                    {loggedInUser.name.slice(0, 2)}
+                  </AvatarFallback>
+                </Avatar>
               </div>
-            </DialogDescription>
+            </div>
             <div className="pt-16 pb-6 px-6">
               <DialogHeader>
                 <DialogTitle
