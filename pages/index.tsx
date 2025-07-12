@@ -870,10 +870,6 @@ export default function WaterTracker() {
                                 Math.max(0, progressPercent * 2.83)
                               )} 283`}
                               transform="rotate(-90 50 50)"
-                              style={{
-                                filter:
-                                  "drop-shadow(0 0 6px rgba(56, 189, 248, 0.5))",
-                              }}
                             />
                             <text
                               x="50"
