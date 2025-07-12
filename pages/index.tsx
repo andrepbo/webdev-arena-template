@@ -774,7 +774,7 @@ const PetSocialNetwork = () => {
                             )}
                             <Button
                               variant="ghost"
-                              className="absolute top-1 right-1 p-1 h-6 w-6 bg-white/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[#FF5C20]/50 hover:text-white"
+                              className="absolute top-1 right-1 p-1 h-6 w-6 bg-white/80 rounded-full opacity-100 transition-opacity hover:bg-[#FF5C20]/50 hover:text-white"
                               onClick={() =>
                                 setAttachments(
                                   attachments.filter((_, i) => i !== index)
