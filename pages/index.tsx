@@ -742,7 +742,7 @@ const PetSocialNetwork = () => {
 
             <div className="px-6">
               <div className="flex flex-col gap-4">
-                <h1>Title</h1>
+                <h1>Post Description</h1>
                 <div className="flex-1">
                   <Textarea
                     placeholder="Enter post description"
