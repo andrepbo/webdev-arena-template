@@ -727,7 +727,16 @@ const PetSocialNetwork = () => {
           }
         }
       `}</style>
-      <Dialog open={isPostModalOpen} onOpenChange={setIsPostModalOpen}>
+      <Dialog
+        open={isPostModalOpen}
+        onOpenChange={(open) => {
+          setIsPostModalOpen(open);
+          if (!open) {
+            setNewPostText("");
+            setAttachments([]);
+          }
+        }}
+      >
         <DialogPortal>
           <DialogOverlay className="fixed inset-0 bg-[#217EFF]/90 backdrop-blur-sm" />
           <DialogContent className="!opacity-1  bg-[#FF7543] rounded-[15px] p-0 overflow-hidden border border-white mr-[20px] ml-[0px] max-w-[calc(100%-40px)] lg:max-w-2xl lg:mx-auto">
