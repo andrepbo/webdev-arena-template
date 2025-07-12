@@ -870,6 +870,10 @@ export default function WaterTracker() {
                                 Math.max(0, progressPercent * 2.83)
                               )} 283`}
                               transform="rotate(-90 50 50)"
+                              style={{
+                                filter:
+                                  "drop-shadow(0 0 6px rgba(56, 189, 248, 0.5))",
+                              }}
                             />
                             <text
                               x="50"
@@ -902,7 +906,7 @@ export default function WaterTracker() {
                             ></motion.div>
                             {progressPercent < 100 && progressPercent > 0 && (
                               <motion.div
-                                className="absolute w-32 h-32 top-0 left-0 bg-gradient-to-tr from-white/20 to-transparent dark:from-sky-200/10 bg-cover opacity-20"
+                                className="absolute w-32 h-32 top-0 left-0 bg-[url('/glass.jpg')] bg-cover opacity-20"
                                 initial={{ y: "100%" }}
                                 animate={{ y: `${100 - progressPercent}%` }}
                                 transition={{ duration: 0.8, ease: "easeOut" }}
