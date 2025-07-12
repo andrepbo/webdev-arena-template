@@ -38,7 +38,7 @@ export default function WaterTracker() {
 
   // UI state
   const [showSettings, setShowSettings] = useState<boolean>(false);
-  const [mounted, setMounted] = useState<boolean>(false);
+  const [mounted] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"today" | "history">("today");
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -58,18 +58,29 @@ export default function WaterTracker() {
     }
   }, []);
 
-  // Set up theme on initial load and when settings change
+  // Set up theme on initial load and listen for prefers-color-scheme changes
   useEffect(() => {
-    setMounted(true);
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-    // Check for system preference on initial load
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
+    const handleChange = (event: MediaQueryListEvent) => {
+      setSettings((prev) => ({
+        ...prev,
+        darkMode: event.matches,
+      }));
+    };
+
+    // Set initial value
     setSettings((prev) => ({
       ...prev,
-      darkMode: prefersDark,
+      darkMode: mediaQuery.matches,
     }));
+
+    // Listen for changes
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
   }, []);
 
   // Apply theme when settings change
