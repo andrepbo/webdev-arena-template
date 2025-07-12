@@ -254,7 +254,7 @@ const PetSocialNetwork = () => {
   const [hiddenComments, setHiddenComments] = useState<Set<number>>(new Set());
   const [sharedPosts, setSharedPosts] = useState<Set<number>>(new Set());
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-  const loggedInUser = mockUsers[0];
+  const loggedInUser = users[0];
 
   const filteredPosts = posts.filter((post) => {
     const user = users.find((u) => u.id === post.userId);
