@@ -1102,9 +1102,9 @@ const PetSocialNetwork = () => {
       </main>
 
       {!isSidebarCollapsed && (
-        <div className="fixed bottom-24 right-6 z-2 lg:hidden">
+        <div className="fixed bottom-6 right-6 z-2 lg:hidden mb-6">
           <Button
-            className="bg-[#217EFF]  hover:bg-[#217EFF]/90 text-white rounded-full p-5 shadow-lg transition-transform hover:scale-105"
+            className="bg-[#217EFF] hover:bg-[#217EFF]/90 text-white rounded-full w-16 h-16 aspect-square p-0 shadow-lg transition-transform hover:scale-105"
             onClick={() => setIsPostModalOpen(true)}
           >
             <PlusIcon className="h-6 w-6" />
