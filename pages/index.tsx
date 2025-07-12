@@ -890,25 +890,24 @@ const PetSocialNetwork = () => {
 
             <Button
               variant="ghost"
-              className={`rounded-xl px-4 hover:bg-transparent ${
+              className={`relative rounded-xl px-4 hover:bg-transparent ${
                 isSidebarCollapsed ? "justify-center" : "justify-start"
               }`}
               onClick={() => setIsOpen(!isOpen)}
             >
               <div className="flex items-center">
-                <BellIcon className="w-5 h-5 mr-2" />
+                <span className="relative">
+                  <BellIcon className="w-5 h-5 mr-2" />
+                  {!isSidebarCollapsed &&
+                    notifications.some((n) => !n.read) && (
+                      <span className="absolute -top-1.5 right-0 bg-[#217EFF] text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">
+                        {notifications.filter((n) => !n.read).length}
+                      </span>
+                    )}
+                </span>
                 {!isSidebarCollapsed && (
                   <span className="ml-2 text-[15px] font-semibold">
                     Notifications
-                  </span>
-                )}
-                {!isSidebarCollapsed && notifications.some((n) => !n.read) && (
-                  <span
-                    className={`ml-2 bg-[#217EFF] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center ${
-                      isSidebarCollapsed ? "absolute top-1 right-1" : ""
-                    }`}
-                  >
-                    {notifications.filter((n) => !n.read).length}
                   </span>
                 )}
               </div>
@@ -1037,21 +1036,21 @@ const PetSocialNetwork = () => {
 
               <Button
                 variant="ghost"
-                className={`rounded-xl px-4 hover:bg-transparent justify-start`}
+                className={`relative rounded-xl px-4 hover:bg-transparent justify-start`}
                 onClick={() => setIsOpen(!isOpen)}
               >
                 <div className="flex items-center">
-                  <BellIcon className="w-5 h-5" />
+                  <span className="relative">
+                    <BellIcon className="w-5 h-5" />
+                    {notifications.some((n) => !n.read) && (
+                      <span className="absolute -top-1.5 right-0 bg-[#217EFF] text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">
+                        {notifications.filter((n) => !n.read).length}
+                      </span>
+                    )}
+                  </span>
                   <span className="ml-2 text-[15px] font-semibold truncate">
                     Notifications
                   </span>
-                  {notifications.some((n) => !n.read) && (
-                    <span
-                      className={`ml-2 bg-[#217EFF] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center `}
-                    >
-                      {notifications.filter((n) => !n.read).length}
-                    </span>
-                  )}
                 </div>
               </Button>
             </div>
