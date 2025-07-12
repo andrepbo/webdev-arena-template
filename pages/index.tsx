@@ -65,9 +65,36 @@ interface Toast {
   type: "success" | "error" | "info";
 }
 
+interface HeaderMenu {
+  name: string;
+  id: string;
+}
+
+interface ShopLinks {
+  label: string;
+  ref: React.RefObject<HTMLDivElement>;
+}
+
+interface SimpleFooterLink {
+  label: string;
+  onClick?: () => void;
+}
+
+type Category =
+  | "all"
+  | "clothing"
+  | "accessories"
+  | "shoes"
+  | "home"
+  | "electronics";
+
 const ThriftStore = () => {
   // Ref for search results dropdown
   const searchResultsRef = useRef<HTMLDivElement | null>(null);
+  // Refs for sections
+  const newArrivalsRef = useRef<HTMLDivElement | null>(null);
+  const categoriesRef = useRef<HTMLDivElement | null>(null);
+  const saleRef = useRef<HTMLDivElement | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [likedItems, setLikedItems] = useState<string[]>([]);
   const [selectedItem, setSelectedItem] = useState<Product | null>(null);
@@ -316,7 +343,7 @@ const ThriftStore = () => {
     },
   ];
 
-  const categories = [
+  const categories: Category[] = [
     "all",
     "clothing",
     "accessories",
@@ -347,6 +374,32 @@ const ThriftStore = () => {
     0
   );
   const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
+
+  const headerMenu: HeaderMenu[] = [
+    { name: "New", id: "hero" },
+    { name: "Categories", id: "categories" },
+    { name: "Sale", id: "flash-sale" },
+  ];
+
+  const shopLinks: ShopLinks[] = [
+    { label: "New Arrivals", ref: newArrivalsRef },
+    { label: "Categories", ref: categoriesRef },
+    { label: "Sale", ref: saleRef },
+  ];
+
+  const companyLinks: SimpleFooterLink[] = [
+    { label: "About", onClick: () => addToast("Coming soon!", "info") },
+    { label: "Careers", onClick: () => addToast("Coming soon!", "info") },
+    { label: "Press", onClick: () => addToast("Coming soon!", "info") },
+    { label: "Blog", onClick: () => addToast("Coming soon!", "info") },
+  ];
+
+  const supportLinks: SimpleFooterLink[] = [
+    { label: "Help Center", onClick: () => addToast("Coming soon!", "info") },
+    { label: "Track Order", onClick: () => addToast("Coming soon!", "info") },
+    { label: "Returns", onClick: () => addToast("Coming soon!", "info") },
+    { label: "Contact", onClick: () => addToast("Coming soon!", "info") },
+  ];
 
   const addToast = (message: string, type: "success" | "error" | "info") => {
     const id = Date.now().toString();
@@ -523,12 +576,7 @@ const ThriftStore = () => {
             </div>
 
             <nav className="hidden lg:flex items-center space-x-1">
-              {[
-                { name: "New", id: "hero" },
-                { name: "Categories", id: "categories" },
-                { name: "Sale", id: "flash-sale" },
-                { name: "About", id: null },
-              ].map((item) => (
+              {headerMenu.map((item) => (
                 <motion.button
                   key={item.name}
                   whileHover={{ y: -1 }}
@@ -681,7 +729,6 @@ const ThriftStore = () => {
                   { name: "New Arrivals", id: "hero" },
                   { name: "Categories", id: "categories" },
                   { name: "Sale", id: "flash-sale" },
-                  { name: "About", id: null },
                 ].map((item) => (
                   <motion.button
                     key={item.name}
@@ -707,6 +754,7 @@ const ThriftStore = () => {
 
       <section
         id="hero"
+        ref={newArrivalsRef}
         className="relative min-h-screen flex items-center overflow-hidden"
       >
         <div className="absolute inset-0">
@@ -934,6 +982,7 @@ const ThriftStore = () => {
 
       <section
         id="flash-sale"
+        ref={saleRef}
         className="py-20 bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-800 dark:to-gray-900 relative overflow-hidden"
       >
         <div className="absolute inset-0 opacity-5">
@@ -1113,7 +1162,11 @@ const ThriftStore = () => {
         </div>
       </section>
 
-      <section id="categories" className="py-16 bg-gray-50 dark:bg-gray-800">
+      <section
+        id="categories"
+        ref={categoriesRef}
+        className="py-16 bg-gray-50 dark:bg-gray-800"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap gap-3 justify-center mb-8">
             {categories.map((category) => (
@@ -1183,38 +1236,62 @@ const ThriftStore = () => {
                 tells a story.
               </p>
             </div>
-            {[
-              {
-                title: "Shop",
-                items: ["New Arrivals", "Categories", "Sale", "Gift Cards"],
-              },
-              {
-                title: "Support",
-                items: ["Contact", "Shipping", "Returns", "Size Guide"],
-              },
-              {
-                title: "Company",
-                items: ["About", "Careers", "Press", "Blog"],
-              },
-            ].map((section, index) => (
-              <div key={index}>
-                <h3 className="font-bold mb-6 text-gray-900 dark:text-white">
-                  {section.title}
-                </h3>
-                <ul className="space-y-3">
-                  {section.items.map((item) => (
-                    <li key={item}>
-                      <button
-                        onClick={() => addToast("Coming soon!", "info")}
-                        className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-white transition-colors"
-                      >
-                        {item}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {/* Shop */}
+            <div>
+              <h3 className="font-bold mb-6 text-gray-900 dark:text-white">
+                Shop
+              </h3>
+              <ul className="space-y-3">
+                {shopLinks.map(({ label, ref }) => (
+                  <li key={label}>
+                    <button
+                      onClick={() =>
+                        ref.current?.scrollIntoView({ behavior: "smooth" })
+                      }
+                      className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition"
+                    >
+                      {label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {/* Support */}
+            <div>
+              <h3 className="font-bold mb-6 text-gray-900 dark:text-white">
+                Support
+              </h3>
+              <ul className="space-y-2">
+                {supportLinks.map(({ label, onClick }) => (
+                  <li key={label}>
+                    <button
+                      onClick={onClick}
+                      className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition"
+                    >
+                      {label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {/* Company */}
+            <div>
+              <h3 className="font-bold mb-6 text-gray-900 dark:text-white">
+                Company
+              </h3>
+              <ul className="space-y-3">
+                {companyLinks.map(({ label, onClick }) => (
+                  <li key={label}>
+                    <button
+                      onClick={onClick}
+                      className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition"
+                    >
+                      {label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
           <div className="border-t border-gray-300 dark:border-gray-800 mt-12 pt-8 text-center text-gray-500 dark:text-gray-400">
             <p>&copy; 2024 ThriftStore. All rights reserved.</p>
