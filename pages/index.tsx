@@ -1238,7 +1238,9 @@ const PetSocialNetwork = () => {
                         ></div>
                         <div className="ml-3 flex-1">
                           <div className="flex justify-between items-center">
-                            <p className="font-medium">{notification.text}</p>
+                            <div className="font-medium">
+                              {notification.text}
+                            </div>
                             <span className="text-xs text-white">
                               {notification.time}
                             </span>
