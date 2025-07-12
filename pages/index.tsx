@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Heart,
@@ -66,6 +66,8 @@ interface Toast {
 }
 
 const ThriftStore = () => {
+  // Ref for search results dropdown
+  const searchResultsRef = useRef<HTMLDivElement | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [likedItems, setLikedItems] = useState<string[]>([]);
   const [selectedItem, setSelectedItem] = useState<Product | null>(null);
@@ -89,6 +91,49 @@ const ThriftStore = () => {
     cvv: "",
   });
 
+  const formatCardNumber = (value: string) => {
+    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
+    const matches = v.match(/\d{4,16}/g);
+    const match = (matches && matches[0]) || "";
+    const parts = [];
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+    if (parts.length) {
+      return parts.join(" ");
+    } else {
+      return v;
+    }
+  };
+
+  const formatExpiryDate = (value: string) => {
+    const v = value.replace(/\D/g, "");
+    if (v.length >= 2) {
+      return v.substring(0, 2) + (v.length > 2 ? "/" + v.substring(2, 4) : "");
+    }
+    return v;
+  };
+
+  const formatCVV = (value: string) => {
+    return value.replace(/\D/g, "").substring(0, 4);
+  };
+
+  const formatPhone = (value: string) => {
+    const v = value.replace(/\D/g, "");
+    if (v.length <= 3) return v;
+    if (v.length <= 6) return `(${v.slice(0, 3)}) ${v.slice(3)}`;
+    return `(${v.slice(0, 3)}) ${v.slice(3, 6)}-${v.slice(6, 10)}`;
+  };
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    } else {
+      addToast("Coming soon!", "info");
+    }
+  };
+
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     setDarkMode(mediaQuery.matches);
@@ -99,6 +144,22 @@ const ThriftStore = () => {
 
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  // Effect to detect click outside search results dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchResultsRef.current &&
+        !searchResultsRef.current.contains(event.target as Node)
+      ) {
+        setSearchQuery("");
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   useEffect(() => {
@@ -275,6 +336,8 @@ const ThriftStore = () => {
         ))
   );
 
+  const showSearchResults = searchQuery.length > 0;
+
   const saleProducts = products.filter(
     (product) => product.discount && product.discount > 20
   );
@@ -413,11 +476,9 @@ const ThriftStore = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-      {/* Improved Header */}
       <header className="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
-            {/* Enhanced Logo */}
             <motion.div
               whileHover={{ scale: 1.05 }}
               className="flex items-center space-x-3"
@@ -438,7 +499,6 @@ const ThriftStore = () => {
               </div>
             </motion.div>
 
-            {/* Improved Search Bar */}
             <div className="hidden md:flex flex-1 max-w-md mx-8">
               <div className="relative w-full group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -462,16 +522,25 @@ const ThriftStore = () => {
               </div>
             </div>
 
-            {/* Enhanced Navigation */}
             <nav className="hidden lg:flex items-center space-x-1">
-              {["New", "Categories", "Sale", "About"].map((item) => (
+              {[
+                { name: "New", id: "hero" },
+                { name: "Categories", id: "categories" },
+                { name: "Sale", id: "flash-sale" },
+                { name: "About", id: null },
+              ].map((item) => (
                 <motion.button
-                  key={item}
+                  key={item.name}
                   whileHover={{ y: -1 }}
+                  onClick={() =>
+                    item.id
+                      ? scrollToSection(item.id)
+                      : addToast("Coming soon!", "info")
+                  }
                   className="relative px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-all duration-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 group"
                 >
-                  {item}
-                  {item === "Sale" && (
+                  {item.name}
+                  {item.name === "Sale" && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
                       HOT
                     </span>
@@ -481,9 +550,7 @@ const ThriftStore = () => {
               ))}
             </nav>
 
-            {/* Action Buttons */}
             <div className="flex items-center space-x-2">
-              {/* Theme Toggle */}
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 180 }}
                 whileTap={{ scale: 0.9 }}
@@ -497,7 +564,6 @@ const ThriftStore = () => {
                 )}
               </motion.button>
 
-              {/* Cart Button */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -516,7 +582,6 @@ const ThriftStore = () => {
                 )}
               </motion.button>
 
-              {/* Mobile Menu Button */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -528,7 +593,6 @@ const ThriftStore = () => {
             </div>
           </div>
 
-          {/* Mobile Search Bar */}
           <div className="md:hidden pb-4">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -546,7 +610,63 @@ const ThriftStore = () => {
         </div>
       </header>
 
-      {/* Mobile Menu */}
+      {/* Search Results Dropdown below Header */}
+      {showSearchResults && (
+        <div
+          ref={searchResultsRef}
+          className="fixed w-full z-40 px-4 sm:px-6 lg:px-8 pt-2"
+        >
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-4 max-w-7xl mx-auto">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 px-2">
+              Found {filteredProducts.length} result(s) for &quot;{searchQuery}
+              &quot;
+            </h3>
+            <div className="space-y-6 max-h-[50vh] overflow-y-auto pr-2">
+              {Array.from(
+                filteredProducts.slice(0, 8).reduce((acc, product) => {
+                  const category = product.category || "Uncategorized";
+                  if (!acc.has(category)) acc.set(category, []);
+                  acc.get(category)!.push(product);
+                  return acc;
+                }, new Map<string, typeof filteredProducts>())
+              ).map(([category, products]) => (
+                <div key={category}>
+                  <h4 className="text-xs font-bold uppercase text-gray-500 dark:text-gray-400 mb-2 px-2">
+                    {category}
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {products.map((product) => (
+                      <div
+                        key={product.id}
+                        className="flex items-center space-x-3 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg p-2 cursor-pointer transition"
+                        onClick={() => {
+                          setSelectedItem(product);
+                          setSearchQuery("");
+                        }}
+                      >
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-12 h-12 object-cover rounded-md"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                            {product.name}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            ${product.price}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -557,13 +677,26 @@ const ThriftStore = () => {
           >
             <div className="p-6">
               <nav className="space-y-2">
-                {["New Arrivals", "Categories", "Sale", "About"].map((item) => (
+                {[
+                  { name: "New Arrivals", id: "hero" },
+                  { name: "Categories", id: "categories" },
+                  { name: "Sale", id: "flash-sale" },
+                  { name: "About", id: null },
+                ].map((item) => (
                   <motion.button
-                    key={item}
+                    key={item.name}
                     whileHover={{ x: 5 }}
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      if (item.id) {
+                        scrollToSection(item.id);
+                      } else {
+                        addToast("Coming soon!", "info");
+                      }
+                    }}
                     className="block w-full text-left py-3 px-4 text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg font-medium transition-all duration-200"
                   >
-                    {item}
+                    {item.name}
                   </motion.button>
                 ))}
               </nav>
@@ -572,9 +705,10 @@ const ThriftStore = () => {
         )}
       </AnimatePresence>
 
-      {/* Enhanced Hero Section */}
-      <section className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Background */}
+      <section
+        id="hero"
+        className="relative min-h-screen flex items-center overflow-hidden"
+      >
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-purple-700 to-pink-600 dark:from-indigo-800 dark:via-purple-900 dark:to-pink-800"></div>
           <div className="absolute inset-0 bg-black/20"></div>
@@ -585,7 +719,6 @@ const ThriftStore = () => {
           />
         </div>
 
-        {/* Floating Elements */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
             animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
@@ -604,10 +737,8 @@ const ThriftStore = () => {
           />
         </div>
 
-        {/* Content */}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -660,6 +791,7 @@ const ThriftStore = () => {
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => scrollToSection("categories")}
                   className="group relative overflow-hidden bg-white text-gray-900 px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300"
                 >
                   <span className="relative z-10 flex items-center">
@@ -672,13 +804,13 @@ const ThriftStore = () => {
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => addToast("Coming soon!", "info")}
                   className="border-2 border-white/30 text-white px-8 py-4 rounded-2xl font-semibold text-lg backdrop-blur-sm hover:bg-white/10 transition-all duration-300"
                 >
                   Learn More
                 </motion.button>
               </motion.div>
 
-              {/* Stats */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -700,7 +832,6 @@ const ThriftStore = () => {
               </motion.div>
             </motion.div>
 
-            {/* Right Content - Featured Products */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -740,7 +871,6 @@ const ThriftStore = () => {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -761,7 +891,6 @@ const ThriftStore = () => {
         </motion.div>
       </section>
 
-      {/* Features */}
       <section className="py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -803,9 +932,10 @@ const ThriftStore = () => {
         </div>
       </section>
 
-      {/* Improved Flash Sales Section */}
-      <section className="py-20 bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-800 dark:to-gray-900 relative overflow-hidden">
-        {/* Background Pattern */}
+      <section
+        id="flash-sale"
+        className="py-20 bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-800 dark:to-gray-900 relative overflow-hidden"
+      >
         <div className="absolute inset-0 opacity-5">
           <svg className="w-full h-full" viewBox="0 0 100 100">
             <pattern
@@ -823,7 +953,6 @@ const ThriftStore = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          {/* Section Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -841,7 +970,6 @@ const ThriftStore = () => {
               won&apos;t last long!
             </p>
 
-            {/* Countdown Timer */}
             <div className="flex justify-center mt-8">
               <div className="grid grid-cols-4 gap-4 text-center">
                 {[
@@ -866,7 +994,6 @@ const ThriftStore = () => {
             </div>
           </motion.div>
 
-          {/* Products Grid with Eye Button Added */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {saleProducts.slice(0, 3).map((product, index) => (
               <motion.div
@@ -877,7 +1004,6 @@ const ThriftStore = () => {
                 whileHover={{ y: -8 }}
                 className="group relative bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
               >
-                {/* Sale Badge */}
                 <div className="absolute top-4 left-4 z-10">
                   <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center">
                     <TrendingUp className="h-3 w-3 mr-1" />
@@ -885,7 +1011,6 @@ const ThriftStore = () => {
                   </div>
                 </div>
 
-                {/* Heart Button */}
                 <button
                   onClick={() => handleToggleLike(product.id)}
                   className={`absolute top-4 right-4 z-10 p-2 rounded-full transition-colors ${
@@ -901,7 +1026,6 @@ const ThriftStore = () => {
                   />
                 </button>
 
-                {/* Product Image */}
                 <div className="relative aspect-square overflow-hidden">
                   <img
                     src={product.image}
@@ -911,7 +1035,6 @@ const ThriftStore = () => {
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                 </div>
 
-                {/* Product Info */}
                 <div className="p-6">
                   <div className="flex items-center mb-2">
                     <Star className="h-4 w-4 text-yellow-400 mr-1" />
@@ -946,7 +1069,6 @@ const ThriftStore = () => {
                       </div>
                     </div>
 
-                    {/* Action Buttons with Eye Button Added */}
                     <div className="flex space-x-2">
                       <motion.button
                         whileHover={{ scale: 1.1 }}
@@ -971,7 +1093,6 @@ const ThriftStore = () => {
             ))}
           </div>
 
-          {/* CTA */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -980,6 +1101,10 @@ const ThriftStore = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                setActiveCategory("all");
+                scrollToSection("categories");
+              }}
               className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
             >
               View All Sale Items
@@ -988,8 +1113,7 @@ const ThriftStore = () => {
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-800">
+      <section id="categories" className="py-16 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap gap-3 justify-center mb-8">
             {categories.map((category) => (
@@ -1011,29 +1135,39 @@ const ThriftStore = () => {
         </div>
       </section>
 
-      {/* Products Grid */}
       <section className="py-16 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {!showSearchResults && (
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                Our Collection
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                Discover unique vintage pieces in our curated collection
+              </p>
+            </div>
+          )}
           <motion.div
             layout
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
           >
-            {filteredProducts.map((product, index) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={handleAddToCart}
-                onToggleLike={handleToggleLike}
-                onViewProduct={setSelectedItem}
-                isLiked={likedItems.includes(product.id)}
-                index={index}
-              />
-            ))}
+            {(showSearchResults ? [] : filteredProducts).map(
+              (product, index) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                  onToggleLike={handleToggleLike}
+                  onViewProduct={setSelectedItem}
+                  isLiked={likedItems.includes(product.id)}
+                  index={index}
+                />
+              )
+            )}
           </motion.div>
         </div>
       </section>
 
-      {/* Footer with improved background color */}
       <footer className="bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -1070,7 +1204,10 @@ const ThriftStore = () => {
                 <ul className="space-y-3">
                   {section.items.map((item) => (
                     <li key={item}>
-                      <button className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-white transition-colors">
+                      <button
+                        onClick={() => addToast("Coming soon!", "info")}
+                        className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-white transition-colors"
+                      >
                         {item}
                       </button>
                     </li>
@@ -1085,7 +1222,6 @@ const ThriftStore = () => {
         </div>
       </footer>
 
-      {/* Simplified Product Modal */}
       <AnimatePresence>
         {selectedItem && (
           <motion.div
@@ -1141,7 +1277,6 @@ const ThriftStore = () => {
                       />
                     </div>
 
-                    {/* Additional Images Placeholder */}
                     <div className="grid grid-cols-4 gap-2">
                       {[1, 2, 3, 4].map((i) => (
                         <div
@@ -1153,7 +1288,6 @@ const ThriftStore = () => {
                   </div>
 
                   <div className="space-y-6">
-                    {/* Price Section */}
                     <div>
                       <div className="flex items-center space-x-3 mb-4">
                         <span className="text-4xl font-bold text-indigo-600 dark:text-indigo-400">
@@ -1172,7 +1306,6 @@ const ThriftStore = () => {
                       </div>
                     </div>
 
-                    {/* Description */}
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                         Description
@@ -1182,7 +1315,6 @@ const ThriftStore = () => {
                       </p>
                     </div>
 
-                    {/* Simplified Product Details - Single Column */}
                     <div className="space-y-3">
                       <div className="flex items-center">
                         <Package className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mr-3" />
@@ -1231,7 +1363,6 @@ const ThriftStore = () => {
                       </div>
                     </div>
 
-                    {/* Tags */}
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                         Tags
@@ -1248,7 +1379,6 @@ const ThriftStore = () => {
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="flex space-x-3 pt-4">
                       <motion.button
                         whileHover={{ scale: 1.02 }}
@@ -1285,7 +1415,6 @@ const ThriftStore = () => {
         )}
       </AnimatePresence>
 
-      {/* Cart Sidebar */}
       <AnimatePresence>
         {cartOpen && (
           <motion.div
@@ -1403,7 +1532,6 @@ const ThriftStore = () => {
         )}
       </AnimatePresence>
 
-      {/* Checkout Modal */}
       <AnimatePresence>
         {showCheckout && (
           <motion.div
@@ -1434,145 +1562,199 @@ const ThriftStore = () => {
                 </div>
 
                 <div className="space-y-6">
-                  {/* Contact Information */}
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                       <User className="h-5 w-5 mr-2" />
                       Contact Information
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <input
-                        type="text"
-                        placeholder="Full Name"
-                        value={checkoutData.name}
-                        onChange={(e) =>
-                          setCheckoutData({
-                            ...checkoutData,
-                            name: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      />
-                      <input
-                        type="email"
-                        placeholder="Email Address"
-                        value={checkoutData.email}
-                        onChange={(e) =>
-                          setCheckoutData({
-                            ...checkoutData,
-                            email: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      />
-                      <input
-                        type="tel"
-                        placeholder="Phone Number"
-                        value={checkoutData.phone}
-                        onChange={(e) =>
-                          setCheckoutData({
-                            ...checkoutData,
-                            phone: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 md:col-span-2"
-                      />
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Full Name *"
+                          value={checkoutData.name}
+                          onChange={(e) =>
+                            setCheckoutData({
+                              ...checkoutData,
+                              name: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          required
+                        />
+                        <span className="absolute right-3 top-3 text-red-500">
+                          *
+                        </span>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="email"
+                          placeholder="Email Address *"
+                          value={checkoutData.email}
+                          onChange={(e) =>
+                            setCheckoutData({
+                              ...checkoutData,
+                              email: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          required
+                        />
+                        <span className="absolute right-3 top-3 text-red-500">
+                          *
+                        </span>
+                      </div>
+                      <div className="relative md:col-span-2">
+                        <input
+                          type="tel"
+                          placeholder="Phone Number * (123) 456-7890"
+                          value={checkoutData.phone}
+                          onChange={(e) => {
+                            const formatted = formatPhone(e.target.value);
+                            setCheckoutData({
+                              ...checkoutData,
+                              phone: formatted,
+                            });
+                          }}
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          required
+                        />
+                        <span className="absolute right-3 top-3 text-red-500">
+                          *
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Shipping Address */}
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                       <MapPin className="h-5 w-5 mr-2" />
                       Shipping Address
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <input
-                        type="text"
-                        placeholder="Street Address"
-                        value={checkoutData.address}
-                        onChange={(e) =>
-                          setCheckoutData({
-                            ...checkoutData,
-                            address: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 md:col-span-2"
-                      />
-                      <input
-                        type="text"
-                        placeholder="City"
-                        value={checkoutData.city}
-                        onChange={(e) =>
-                          setCheckoutData({
-                            ...checkoutData,
-                            city: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      />
-                      <input
-                        type="text"
-                        placeholder="ZIP Code"
-                        value={checkoutData.zipCode}
-                        onChange={(e) =>
-                          setCheckoutData({
-                            ...checkoutData,
-                            zipCode: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      />
+                      <div className="relative md:col-span-2">
+                        <input
+                          type="text"
+                          placeholder="Street Address *"
+                          value={checkoutData.address}
+                          onChange={(e) =>
+                            setCheckoutData({
+                              ...checkoutData,
+                              address: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          required
+                        />
+                        <span className="absolute right-3 top-3 text-red-500">
+                          *
+                        </span>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="City *"
+                          value={checkoutData.city}
+                          onChange={(e) =>
+                            setCheckoutData({
+                              ...checkoutData,
+                              city: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          required
+                        />
+                        <span className="absolute right-3 top-3 text-red-500">
+                          *
+                        </span>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="ZIP Code *"
+                          value={checkoutData.zipCode}
+                          onChange={(e) =>
+                            setCheckoutData({
+                              ...checkoutData,
+                              zipCode: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          required
+                        />
+                        <span className="absolute right-3 top-3 text-red-500">
+                          *
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Payment Information */}
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                       <CreditCard className="h-5 w-5 mr-2" />
                       Payment Information
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <input
-                        type="text"
-                        placeholder="Card Number"
-                        value={checkoutData.cardNumber}
-                        onChange={(e) =>
-                          setCheckoutData({
-                            ...checkoutData,
-                            cardNumber: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 md:col-span-2"
-                      />
-                      <input
-                        type="text"
-                        placeholder="MM/YY"
-                        value={checkoutData.expiryDate}
-                        onChange={(e) =>
-                          setCheckoutData({
-                            ...checkoutData,
-                            expiryDate: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      />
-                      <input
-                        type="text"
-                        placeholder="CVV"
-                        value={checkoutData.cvv}
-                        onChange={(e) =>
-                          setCheckoutData({
-                            ...checkoutData,
-                            cvv: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      />
+                      <div className="relative md:col-span-2">
+                        <input
+                          type="text"
+                          placeholder="Card Number * (1234 5678 9012 3456)"
+                          value={checkoutData.cardNumber}
+                          onChange={(e) => {
+                            const formatted = formatCardNumber(e.target.value);
+                            setCheckoutData({
+                              ...checkoutData,
+                              cardNumber: formatted,
+                            });
+                          }}
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          required
+                        />
+                        <span className="absolute right-3 top-3 text-red-500">
+                          *
+                        </span>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="MM/YY *"
+                          value={checkoutData.expiryDate}
+                          onChange={(e) => {
+                            const formatted = formatExpiryDate(e.target.value);
+                            setCheckoutData({
+                              ...checkoutData,
+                              expiryDate: formatted,
+                            });
+                          }}
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          required
+                        />
+                        <span className="absolute right-3 top-3 text-red-500">
+                          *
+                        </span>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="CVV *"
+                          value={checkoutData.cvv}
+                          onChange={(e) => {
+                            const formatted = formatCVV(e.target.value);
+                            setCheckoutData({
+                              ...checkoutData,
+                              cvv: formatted,
+                            });
+                          }}
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          required
+                        />
+                        <span className="absolute right-3 top-3 text-red-500">
+                          *
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Order Summary */}
                   <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                       Order Summary
@@ -1605,7 +1787,6 @@ const ThriftStore = () => {
                     </div>
                   </div>
 
-                  {/* Checkout Button */}
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -1621,7 +1802,6 @@ const ThriftStore = () => {
         )}
       </AnimatePresence>
 
-      {/* Toast Notifications */}
       <div className="fixed top-20 right-4 z-50 space-y-2">
         <AnimatePresence>
           {toasts.map((toast) => (
@@ -1752,7 +1932,6 @@ const ProductCard = ({
           </div>
         </div>
 
-        {/* Tags */}
         <div className="mt-3 flex flex-wrap gap-1">
           {product.tags.slice(0, 3).map((tag) => (
             <span
